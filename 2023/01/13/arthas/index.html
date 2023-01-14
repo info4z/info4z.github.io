@@ -521,10 +521,10 @@
 </ol>
 <h2 id="二-快速入门"><a href="#二-快速入门" class="headerlink" title="二 : 快速入门"></a>二 : 快速入门</h2><h3 id="一-下载启动"><a href="#一-下载启动" class="headerlink" title="(一) 下载启动"></a>(一) 下载启动</h3><ul>
 <li><p>下载 jar 包</p>
-<pre class="highlight"><span class="line">$ curl -O https://arthas.aliyun.com/arthas-boot.jar</span><br></pre>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">$ curl -O https://arthas.aliyun.com/arthas-boot.jar<br></code></pre></td></tr></table></figure>
 </li>
 <li><p>启动</p>
-<pre class="highlight"><span class="line"><span class="meta prompt_"># </span><span class="language-bash">执行该程序的用户需要和目标进程具有相同的权限</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">java -jar arthas-boot.jar</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">可以执行如下命令来查看帮助</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">java -jar arthas-boot.jar -h</span></span><br></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">执行该程序的用户需要和目标进程具有相同的权限</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">java -jar arthas-boot.jar</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">可以执行如下命令来查看帮助</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">java -jar arthas-boot.jar -h</span><br></code></pre></td></tr></table></figure>
 </li>
 <li><p>选择应用 : 数据对应程序的编号, 然后回车即可</p>
 </li>
@@ -535,20 +535,20 @@
 </ul>
 <h3 id="二-常用操作"><a href="#二-常用操作" class="headerlink" title="(二) 常用操作"></a>(二) 常用操作</h3><ul>
 <li><p>dashboard : 选择指定程序后, 输入 <code>dashboard</code> 后回车, 即可进入看板, 按 <code>ctrl+c </code>可以中断执行</p>
-<pre class="highlight"><span class="line">$ dashboard</span><br></pre>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">$ dashboard<br></code></pre></td></tr></table></figure>
 
 <ul>
 <li>主要涉及到当前执行的线程, 内存情况和运行环境</li>
 </ul>
 </li>
 <li><p>thread : 查看当前线程, 命令 : <code>thread ID</code></p>
-<pre class="highlight"><span class="line">$ thread 1 | grep <span class="string">&#x27;main(&#x27;</span></span><br><span class="line">    at demo.MathGame.main(MathGame.java:17)</span><br></pre>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">$ thread 1 | grep <span class="hljs-string">&#x27;main(&#x27;</span><br>    at demo.MathGame.main(MathGame.java:17)<br></code></pre></td></tr></table></figure>
 </li>
 <li><p>jad : 反编译工具, 通过 jad 来反编译 Main Class</p>
-<pre class="highlight"><span class="line">$ jad demo.MathGame</span><br></pre>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">$ jad demo.MathGame<br></code></pre></td></tr></table></figure>
 </li>
 <li><p>watch : 查看具体函数的参数和返回值</p>
-<pre class="highlight"><span class="line">$ watch demo.MathGame primeFactors returnObj</span><br></pre></li>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">$ watch demo.MathGame primeFactors returnObj<br></code></pre></td></tr></table></figure></li>
 </ul>
 <h3 id="三-退出"><a href="#三-退出" class="headerlink" title="(三) 退出"></a>(三) 退出</h3><ul>
 <li>如果只是退出当前的连接，可以用<code>quit</code>或者<code>exit</code>命令。Attach 到目标进程上的 arthas 还会继续运行，端口会保持开放，下次连接时可以直接连接上。</li>
@@ -819,6 +819,10 @@
     <script src="//instant.page/5.1.0" type="module"
       integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
     
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
     
   </body>
 </html>

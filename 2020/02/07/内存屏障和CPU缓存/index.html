@@ -504,7 +504,7 @@
 <li><p>为了提高程序运行的性能, 现代 CPU 在很多方面对程序进行了优化</p>
 </li>
 <li><p>例如 : CPU 高速缓存, 尽可能地避免处理器访问主内存的时间开销, 处理器大多会利用缓存(cache)以提高性能</p>
-<pre class="highlight"><span class="line">CPU &lt;===&gt; L1-L3缓存 &lt;===&gt;</span><br><span class="line">CPU &lt;===&gt; L1-L3缓存 &lt;===&gt; 缓存一致性协议 &lt;===&gt; 主内存</span><br><span class="line">CPU &lt;===&gt; L1-L3缓存 &lt;===&gt;</span><br></pre></li>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">CPU &lt;===&gt; L1-L3缓存 &lt;===&gt;<br>CPU &lt;===&gt; L1-L3缓存 &lt;===&gt; 缓存一致性协议 &lt;===&gt; 主内存<br>CPU &lt;===&gt; L1-L3缓存 &lt;===&gt;<br></code></pre></td></tr></table></figure></li>
 </ul>
 <h3 id="2-多级缓存"><a href="#2-多级缓存" class="headerlink" title="2: 多级缓存"></a>2: 多级缓存</h3><ul>
 <li>L1 Cache(一级缓存)是 CPU 第一层高速缓存, 分为数据缓存和指令缓存; 一般服务器 CPU 的 L1 缓存的容量通常在 <strong>32~4096KB</strong></li>
@@ -531,7 +531,7 @@
 </ul>
 <h2 id="二-CPU性能优化手段-运行时指令重排"><a href="#二-CPU性能优化手段-运行时指令重排" class="headerlink" title="二 : CPU性能优化手段-运行时指令重排"></a>二 : CPU性能优化手段-运行时指令重排</h2><ul>
 <li><p>指令重排的场景 : 当 CPU <strong>写缓存时</strong>发现缓存区块正被其他 CPU 占用, 为了提高 CPU 处理性能, 可能将后面的<strong>读缓存命令优先执行</strong></p>
-<pre class="highlight"><span class="line"><span class="comment">//代码  </span></span><br><span class="line">x = <span class="number">100</span>;</span><br><span class="line">y = z;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 正常执行的三步骤: 1.将100写入x; 2.读取z的值; 3.将z值写入y</span></span><br><span class="line"><span class="comment"> * 重排序后执行: 1.读取z的值; 2.将z值写入y; 3.将100写入x</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//代码  </span><br>x = <span class="hljs-number">100</span>;<br>y = z;<br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 正常执行的三步骤: 1.将100写入x; 2.读取z的值; 3.将z值写入y</span><br><span class="hljs-comment"> * 重排序后执行: 1.读取z的值; 2.将z值写入y; 3.将100写入x</span><br><span class="hljs-comment"> */</span><br></code></pre></td></tr></table></figure>
 </li>
 <li><p>并非随便重排, 需要遵守 <strong>as-if-serial</strong> 语义</p>
 </li>
@@ -836,6 +836,10 @@
     <script src="//instant.page/5.1.0" type="module"
       integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
     
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
     
   </body>
 </html>

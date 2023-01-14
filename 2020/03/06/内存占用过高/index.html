@@ -501,14 +501,14 @@
 </ol>
 <h2 id="三-解决方案"><a href="#三-解决方案" class="headerlink" title="三 : 解决方案"></a>三 : 解决方案</h2><h3 id="一-手动清理"><a href="#一-手动清理" class="headerlink" title="(一) 手动清理"></a>(一) 手动清理</h3><ul>
 <li><p>可手动清理页文件缓存</p>
-<pre class="highlight"><span class="line">echo 1 &gt; /proc/sys/vm/drop_caches</span><br></pre></li>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">echo 1 &gt; /proc/sys/vm/drop_caches<br></code></pre></td></tr></table></figure></li>
 </ul>
 <h3 id="二-设置最低剩余内存"><a href="#二-设置最低剩余内存" class="headerlink" title="(二) 设置最低剩余内存"></a>(二) 设置最低剩余内存</h3><ul>
 <li><p>修改 sysctl.conf 配置文件</p>
-<pre class="highlight"><span class="line">vim /etc/sysctl.conf</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">最后加入一行</span></span><br><span class="line">vm.min_free_kbytes = 2097152</span><br></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">vim /etc/sysctl.conf<br><span class="hljs-meta prompt_"># </span><span class="language-bash">最后加入一行</span><br>vm.min_free_kbytes = 2097152<br></code></pre></td></tr></table></figure>
 </li>
 <li><p>使配置文件生效</p>
-<pre class="highlight"><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">sudo sysctl -p</span></span><br></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo sysctl -p</span><br></code></pre></td></tr></table></figure>
 </li>
 <li><p>第一种方法直接清空缓存, 可能会造成数据丢失, 我们选用第二种</p>
 </li>
@@ -792,6 +792,10 @@
     <script src="//instant.page/5.1.0" type="module"
       integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
     
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
     
   </body>
 </html>

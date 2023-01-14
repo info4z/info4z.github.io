@@ -322,7 +322,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BB%E9%A2%98"><span class="toc-text">一 : 主题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="toc-text">二 : 站点配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE"><span class="toc-text">三 : 主题配置</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BB%E9%A2%98"><span class="toc-text">一 : 主题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="toc-text">二 : 站点配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE"><span class="toc-text">三 : 主题配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E4%BB%A3%E7%A0%81%E9%AB%98%E4%BA%AE"><span class="toc-text">四 : 代码高亮</span></a></li></ol>
       </div>
     </article>
   
@@ -456,7 +456,7 @@
     
     
       <span class="dot"></span>
-      <span>258 字</span>
+      <span>278 字</span>
     
   </div>
   
@@ -469,21 +469,27 @@
 </blockquote>
 <h2 id="一-主题"><a href="#一-主题" class="headerlink" title="一 : 主题"></a>一 : 主题</h2><ul>
 <li><p>博客搭建完毕后, 可以对其进行一定的美化, 可以使用 kaze 主题</p>
-<pre class="highlight"><span class="line">$ git <span class="built_in">clone</span> git@github.com:theme-kaze/hexo-theme-kaze.git themes/kaze</span><br></pre></li>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">$ git <span class="hljs-built_in">clone</span> git@github.com:theme-kaze/hexo-theme-kaze.git themes/kaze<br></code></pre></td></tr></table></figure></li>
 </ul>
 <h2 id="二-站点配置"><a href="#二-站点配置" class="headerlink" title="二 : 站点配置"></a>二 : 站点配置</h2><ul>
 <li><p>编辑博客根目录下的 <code>_config.yml</code></p>
-<pre class="highlight"><span class="line"><span class="comment"># Site</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">冰清阁</span>		<span class="comment">#标题</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;差不多得了, 玩什么命呀...&#x27;</span>	<span class="comment">#简介或者格言</span></span><br><span class="line"><span class="attr">keywords:</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">清月明风</span>		<span class="comment">#作者</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span>		<span class="comment">#主题语言,查看themes\next\languages下面的具体名字</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">Asia/Shanghai</span>		<span class="comment">#中国的时区</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># URL</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">https://info4z.github.io</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Extensions</span></span><br><span class="line"><span class="attr">theme:</span> <span class="string">kaze</span></span><br></pre></li>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># Site</span><br><span class="hljs-attr">title:</span> <span class="hljs-string">冰清阁</span>		<span class="hljs-comment">#标题</span><br><span class="hljs-attr">subtitle:</span> <span class="hljs-string">&#x27;&#x27;</span><br><span class="hljs-attr">description:</span> <span class="hljs-string">&#x27;差不多得了, 玩什么命呀...&#x27;</span>	<span class="hljs-comment">#简介或者格言</span><br><span class="hljs-attr">keywords:</span><br><span class="hljs-attr">author:</span> <span class="hljs-string">清月明风</span>		<span class="hljs-comment">#作者</span><br><span class="hljs-attr">language:</span> <span class="hljs-string">zh-CN</span>		<span class="hljs-comment">#主题语言,查看themes\next\languages下面的具体名字</span><br><span class="hljs-attr">timezone:</span> <span class="hljs-string">Asia/Shanghai</span>		<span class="hljs-comment">#中国的时区</span><br><br><span class="hljs-comment"># URL</span><br><span class="hljs-attr">url:</span> <span class="hljs-string">https://info4z.github.io</span><br><br><span class="hljs-comment"># 代码高亮</span><br><span class="hljs-attr">highlight:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">line_number:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-attr">auto_detect:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-attr">tab_replace:</span> <span class="hljs-string">&#x27;&#x27;</span><br>  <span class="hljs-attr">wrap:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">hljs:</span> <span class="hljs-literal">true</span><br><span class="hljs-attr">prismjs:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">false</span><br><br><span class="hljs-comment"># Extensions</span><br><span class="hljs-attr">theme:</span> <span class="hljs-string">kaze</span><br></code></pre></td></tr></table></figure></li>
 </ul>
 <h2 id="三-主题配置"><a href="#三-主题配置" class="headerlink" title="三 : 主题配置"></a>三 : 主题配置</h2><ul>
 <li><p>修改 kaze下的 <code>_config.yml</code></p>
-<pre class="highlight"><span class="line"><span class="comment"># Header config</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">冰清阁</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">清月明风</span></span><br><span class="line"><span class="comment"># put the logo on the $&#123;blog_path&#125;/source/img/$&#123;picname&#125;.png or use urls</span></span><br><span class="line"><span class="comment"># logo_img: https://img.songhn.com/img/Y67gdd.png</span></span><br><span class="line"><span class="attr">author_img:</span> <span class="string">https://img.songhn.com/img/Y67gdd.png</span></span><br><span class="line"><span class="attr">author_description:</span> <span class="string">差不多得了,</span> <span class="string">玩什么命呀...</span></span><br></pre>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># Header config</span><br><span class="hljs-attr">title:</span> <span class="hljs-string">冰清阁</span><br><span class="hljs-attr">author:</span> <span class="hljs-string">清月明风</span><br><span class="hljs-attr">logo_img:</span> <span class="hljs-string">https://img.songhn.com/img/Y67gdd.png</span><br><span class="hljs-attr">author_img:</span> <span class="hljs-string">https://img.songhn.com/img/Y67gdd.png</span><br><span class="hljs-attr">author_description:</span> <span class="hljs-string">差不多得了,</span> <span class="hljs-string">玩什么命呀...</span><br></code></pre></td></tr></table></figure>
 </li>
 <li><p>目录</p>
-<pre class="highlight"><span class="line"><span class="comment"># Navbar config</span></span><br><span class="line"><span class="attr">menus:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">/</span></span><br><span class="line">  <span class="attr">tags:</span> <span class="string">/tags</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="string">/categories</span></span><br><span class="line">  <span class="attr">archive:</span> <span class="string">/archives</span></span><br><span class="line">  <span class="attr">about:</span> <span class="string">/about</span></span><br><span class="line">  <span class="attr">friends:</span> <span class="string">/links</span></span><br></pre>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># Navbar config</span><br><span class="hljs-attr">menus:</span><br>  <span class="hljs-attr">home:</span> <span class="hljs-string">/</span><br>  <span class="hljs-attr">tags:</span> <span class="hljs-string">/tags</span><br>  <span class="hljs-attr">categories:</span> <span class="hljs-string">/categories</span><br>  <span class="hljs-attr">archive:</span> <span class="hljs-string">/archives</span><br>  <span class="hljs-attr">about:</span> <span class="hljs-string">/about</span><br>  <span class="hljs-attr">friends:</span> <span class="hljs-string">/friends</span><br></code></pre></td></tr></table></figure>
 </li>
 <li><p>当然了, 有些目录是不存在的, 需要手动创建</p>
-<pre class="highlight"><span class="line">$ hexo new page tags</span><br><span class="line">$ hexo new page categories</span><br><span class="line">$ hexo new page about</span><br><span class="line">$ hexo new page friends</span><br></pre></li>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">$ hexo new page tags<br>$ hexo new page categories<br>$ hexo new page about<br>$ hexo new page friends<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>搜索</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">search:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">path:</span> <span class="hljs-string">search.json</span><br>  <span class="hljs-attr">field:</span> <span class="hljs-string">posts</span><br>  <span class="hljs-attr">searchContent:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="四-代码高亮"><a href="#四-代码高亮" class="headerlink" title="四 : 代码高亮"></a>四 : 代码高亮</h2><ul>
+<li></li>
 </ul>
 
   </div>
@@ -555,7 +561,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BB%E9%A2%98"><span class="toc-text">一 : 主题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="toc-text">二 : 站点配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE"><span class="toc-text">三 : 主题配置</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BB%E9%A2%98"><span class="toc-text">一 : 主题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="toc-text">二 : 站点配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE"><span class="toc-text">三 : 主题配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E4%BB%A3%E7%A0%81%E9%AB%98%E4%BA%AE"><span class="toc-text">四 : 代码高亮</span></a></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -569,7 +575,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BB%E9%A2%98"><span class="toc-text">一 : 主题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="toc-text">二 : 站点配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE"><span class="toc-text">三 : 主题配置</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BB%E9%A2%98"><span class="toc-text">一 : 主题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="toc-text">二 : 站点配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE"><span class="toc-text">三 : 主题配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E4%BB%A3%E7%A0%81%E9%AB%98%E4%BA%AE"><span class="toc-text">四 : 代码高亮</span></a></li></ol>
     </article>
   
   
@@ -764,6 +770,10 @@
     <script src="//instant.page/5.1.0" type="module"
       integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
     
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
     
   </body>
 </html>
