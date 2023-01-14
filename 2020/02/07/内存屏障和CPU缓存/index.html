@@ -49,7 +49,7 @@
         content="2020-02-07">
       <meta 
         property="og:article:modified_time" 
-        content="2023-01-14">
+        content="2023-01-15">
       <meta 
         property="og:article:author" 
         content="清月明风">
@@ -330,7 +330,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E7%BC%93%E5%AD%98"><span class="toc-text">一 : CPU性能优化手段-缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="toc-text">2: 多级缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%BC%93%E5%AD%98%E5%90%8C%E6%AD%A5%E5%8D%8F%E8%AE%AE"><span class="toc-text">3: 缓存同步协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92"><span class="toc-text">二 : CPU性能优化手段-运行时指令重排</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%A4%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">三 : 两个问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="toc-text">四 : 内存屏障</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E7%BC%93%E5%AD%98"><span class="toc-text">一 : CPU性能优化手段-缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="toc-text">(一) 多级缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E7%BC%93%E5%AD%98%E5%90%8C%E6%AD%A5%E5%8D%8F%E8%AE%AE"><span class="toc-text">(二) 缓存同步协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92"><span class="toc-text">二 : CPU性能优化手段-运行时指令重排</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%A4%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">三 : 两个问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="toc-text">四 : 内存屏障</span></a></li></ol>
       </div>
     </article>
   
@@ -458,7 +458,7 @@
     
     
       <span class="dot"></span>
-      <span>1.2k 字</span>
+      <span>1.1k 字</span>
     
   </div>
   
@@ -494,60 +494,39 @@
   <div 
     id="section" 
     class="post-content">
-    <h2 id="一-CPU性能优化手段-缓存"><a href="#一-CPU性能优化手段-缓存" class="headerlink" title="一 : CPU性能优化手段-缓存"></a>一 : CPU性能优化手段-缓存</h2><ul>
-<li><p>为了提高程序运行的性能, 现代 CPU 在很多方面对程序进行了优化</p>
-</li>
-<li><p>例如 : CPU 高速缓存, 尽可能地避免处理器访问主内存的时间开销, 处理器大多会利用缓存(cache)以提高性能</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">CPU &lt;===&gt; L1-L3缓存 &lt;===&gt;<br>CPU &lt;===&gt; L1-L3缓存 &lt;===&gt; 缓存一致性协议 &lt;===&gt; 主内存<br>CPU &lt;===&gt; L1-L3缓存 &lt;===&gt;<br></code></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="2-多级缓存"><a href="#2-多级缓存" class="headerlink" title="2: 多级缓存"></a>2: 多级缓存</h3><ul>
-<li>L1 Cache(一级缓存)是 CPU 第一层高速缓存, 分为数据缓存和指令缓存; 一般服务器 CPU 的 L1 缓存的容量通常在 <strong>32~4096KB</strong></li>
-<li>L2 由于 L1 级高速缓存容量的限制, 为了再次提高CPU的运算速度, 在 CPU 外部放置一高速存储器, 即二级缓存</li>
-<li>L3 现在的都是内置的; 作用是: L3缓存的应用可以进一步降低内存延迟, 同时提升大数据量计算时处理器的性能; 具有较大 L3 缓存的处理器提供更有效的文件系统缓存行为及较短消息和处理器队列长度; 一般是多核共享一个 L3 缓存</li>
-<li>CPU 在读取数据时, 现在 L1 中寻找, 再从 L2 寻找, 再从 L3 寻找, 然后是内存, 再后是外存储器</li>
-</ul>
-<h3 id="3-缓存同步协议"><a href="#3-缓存同步协议" class="headerlink" title="3: 缓存同步协议"></a>3: 缓存同步协议</h3><ul>
-<li><p>多 CPU 读取同样的数据进行缓存, 进行不同运算之后, 最终写入主内存以哪个 CPU 为准 ?</p>
-</li>
-<li><p>在这种高速缓存写的场景下, 有一个缓存一致性协议, 多数 CPU 厂商对它进行了实现</p>
-</li>
-<li><p>MESI 协议</p>
-<p>, 它规定每条缓存有个状态位, 同时定义了下面四个状态 :</p>
+    <h2 id="一-CPU性能优化手段-缓存"><a href="#一-CPU性能优化手段-缓存" class="headerlink" title="一 : CPU性能优化手段-缓存"></a>一 : CPU性能优化手段-缓存</h2><p>为了提高程序运行的性能, 现代 CPU 在很多方面对程序进行了优化; 例如 : CPU 高速缓存, 尽可能地避免处理器访问主内存的时间开销, 处理器大多会利用缓存(cache)以提高性能</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">CPU &lt;===&gt; L1-L3缓存 &lt;===&gt;<br>CPU &lt;===&gt; L1-L3缓存 &lt;===&gt; 缓存一致性协议 &lt;===&gt; 主内存<br>CPU &lt;===&gt; L1-L3缓存 &lt;===&gt;<br></code></pre></td></tr></table></figure>
+
+<h3 id="一-多级缓存"><a href="#一-多级缓存" class="headerlink" title="(一) 多级缓存"></a>(一) 多级缓存</h3><p>L1 Cache(一级缓存)是 CPU 第一层高速缓存, 分为数据缓存和指令缓存; 一般服务器 CPU 的 L1 缓存的容量通常在 <strong>32~4096KB</strong></p>
+<p>L2 由于 L1 级高速缓存容量的限制, 为了再次提高CPU的运算速度, 在 CPU 外部放置一高速存储器, 即二级缓存</p>
+<p>L3 现在的都是内置的; 作用是: L3缓存的应用可以进一步降低内存延迟, 同时提升大数据量计算时处理器的性能; 具有较大 L3 缓存的处理器提供更有效的文件系统缓存行为及较短消息和处理器队列长度; 一般是多核共享一个 L3 缓存</p>
+<p><strong>读取顺序 :</strong> CPU 在读取数据时, 现在 L1 中寻找, 再从 L2 寻找, 再从 L3 寻找, 然后是内存, 再后是外存储器</p>
+<h3 id="二-缓存同步协议"><a href="#二-缓存同步协议" class="headerlink" title="(二) 缓存同步协议"></a>(二) 缓存同步协议</h3><p>多 CPU 读取同样的数据进行缓存, 进行不同运算之后, 最终写入主内存以哪个 CPU 为准 ?</p>
+<p>在这种高速缓存写的场景下, 有一个<strong>缓存一致性协议(MESI 协议)</strong>, 多数 CPU 厂商对它进行了实现; 它规定每条缓存有个状态位, 同时定义了下面四个状态 :</p>
 <ul>
 <li><strong>修改态(Modified)</strong> : 此 cache 行已被修改过(脏行), 内容已不同于主内存, 为此 cache 专有</li>
 <li><strong>专有态(Exclusive)</strong> : 此 cache 行内容同于主存, 但不出现于其他 cache 中</li>
 <li><strong>共享态(Shared)</strong> : 此 cache 行内容同于主存, 但也出现于其他 cache 中</li>
 <li><strong>无效态(Invalid)</strong> : 此 cache 行 内容无效(空行)</li>
 </ul>
-</li>
-<li><p>多处理器时, 单个 CPU 对缓存中数据进行了改动, 需要通知给其他 CPU; 也就是意味着, <strong>CPU 处理要控制自己的读写操作, 还要监听其他 CPU 发出的通知, 从而保证最终一致</strong></p>
-</li>
-</ul>
-<h2 id="二-CPU性能优化手段-运行时指令重排"><a href="#二-CPU性能优化手段-运行时指令重排" class="headerlink" title="二 : CPU性能优化手段-运行时指令重排"></a>二 : CPU性能优化手段-运行时指令重排</h2><ul>
-<li><p>指令重排的场景 : 当 CPU <strong>写缓存时</strong>发现缓存区块正被其他 CPU 占用, 为了提高 CPU 处理性能, 可能将后面的<strong>读缓存命令优先执行</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//代码  </span><br>x = <span class="hljs-number">100</span>;<br>y = z;<br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 正常执行的三步骤: 1.将100写入x; 2.读取z的值; 3.将z值写入y</span><br><span class="hljs-comment"> * 重排序后执行: 1.读取z的值; 2.将z值写入y; 3.将100写入x</span><br><span class="hljs-comment"> */</span><br></code></pre></td></tr></table></figure>
-</li>
-<li><p>并非随便重排, 需要遵守 <strong>as-if-serial</strong> 语义</p>
-</li>
-<li><p><code>as-if-serial</code> 语义的意思指: 不管怎么重排序(编译器和处理器为了提高并行度), (单线程)程序的执行结果不能被改变; 编译器, runtime 和处理器都必须遵守 as-if-serial 语义</p>
-</li>
-<li><p>也就是说: 编译器和处理器<strong>不会对存在数据依赖关系的操作重排序</strong></p>
-</li>
-</ul>
-<h2 id="三-两个问题"><a href="#三-两个问题" class="headerlink" title="三 : 两个问题"></a>三 : 两个问题</h2><ul>
-<li>CPU 高速缓存下有一个问题 :<ul>
+<p>多处理器时, 单个 CPU 对缓存中数据进行了改动, 需要通知给其他 CPU; 也就是意味着, <strong>CPU 处理要控制自己的读写操作, 还要监听其他 CPU 发出的通知, 从而保证最终一致</strong></p>
+<h2 id="二-CPU性能优化手段-运行时指令重排"><a href="#二-CPU性能优化手段-运行时指令重排" class="headerlink" title="二 : CPU性能优化手段-运行时指令重排"></a>二 : CPU性能优化手段-运行时指令重排</h2><p>指令重排的场景 : 当 CPU <strong>写缓存时</strong>发现缓存区块正被其他 CPU 占用, 为了提高 CPU 处理性能, 可能将后面的<strong>读缓存命令优先执行</strong></p>
+<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/5318eb3a-ae93-4f4f-b1db-00941621e698-8352070.jpg" alt="img" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/5318eb3a-ae93-4f4f-b1db-00941621e698-8352070.jpg" class="lozad post-image"></p>
+<p>并非随便重排, 需要遵守 <strong>as-if-serial</strong> 语义</p>
+<p><code>as-if-serial</code> 语义的意思指: 不管怎么重排序(编译器和处理器为了提高并行度), (单线程)程序的执行结果不能被改变; 编译器, runtime 和处理器都必须遵守 as-if-serial 语义</p>
+<p>也就是说: 编译器和处理器<strong>不会对存在数据依赖关系的操作重排序</strong></p>
+<h2 id="三-两个问题"><a href="#三-两个问题" class="headerlink" title="三 : 两个问题"></a>三 : 两个问题</h2><p>CPU 高速缓存下有一个问题 :</p>
+<ul>
 <li>缓存中的数据与主内存的数据并不是实时同步的, 各 CPU (或 CPU 核心) 间缓存的数据也不是实时同步;</li>
 <li><strong>在同一个时间点, 各 CPU 所看到同一内存地址的数据的值可能时不一致的</strong></li>
 </ul>
-</li>
-<li>CPU 执行指令重排序优化下有一个问题 :<ul>
+<p>CPU 执行指令重排序优化下有一个问题 :</p>
+<ul>
 <li>虽然遵守了 as-if-serial 语义, 但仅在单 CPU 自己执行的情况下能保证结果正确;</li>
 <li>多核多线程中, 指令逻辑无法分辨因果关联, 可能出现<strong>乱序执行</strong>, 导致程序运行结果错误</li>
 </ul>
-</li>
-</ul>
-<h2 id="四-内存屏障"><a href="#四-内存屏障" class="headerlink" title="四 : 内存屏障"></a>四 : 内存屏障</h2><ul>
-<li>处理器提供了两个内存屏障指令(Memory Barrier)用于解决上述两个问题</li>
+<h2 id="四-内存屏障"><a href="#四-内存屏障" class="headerlink" title="四 : 内存屏障"></a>四 : 内存屏障</h2><p>处理器提供了两个内存屏障指令(Memory Barrier)用于解决上述两个问题 : </p>
+<ul>
 <li><strong>写内存屏障(Store Memory Barrier)</strong>: 在指令后插入 Store Barrier, 能让写入缓存中的最新数据更新写入主内存, 让其他线程可见; 强制写入主内存, 这种显示调用, <strong>CPU 就不会因为性能考虑而去对指令重排</strong></li>
 <li><strong>读内存屏障(Load Memory Barrier)</strong>: 在指令前插入 Load Barrier, 可以让高速缓存中的数据失效, 强制重新从主内存加载数据; 强制读取主内存内容, 让 CPU 缓存与主内存保持一致, <strong>避免了缓存导致的一致性问题</strong></li>
 </ul>
@@ -621,7 +600,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E7%BC%93%E5%AD%98"><span class="toc-text">一 : CPU性能优化手段-缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="toc-text">2: 多级缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%BC%93%E5%AD%98%E5%90%8C%E6%AD%A5%E5%8D%8F%E8%AE%AE"><span class="toc-text">3: 缓存同步协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92"><span class="toc-text">二 : CPU性能优化手段-运行时指令重排</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%A4%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">三 : 两个问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="toc-text">四 : 内存屏障</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E7%BC%93%E5%AD%98"><span class="toc-text">一 : CPU性能优化手段-缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="toc-text">(一) 多级缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E7%BC%93%E5%AD%98%E5%90%8C%E6%AD%A5%E5%8D%8F%E8%AE%AE"><span class="toc-text">(二) 缓存同步协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92"><span class="toc-text">二 : CPU性能优化手段-运行时指令重排</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%A4%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">三 : 两个问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="toc-text">四 : 内存屏障</span></a></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -635,7 +614,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E7%BC%93%E5%AD%98"><span class="toc-text">一 : CPU性能优化手段-缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="toc-text">2: 多级缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%BC%93%E5%AD%98%E5%90%8C%E6%AD%A5%E5%8D%8F%E8%AE%AE"><span class="toc-text">3: 缓存同步协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92"><span class="toc-text">二 : CPU性能优化手段-运行时指令重排</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%A4%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">三 : 两个问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="toc-text">四 : 内存屏障</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E7%BC%93%E5%AD%98"><span class="toc-text">一 : CPU性能优化手段-缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="toc-text">(一) 多级缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E7%BC%93%E5%AD%98%E5%90%8C%E6%AD%A5%E5%8D%8F%E8%AE%AE"><span class="toc-text">(二) 缓存同步协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92"><span class="toc-text">二 : CPU性能优化手段-运行时指令重排</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%A4%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">三 : 两个问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="toc-text">四 : 内存屏障</span></a></li></ol>
     </article>
   
   
