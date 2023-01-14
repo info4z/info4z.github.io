@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="https://img.songhn.com/img/Y67gdd.png">
-  <title>线程池应用及实现原理剖析</title>
+  <title>线程封闭之ThreadLocal和栈封闭</title>
   
     
       <meta 
         property="og:title" 
-        content="线程池应用及实现原理剖析">
+        content="线程封闭之ThreadLocal和栈封闭">
     
     
       <meta 
         property="og:url" 
-        content="https://info4z.github.io/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90(7)/index.html">
+        content="https://info4z.github.io/2020/02/21/%E7%BA%BF%E7%A8%8B%E5%B0%81%E9%97%AD%E4%B9%8BThreadLocal%E5%92%8C%E6%A0%88%E5%B0%81%E9%97%AD/index.html">
     
     
       <meta 
@@ -46,10 +46,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2020-02-28">
+        content="2020-02-21">
       <meta 
         property="og:article:modified_time" 
-        content="2023-01-14">
+        content="2023-01-15">
       <meta 
         property="og:article:author" 
         content="清月明风">
@@ -330,7 +330,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">一 : 为什么要用线程池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86"><span class="toc-text">二 : 线程池原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%BA%BF%E7%A8%8B%E6%95%B0%E9%87%8F"><span class="toc-text">三 : 线程数量</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BA%BF%E7%A8%8B%E5%B0%81%E9%97%AD%E6%A6%82%E5%BF%B5"><span class="toc-text">一 : 线程封闭概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-ThreadLocal"><span class="toc-text">二 : ThreadLocal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%A0%88%E5%B0%81%E9%97%AD"><span class="toc-text">三 : 栈封闭</span></a></li></ol>
       </div>
     </article>
   
@@ -435,16 +435,16 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      线程池应用及实现原理剖析
+      线程封闭之ThreadLocal和栈封闭
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2020-02-27T16:00:00.000Z">
+    <time datetime="2020-02-20T16:00:00.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2020-02-28</span>
+      <span>2020-02-21</span>
     </time>
     
       <span class="dot"></span>
@@ -458,7 +458,7 @@
     
     
       <span class="dot"></span>
-      <span>20 字</span>
+      <span>549 字</span>
     
   </div>
   
@@ -494,7 +494,22 @@
   <div 
     id="section" 
     class="post-content">
-    <h2 id="一-为什么要用线程池"><a href="#一-为什么要用线程池" class="headerlink" title="一 : 为什么要用线程池"></a>一 : 为什么要用线程池</h2><h2 id="二-线程池原理"><a href="#二-线程池原理" class="headerlink" title="二 : 线程池原理"></a>二 : 线程池原理</h2><h2 id="三-线程数量"><a href="#三-线程数量" class="headerlink" title="三 : 线程数量"></a>三 : 线程数量</h2>
+    <blockquote>
+<p>并不是所有多线程都会用到共享数据, 如果数据都是独享的, 就可以使用线程封闭技术</p>
+</blockquote>
+<h2 id="一-线程封闭概念"><a href="#一-线程封闭概念" class="headerlink" title="一 : 线程封闭概念"></a>一 : 线程封闭概念</h2><p>多线程访问共享可变数据时, 涉及到线程间数据同步的问题, 并不是所有时候, 都要用到共享数据, 所以线程封闭概念就提出来了</p>
+<p>数据都被封闭在各自的线程之中, 就不需要同步, 这种通过将数据封闭在线程中而避免使用同步的技术称为<strong>线程封闭</strong></p>
+<p>线程封闭的具体实现有: <strong>ThreadLocal</strong>, <strong>局部变量</strong></p>
+<h2 id="二-ThreadLocal"><a href="#二-ThreadLocal" class="headerlink" title="二 : ThreadLocal"></a>二 : ThreadLocal</h2><p><strong>ThreadLocal 是 java 里一种特殊的变量</strong>, 它是一个<strong>线程级别变量</strong>, 每个线程都有一个 ThreadLocal, 就是每个线程都拥有了自己独立的一个变量, 竞争条件被彻底消除了, 在并发模式下是绝对安全的变量</p>
+<p><strong>用法</strong>: <code>ThreadLocal&lt;T&gt; var = new ThreadLocal&lt;T&gt;();</code> 会自动在每一个线程上创建一个 T 的副本, 副本之间彼此独立, 互不影响; 可以用 ThreadLocal 存储一些参数, 以便在线程中多个方法中使用, <strong>用来代替方法传参的做法</strong>; </p>
+<ul>
+<li><p>代码示例</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ThreadLocal&lt;String&gt; value = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThreadLocal</span>&lt;&gt;();<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">threadLocalTest</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;<br>    value.set(<span class="hljs-string">&quot;123&quot;</span>);<br>    <span class="hljs-type">String</span> <span class="hljs-variable">v</span> <span class="hljs-operator">=</span> value.get();<br>    System.out.println(<span class="hljs-string">&quot;线程1执行之前,主线程取到的值: &quot;</span> + v);<br><br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(()-&gt;&#123;<br>        <span class="hljs-type">String</span> <span class="hljs-variable">s</span> <span class="hljs-operator">=</span> value.get();<br>        System.out.println(<span class="hljs-string">&quot;线程1取到的值: &quot;</span> + s);<br>        value.set(<span class="hljs-string">&quot;456&quot;</span>);<br><br>        s = value.get();<br>        System.out.println(<span class="hljs-string">&quot;重新设置后,线程1取到的值: &quot;</span> + s);<br>    &#125;).start();<br><br>    Thread.sleep(<span class="hljs-number">5000L</span>);<br>    v = value.get();<br>    System.out.println(<span class="hljs-string">&quot;线程1执行之后,主线程取到的值: &quot;</span> + v);<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThreadLocalDemo</span>().threadLocalTest();<br>&#125;<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>实在难以理解的, 可以理解为, jvm 维护了一个 Map&lt;Thread, T&gt;, 每个线程要用这个 T 的时候, 用当前的线程去 Map 里面取, 仅作为一个概念理解</p>
+<h2 id="三-栈封闭"><a href="#三-栈封闭" class="headerlink" title="三 : 栈封闭"></a>三 : 栈封闭</h2><p><strong>局部变量</strong>的固有属性之一就是封闭在线程中</p>
+<p>它们位于执行线程的栈中, 其他线程无法访问这个栈</p>
+
   </div>
   <div>
     
@@ -513,8 +528,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://info4z.github.io/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90(7)/">
-            https://info4z.github.io/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90(7)/
+            href="https://info4z.github.io/2020/02/21/%E7%BA%BF%E7%A8%8B%E5%B0%81%E9%97%AD%E4%B9%8BThreadLocal%E5%92%8C%E6%A0%88%E5%B0%81%E9%97%AD/">
+            https://info4z.github.io/2020/02/21/%E7%BA%BF%E7%A8%8B%E5%B0%81%E9%97%AD%E4%B9%8BThreadLocal%E5%92%8C%E6%A0%88%E5%B0%81%E9%97%AD/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -526,13 +541,13 @@
   
     <div class="nav-item-prev">
       <a 
-        href="/2020/03/06/%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/" 
+        href="/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/" 
         class="nav-link">
         <i class="iconfont icon-left nav-prev-icon"></i>
         <div>
           <div class="nav-label">上一篇</div>
           
-            <div class="nav-title">内存占用过高 </div>
+            <div class="nav-title">线程池应用及实现原理剖析 </div>
           
         </div>
       </a>
@@ -541,12 +556,12 @@
   
     <div class="nav-item-next">
       <a 
-        href="/2020/02/21/%E7%BA%BF%E7%A8%8B%E5%B0%81%E9%97%AD%E4%B9%8BThreadLocal%E5%92%8C%E6%A0%88%E5%B0%81%E9%97%AD(6)/" 
+        href="/2020/02/14/%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">线程封闭之ThreadLocal和栈封闭 </div>
+            <div class="nav-title">线程通信 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -564,7 +579,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">一 : 为什么要用线程池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86"><span class="toc-text">二 : 线程池原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%BA%BF%E7%A8%8B%E6%95%B0%E9%87%8F"><span class="toc-text">三 : 线程数量</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BA%BF%E7%A8%8B%E5%B0%81%E9%97%AD%E6%A6%82%E5%BF%B5"><span class="toc-text">一 : 线程封闭概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-ThreadLocal"><span class="toc-text">二 : ThreadLocal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%A0%88%E5%B0%81%E9%97%AD"><span class="toc-text">三 : 栈封闭</span></a></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -578,7 +593,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">一 : 为什么要用线程池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86"><span class="toc-text">二 : 线程池原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%BA%BF%E7%A8%8B%E6%95%B0%E9%87%8F"><span class="toc-text">三 : 线程数量</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BA%BF%E7%A8%8B%E5%B0%81%E9%97%AD%E6%A6%82%E5%BF%B5"><span class="toc-text">一 : 线程封闭概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-ThreadLocal"><span class="toc-text">二 : ThreadLocal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%A0%88%E5%B0%81%E9%97%AD"><span class="toc-text">三 : 栈封闭</span></a></li></ol>
     </article>
   
   
@@ -609,7 +624,7 @@
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2020-02-28</div>
-        <a href="/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90(7)/"><div class="recent-posts-item-content">线程池应用及实现原理剖析</div></a>
+        <a href="/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/"><div class="recent-posts-item-content">线程池应用及实现原理剖析</div></a>
       </div>
     
   </div>

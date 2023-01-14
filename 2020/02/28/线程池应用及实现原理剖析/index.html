@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="https://img.songhn.com/img/Y67gdd.png">
-  <title>线程通信</title>
+  <title>线程池应用及实现原理剖析</title>
   
     
       <meta 
         property="og:title" 
-        content="线程通信">
+        content="线程池应用及实现原理剖析">
     
     
       <meta 
         property="og:url" 
-        content="https://info4z.github.io/2020/02/14/%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1(5)/index.html">
+        content="https://info4z.github.io/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/index.html">
     
     
       <meta 
@@ -46,7 +46,7 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2020-02-14">
+        content="2020-02-28">
       <meta 
         property="og:article:modified_time" 
         content="2023-01-15">
@@ -330,7 +330,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E9%80%9A%E4%BF%A1%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="toc-text">一 : 通信的方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB"><span class="toc-text">二 : 文件共享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%8F%98%E9%87%8F%E5%85%B1%E4%BA%AB"><span class="toc-text">三 : 变量共享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BA%BF%E7%A8%8B%E5%8D%8F%E4%BD%9C-JDK-API"><span class="toc-text">四 : 线程协作-JDK API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E4%BC%AA%E5%94%A4%E9%86%92"><span class="toc-text">五 : 伪唤醒</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">一 : 为什么要用线程池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BA%BF%E7%A8%8B%E6%B1%A0-API"><span class="toc-text">二 : 线程池 API</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-ExecutorService"><span class="toc-text">(一) ExecutorService</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-ScheduledExecutorService"><span class="toc-text">(二) ScheduledExecutorService</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-Executors-%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="toc-text">(三) Executors 工具类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86"><span class="toc-text">三 : 线程池原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E5%BF%B5"><span class="toc-text">(一) 概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="toc-text">(二) 执行过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BA%BF%E7%A8%8B%E6%95%B0%E9%87%8F"><span class="toc-text">四 : 线程数量</span></a></li></ol>
       </div>
     </article>
   
@@ -435,16 +435,16 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      线程通信
+      线程池应用及实现原理剖析
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2020-02-13T16:00:00.000Z">
+    <time datetime="2020-02-27T16:00:00.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2020-02-14</span>
+      <span>2020-02-28</span>
     </time>
     
       <span class="dot"></span>
@@ -458,7 +458,7 @@
     
     
       <span class="dot"></span>
-      <span>27 字</span>
+      <span>2k 字</span>
     
   </div>
   
@@ -494,7 +494,118 @@
   <div 
     id="section" 
     class="post-content">
-    <h2 id="一-通信的方式"><a href="#一-通信的方式" class="headerlink" title="一 : 通信的方式"></a>一 : 通信的方式</h2><h2 id="二-文件共享"><a href="#二-文件共享" class="headerlink" title="二 : 文件共享"></a>二 : 文件共享</h2><h2 id="三-变量共享"><a href="#三-变量共享" class="headerlink" title="三 : 变量共享"></a>三 : 变量共享</h2><h2 id="四-线程协作-JDK-API"><a href="#四-线程协作-JDK-API" class="headerlink" title="四 : 线程协作-JDK API"></a>四 : 线程协作-JDK API</h2><h2 id="五-伪唤醒"><a href="#五-伪唤醒" class="headerlink" title="五 : 伪唤醒"></a>五 : 伪唤醒</h2>
+    <blockquote>
+<p>多线程会提高处理速度不假, 但如果使用不合理, 也会造成资源浪费</p>
+</blockquote>
+<h2 id="一-为什么要用线程池"><a href="#一-为什么要用线程池" class="headerlink" title="一 : 为什么要用线程池"></a>一 : 为什么要用线程池</h2><p>线程是不是越多越好?</p>
+<ol>
+<li>线程在 java 中是一个对象, 更是操作系统的资源, 线程创建和销毁需要时间; 如果创建时间 + 销毁时间 &gt; 执行任务时间就很不合算</li>
+<li>java 对象占用堆内存, 操作系统线程占用系统内存, 根据 jvm 规范, 一个线程默认最大栈大小 1M , 这个栈空间是需要从系统内存中分配的; 线程过多, 会消耗很多的内存</li>
+<li>操作系统需要频繁切换线程上下文, 影响性能</li>
+</ol>
+<p><strong>线程池的推出, 就是为了方便的控制线程数量</strong></p>
+<h2 id="二-线程池-API"><a href="#二-线程池-API" class="headerlink" title="二 : 线程池 API"></a>二 : 线程池 API</h2><p>三个接口两个实现类</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>接口</td>
+<td>Executor</td>
+<td>最上层的接口, 定义了<strong>执行任务的方法 execute</strong></td>
+</tr>
+<tr>
+<td>接口</td>
+<td>ExecutorService</td>
+<td>继承了 Executor 接口, 拓展了 Callable, Future, 关闭方法</td>
+</tr>
+<tr>
+<td>接口</td>
+<td>ScheduledExecutorService</td>
+<td>继承了 ExecutorService, 增加了定时任务相关的方法</td>
+</tr>
+<tr>
+<td>实现类</td>
+<td>ThreadPoolExecutor</td>
+<td><strong>基础, 标准的线程池实现</strong></td>
+</tr>
+<tr>
+<td>实现类</td>
+<td>ScheduledThreadPoolExecutor</td>
+<td>继承了 ThreadPoolExecutor, 实现了 ScheduledExecutorService 中相关<strong>定时任务</strong>的方法, 可以认为时最丰富的实现类</td>
+</tr>
+</tbody></table>
+<h3 id="一-ExecutorService"><a href="#一-ExecutorService" class="headerlink" title="(一) ExecutorService"></a>(一) ExecutorService</h3><ul>
+<li><p>方法定义和解释</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 请求关闭、发生超时或者当前线程中断，无论哪一个首先发生之后，都将导致阻塞，直到所有任务完成执行。</span><br>awaitTermination(<span class="hljs-type">long</span> timeout, TimeUnit unit);<br><span class="hljs-comment">// 执行给定的任务，当所有任务完成时，返回保持任务状态和结果的 Future 列表。</span><br>invokeAll(Collection&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Callable</span>&lt;T&gt;&gt; tasks);<br><span class="hljs-comment">// 执行给定的任务，当所有任务完成或超时期满时(无论哪个首先发生)，返回保持任务状态和结果的 Future 列表。</span><br>invokeAll(Collection&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Callable</span>&lt;T&gt;&gt; tasks, <span class="hljs-type">long</span> timeout, TimeUnit unit);<br><span class="hljs-comment">// 执行给定的任务，如果某个任务已成功完成(也就是未抛出异常)，则返回其结果。</span><br>invokeAny(Collection&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Callable</span>&lt;T&gt;&gt; tasks);<br><span class="hljs-comment">// 执行给定的任务，如果在给定的超时期满前某个任务已成功完成(也就是未抛出异常)，则返回其结果。</span><br>invokeAny(Collection&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Callable</span>&lt;T&gt;&gt; tasks, <span class="hljs-type">long</span> timeout, TimeUnit unit);<br><span class="hljs-comment">// 如果此执行程序已关闭，则返回 true。</span><br>isShutdown();<br><span class="hljs-comment">// 如果关闭后所有任务都已完成，则返回 true。</span><br>isTerminated();<br><span class="hljs-comment">// 启动一次顺序关闭，执行以前提交的任务，但不接受新任务。</span><br>shutdown();<br><span class="hljs-comment">// 试图停止所有正在执行的活动任务，暂停处理正在等待的任务，并返回等待执行的任务列表。</span><br>shutdownNow();<br><span class="hljs-comment">// 提交一个返回值的任务用于执行，返回一个表示任务的未决结果的 Future。</span><br>submit(Callable&lt;T&gt; task);<br><span class="hljs-comment">// 提交一个 Runnable 任务用于执行，并返回一个表示该任务的 Future。</span><br>submit(Runnable task);<br><span class="hljs-comment">// 提交一个 Runnable 任务用于执行，并返回一个表示该任务的 Future。</span><br>submit(Runnable task, T result)<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="二-ScheduledExecutorService"><a href="#二-ScheduledExecutorService" class="headerlink" title="(二) ScheduledExecutorService"></a>(二) ScheduledExecutorService</h3><ul>
+<li><p>方法定义和解释</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 创建并执行在给定延迟后启用的 ScheduledFuture。</span><br>schedule(Callable&lt;V&gt; callable, <span class="hljs-type">long</span> delay, TimeUnit unit);<br><span class="hljs-comment">// 创建并执行在给定延迟后启用的一次性操作。</span><br>schedule(Runnable command, <span class="hljs-type">long</span> delay, TimeUnit unit);<br><span class="hljs-comment">// 创建并执行一个在给定初始延迟后首次启用的定期操作，后续操作具有给定的周期；也就是将在 initialDelay 后开始执行，然后在 initialDelay+period 后执行，接着在 initialDelay + 2 * period 后执行，依此类推。</span><br>scheduleAtFixedRate(Runnable command, <span class="hljs-type">long</span> initialDelay, <span class="hljs-type">long</span> period, TimeUnit unit);<br><span class="hljs-comment">// 创建并执行一个在给定初始延迟后首次启用的定期操作，随后，在每一次执行终止和下一次执行开始之间都存在给定的延迟。 </span><br>scheduleWithFixedDelay(Runnable command, <span class="hljs-type">long</span> initialDelay, <span class="hljs-type">long</span> delay, TimeUnit unit);<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>schedule 方法</p>
+<ul>
+<li>创建并执行一个一次性任务; </li>
+<li>过了延迟时间就会被执行</li>
+</ul>
+</li>
+<li><p>scheduleAtFixedRate 方法</p>
+<ul>
+<li>创建并执行一个周期任务; </li>
+<li>过了给定的初始延迟时间, 会第一次被执行; </li>
+<li>执行过程中发生了异常, 那么任务就停止; </li>
+<li><strong>一次任务执行时长超过了周期时间, 下一次任务会等到该次任务执行结束后, 立刻执行, 这也是它和 scheduleWithFixedDelay 的重要区别</strong></li>
+</ul>
+</li>
+<li><p>scheduleWithFixedDelay 方法</p>
+<ul>
+<li>创建并执行一个周期性任务; </li>
+<li>过了初始延迟时间, 第一次被执行, 后续以给定的周期时间执行; </li>
+<li>执行过程中发生了异常, 那么任务就停止; </li>
+<li>**一次任务执行时长超过了周期时间, 下一次任务会在该次任务执行结束的时间基础上, 计算执行延时; **</li>
+<li><strong>对于超过周期的长时间处理任务的不同处理方式, 这是它和scheduledFixedRate的重要区别</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="三-Executors-工具类"><a href="#三-Executors-工具类" class="headerlink" title="(三) Executors 工具类"></a>(三) Executors 工具类</h3><p>你可以自己实例化线程池, 也可以用 Executors 创建线程池的工厂类, 常用方法如下: </p>
+<ul>
+<li><strong>newFixedThreadPool(int nThreads):</strong> 创建一个固定大小, 任务队列容量无界的线程池; 推荐: <strong>核心线程数 &#x3D; 最大线程数</strong></li>
+<li><strong>newCachedThreadPool():</strong> 创建的是一个大小无界的缓冲线程池; 它的任务队列是一个同步队列; 任务加入到池中, 如果池中有空闲线程, 则用空闲线程执行, 如无则创建新线程执行; 池中的线程空闲超过60秒, 将被销毁释放; 线程数随任务的多少变化, 适用于执行耗时较小的异步任务; 池的核心线程数为0, 最大线程数&#x3D;Integer.MAX_VALUE</li>
+<li><strong>newSingleThreadExecutor():</strong> 只有一个线程来执行无界任务队列的单一线程池; 该线程池确保任务被加入的顺序一个一个一次执行; 当唯一的线程因任务异常中止时, 将创建一个新的线程来继续执行后续的任务; 与 newFixedThreadPool(1)的区别在于, 单一线程池的池大小在 newSingleThreadExecutor() 中硬编码, 不能在改变的</li>
+<li><strong>newScheduledThreadPool(int corePoolSize):</strong> 能定时执行任务的线程池; 该池的核心线程数由参数指定, 最大线程数 &#x3D; Integer.MAX_VALUE</li>
+</ul>
+<h2 id="三-线程池原理"><a href="#三-线程池原理" class="headerlink" title="三 : 线程池原理"></a>三 : 线程池原理</h2><h3 id="一-概念"><a href="#一-概念" class="headerlink" title="(一) 概念"></a>(一) 概念</h3><p><strong>线程池管理器 :</strong> 用于创建并管理线程池; 包括创建线程池, 销毁线程池, 添加新任务</p>
+<p><strong>工作线程 :</strong> 线程池中线程, 在没有任务时处于等待状态, 可以循环的执行任务</p>
+<p><strong>任务接口 :</strong> 每个任务必须实现的接口, 以供工作线程调度任务的执行, 它主要规定了任务的入口, 任务执行完后的收尾工作, 任务的执行状态等</p>
+<p><strong>任务队列 :</strong> 用于存放没有处理的任务; 提供一种缓冲机制</p>
+<h3 id="二-执行过程"><a href="#二-执行过程" class="headerlink" title="(二) 执行过程"></a>(二) 执行过程</h3><p>首先, 是否达到核心线程数量? </p>
+<ul>
+<li>没达到, 创建一个工作线程来执行任务</li>
+<li>达到了, 进入工作队列</li>
+</ul>
+<p>其次, 工作队列是否已满? </p>
+<ul>
+<li>没满, 则将新提交的任务存储在工作队列里</li>
+<li>满了, 创建新的线程</li>
+</ul>
+<p>最后, 是否达到线程池最大数量? </p>
+<ul>
+<li>没达到, 则创建一个新的工作线程来执行任务</li>
+<li>达到了, 执行拒绝策略来处理这个任务</li>
+</ul>
+<p>过程梳理如图所示</p>
+<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/2292db4a-8eff-4cfd-9d05-9cd258d4d5be-8352070.jpg" alt="img" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/2292db4a-8eff-4cfd-9d05-9cd258d4d5be-8352070.jpg" class="lozad post-image"></p>
+<h2 id="四-线程数量"><a href="#四-线程数量" class="headerlink" title="四 : 线程数量"></a>四 : 线程数量</h2><p>如何确定合适数量的线程? 要根据自己任务的类型进行判定</p>
+<ul>
+<li><strong>计算型任务 :</strong> cpu 数量的1~2倍数</li>
+<li><strong>IO型任务 :</strong> 相对比计算型任务, 需要多一些线程, 要根据具体的 <strong>IO 阻塞时长</strong>进行考量决定; 如 tomcat 中默认的最大线程数为: 200</li>
+</ul>
+<p>也可考虑根据需要在一个<strong>最小数量和最大数量</strong>间自动增减线程数</p>
+
   </div>
   <div>
     
@@ -513,8 +624,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://info4z.github.io/2020/02/14/%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1(5)/">
-            https://info4z.github.io/2020/02/14/%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1(5)/
+            href="https://info4z.github.io/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/">
+            https://info4z.github.io/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -526,13 +637,13 @@
   
     <div class="nav-item-prev">
       <a 
-        href="/2020/02/21/%E7%BA%BF%E7%A8%8B%E5%B0%81%E9%97%AD%E4%B9%8BThreadLocal%E5%92%8C%E6%A0%88%E5%B0%81%E9%97%AD(6)/" 
+        href="/2020/03/06/%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/" 
         class="nav-link">
         <i class="iconfont icon-left nav-prev-icon"></i>
         <div>
           <div class="nav-label">上一篇</div>
           
-            <div class="nav-title">线程封闭之ThreadLocal和栈封闭 </div>
+            <div class="nav-title">内存占用过高 </div>
           
         </div>
       </a>
@@ -541,12 +652,12 @@
   
     <div class="nav-item-next">
       <a 
-        href="/2020/02/07/%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C%E5%92%8CCPU%E7%BC%93%E5%AD%98/" 
+        href="/2020/02/21/%E7%BA%BF%E7%A8%8B%E5%B0%81%E9%97%AD%E4%B9%8BThreadLocal%E5%92%8C%E6%A0%88%E5%B0%81%E9%97%AD/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">内存屏障和CPU缓存 </div>
+            <div class="nav-title">线程封闭之ThreadLocal和栈封闭 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -564,7 +675,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E9%80%9A%E4%BF%A1%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="toc-text">一 : 通信的方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB"><span class="toc-text">二 : 文件共享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%8F%98%E9%87%8F%E5%85%B1%E4%BA%AB"><span class="toc-text">三 : 变量共享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BA%BF%E7%A8%8B%E5%8D%8F%E4%BD%9C-JDK-API"><span class="toc-text">四 : 线程协作-JDK API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E4%BC%AA%E5%94%A4%E9%86%92"><span class="toc-text">五 : 伪唤醒</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">一 : 为什么要用线程池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BA%BF%E7%A8%8B%E6%B1%A0-API"><span class="toc-text">二 : 线程池 API</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-ExecutorService"><span class="toc-text">(一) ExecutorService</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-ScheduledExecutorService"><span class="toc-text">(二) ScheduledExecutorService</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-Executors-%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="toc-text">(三) Executors 工具类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86"><span class="toc-text">三 : 线程池原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E5%BF%B5"><span class="toc-text">(一) 概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="toc-text">(二) 执行过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BA%BF%E7%A8%8B%E6%95%B0%E9%87%8F"><span class="toc-text">四 : 线程数量</span></a></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -578,7 +689,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E9%80%9A%E4%BF%A1%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="toc-text">一 : 通信的方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB"><span class="toc-text">二 : 文件共享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%8F%98%E9%87%8F%E5%85%B1%E4%BA%AB"><span class="toc-text">三 : 变量共享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BA%BF%E7%A8%8B%E5%8D%8F%E4%BD%9C-JDK-API"><span class="toc-text">四 : 线程协作-JDK API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E4%BC%AA%E5%94%A4%E9%86%92"><span class="toc-text">五 : 伪唤醒</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">一 : 为什么要用线程池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BA%BF%E7%A8%8B%E6%B1%A0-API"><span class="toc-text">二 : 线程池 API</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-ExecutorService"><span class="toc-text">(一) ExecutorService</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-ScheduledExecutorService"><span class="toc-text">(二) ScheduledExecutorService</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-Executors-%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="toc-text">(三) Executors 工具类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86"><span class="toc-text">三 : 线程池原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E5%BF%B5"><span class="toc-text">(一) 概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="toc-text">(二) 执行过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BA%BF%E7%A8%8B%E6%95%B0%E9%87%8F"><span class="toc-text">四 : 线程数量</span></a></li></ol>
     </article>
   
   
@@ -609,7 +720,7 @@
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2020-02-28</div>
-        <a href="/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90(7)/"><div class="recent-posts-item-content">线程池应用及实现原理剖析</div></a>
+        <a href="/2020/02/28/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%94%E7%94%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/"><div class="recent-posts-item-content">线程池应用及实现原理剖析</div></a>
       </div>
     
   </div>
