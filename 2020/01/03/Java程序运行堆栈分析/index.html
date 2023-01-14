@@ -49,7 +49,7 @@
         content="2020-01-03">
       <meta 
         property="og:article:modified_time" 
-        content="2023-01-14">
+        content="2023-01-15">
       <meta 
         property="og:article:author" 
         content="清月明风">
@@ -313,7 +313,7 @@
   <a 
     class="author-tags-count" 
     href="/tags">
-    <span>7</span>
+    <span>6</span>
     <span>标签</span>
   </a>
 </div>
@@ -330,7 +330,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-text">一 : JVM运行时数据区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0"><span class="toc-text">(一) 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-text">(二) 数据区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-class%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="toc-text">二 : class文件内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0-1"><span class="toc-text">(一) 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%86%85%E5%AE%B9%E5%88%86%E6%9E%90"><span class="toc-text">(二) 内容分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%A8%8B%E5%BA%8F%E5%AE%8C%E6%95%B4%E8%BF%90%E8%A1%8C%E5%88%86%E6%9E%90"><span class="toc-text">三 : 程序完整运行分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%8A%A0%E8%BD%BD%E4%BF%A1%E6%81%AF%E5%88%B0%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">(一) 加载信息到方法区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-jvm%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%9D%A5%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81"><span class="toc-text">(二) jvm创建线程来执行代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%B9%E6%B3%95%E5%8C%BA%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3"><span class="toc-text">(三) 方法区程序入口</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0"><span class="toc-text">一 : 概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-text">二 : JVM运行时数据区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">(一) 方法区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%A0%86%E5%86%85%E5%AD%98"><span class="toc-text">(二) 堆内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88"><span class="toc-text">(三) 虚拟机栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88"><span class="toc-text">(四) 本地方法栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-text">(五) 程序计数器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-class%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="toc-text">三 : class文件内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0-1"><span class="toc-text">(一) 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%86%85%E5%AE%B9%E5%88%86%E6%9E%90"><span class="toc-text">(二) 内容分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%A8%8B%E5%BA%8F%E5%AE%8C%E6%95%B4%E8%BF%90%E8%A1%8C%E5%88%86%E6%9E%90"><span class="toc-text">四 : 程序完整运行分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%8A%A0%E8%BD%BD%E4%BF%A1%E6%81%AF%E5%88%B0%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">(一) 加载信息到方法区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-jvm-%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%9D%A5%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81"><span class="toc-text">(二) jvm 创建线程来执行代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%B9%E6%B3%95%E5%8C%BA%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3"><span class="toc-text">(三) 方法区程序入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="toc-text">(四) 程序执行过程</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -388,21 +388,15 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" 
-        title="多线程并发编程">
-        <div class="tags-list-item">多线程并发编程</div>
-      </a>
-    
-      <a 
         href="/tags/java%E5%9F%BA%E7%A1%80/" 
         title="java基础">
         <div class="tags-list-item">java基础</div>
       </a>
     
       <a 
-        href="/tags/java/" 
-        title="java">
-        <div class="tags-list-item">java</div>
+        href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" 
+        title="多线程并发编程">
+        <div class="tags-list-item">多线程并发编程</div>
       </a>
     
       <a 
@@ -464,7 +458,7 @@
     
     
       <span class="dot"></span>
-      <span>1.9k 字</span>
+      <span>1.8k 字</span>
     
   </div>
   
@@ -501,82 +495,49 @@
     id="section" 
     class="post-content">
     <blockquote>
-<p>java代码写起来很简单, 但具体是怎么运行的呢?</p>
+<p>java 代码写起来很简单, 但具体是怎么运行的呢?</p>
 </blockquote>
-<h2 id="一-JVM运行时数据区"><a href="#一-JVM运行时数据区" class="headerlink" title="一 : JVM运行时数据区"></a>一 : JVM运行时数据区</h2><h3 id="一-概述"><a href="#一-概述" class="headerlink" title="(一) 概述"></a>(一) 概述</h3><ul>
-<li><code>jvm</code> 运行时数据区大致可以分为两部分 : <u>线程共享</u>部分和<u>线程独占</u>部分</li>
-<li><strong>线程共享</strong> : 所有线程能访问这块内存数据, 随虚拟机或者 <code>GC</code> 而创建和销毁<ul>
-<li>方法区</li>
-<li>堆内存</li>
+<h2 id="一-概述"><a href="#一-概述" class="headerlink" title="一 : 概述"></a>一 : 概述</h2><p>jvm 运行时数据区大致可以分为两部分 : <u>线程共享</u>部分和<u>线程独占</u>部分</p>
+<img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/0c33cb56-bffa-4b31-b8e1-df15e642f152-8352070.jpg" alt="image"  / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/0c33cb56-bffa-4b31-b8e1-df15e642f152-8352070.jpg" class="lozad post-image">
+
+<p><strong>线程共享</strong> : 所有线程能访问这块内存数据, 随虚拟机或者 <code>GC</code> 而创建和销毁; <strong>方法区</strong>和<strong>堆内存</strong>皆属此列</p>
+<p><strong>线程独占</strong> : 每个线程都会有它的独立的空间, 随线程生命周期而创建和销毁; <strong>虚拟机栈</strong>, <strong>本地方法栈</strong>和<strong>程序计数器</strong>属于线程独占</p>
+<h2 id="二-JVM运行时数据区"><a href="#二-JVM运行时数据区" class="headerlink" title="二 : JVM运行时数据区"></a>二 : JVM运行时数据区</h2><h3 id="一-方法区"><a href="#一-方法区" class="headerlink" title="(一) 方法区"></a>(一) 方法区</h3><p>jvm 启动时创建, 用来存储加载<u>类信息, 常量, 静态变量, 编译后的代码</u>等数据; </p>
+<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/7e154695-b8a0-468b-a587-9f308453d42e-8352070.jpg" alt="img" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/7e154695-b8a0-468b-a587-9f308453d42e-8352070.jpg" class="lozad post-image"></p>
+<p>虚拟机规范中这是一个逻辑区划, 具体实现根据不同虚拟机来实现; 例如: </p>
+<ul>
+<li>oracle 的 HotSpot 在 java7 中方法区放在<strong>永久代</strong>; </li>
+<li>java8 放在<strong>元数据空间</strong> (metaspace), 并且通过 <code>GC</code> 机制对这个区域进行管理。</li>
 </ul>
-</li>
-<li><strong>线程独占</strong> : 每个线程都会有它的独立的空间, 随线程生命周期而创建和销毁<ul>
-<li>虚拟机栈</li>
-<li>本地方法栈</li>
-<li>程序计数器</li>
-</ul>
-</li>
-</ul>
-<h3 id="二-数据区"><a href="#二-数据区" class="headerlink" title="(二) 数据区"></a>(二) 数据区</h3><ul>
-<li>方法区<ul>
-<li>jvm 启动时创建, 用来存储加载<u>类信息, 常量, 静态变量, 编译后的代码</u>等数据;</li>
-<li>虚拟机规范中这是一个逻辑区划; 具体实现根据不同虚拟机来实现; 例如 : <ul>
-<li>oracle 的 HotSpot 在 java7 中方法区放在<u>永久代</u>;</li>
-<li>java8 放在<u>元数据空间 (metaspace)</u>, 并且通过 <code>GC</code> 机制对这个区域进行管理</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>堆内存<ul>
-<li>jvm 启动时创建, 存放<u>对象的实例</u>; 垃圾回收器主要就是管理堆内存; 如果满了, 就会出现 <code>OutOfMemroyError</code></li>
-<li>堆内存还可以细分为 : <ul>
-<li><strong>新生代</strong> : <code>Eden</code>, <code>From Survivor(s0)</code> 和 <code>To Survivor(s1))</code></li>
-<li><strong>老年代</strong> : <code>Old</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>虚拟机栈<ul>
-<li>随线程的生命周期创建和销毁, 每个线程都在在这个空间有一个私有的空间, 这个空间称为线程栈;</li>
-<li>线程栈由多个<u>栈帧 (Stack Frame)</u> 组成; 栈帧内容包含:<ul>
-<li>局部变量表</li>
-<li>操作数栈</li>
-<li>动态链接</li>
-<li>方法返回地址</li>
-<li>附加信息等</li>
-</ul>
-</li>
-<li><strong>一个线程会执行一个或多个方法, 一个方法对应一个栈帧</strong></li>
-<li>栈内存默认最大是 <u>1M</u>, 超出则抛出 <code>StackOverflowError</code></li>
-</ul>
-</li>
-<li>本地方法栈<ul>
-<li>和虚拟机栈功能类似, 虚拟机栈是为虚拟机执行java方法而准备的, 本地方法栈是为虚拟机使用 <code>Native</code> 本地方法而准备的;</li>
-<li>虚拟机规范没有规定具体的实现, 由不同的虚拟机厂商去实现;</li>
-<li>HotSpot 虚拟机中虚拟机栈和本地方法栈的实现是一样的; 同样, 超出大小以后也会抛出 <code>StackOverflowError</code></li>
-</ul>
-</li>
-<li>程序计数器<ul>
-<li>程序计数器 (Program Counter Register) 记录当前线程执行字节码的位置, 存储的是<u>字节码指令地址</u>, 如果执行Native方法, 则计数器值为空;</li>
-<li><strong>每个线程都在这个空间有一个私有的空间, 占用内存空间很少;</strong></li>
-<li>CPU 同一时间, 只会执行一条线程中的指令; <code>jvm</code> 多线程会轮流切换并分配 <code>CPU</code> 执行时间; 线程切换后, 需要通过程序计数器, 来恢复正确的执行位置</li>
-</ul>
-</li>
-</ul>
-<h2 id="二-class文件内容"><a href="#二-class文件内容" class="headerlink" title="二 : class文件内容"></a>二 : class文件内容</h2><h3 id="一-概述-1"><a href="#一-概述-1" class="headerlink" title="(一) 概述"></a>(一) 概述</h3><ul>
-<li>class 文件包含 java 程序执行的字节码; 数据严格按照格式紧凑排列在class文件中的二进制流,中间无任何分隔符; </li>
-<li>文件开头有一个<code>ca fe ba be</code> (16进制)特殊的一个标志; </li>
-<li>这个文件具有复杂且严格的格式, 专门给 jvm 读取其中的内容, 人类可以借助工具查看</li>
-<li>其中包含 : 版本信息, 访问标志, 常量池, 当前类, 超级类, 接口, 字段, 方法, 属性等信息</li>
-</ul>
+<h3 id="二-堆内存"><a href="#二-堆内存" class="headerlink" title="(二) 堆内存"></a>(二) 堆内存</h3><p>jvm 启动时创建, 存放<u>对象的实例</u>; <strong>垃圾回收器主要就是管理堆内存;</strong> </p>
+<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/7c0219ca-003b-40b2-9391-088efcc29ad6-8352070.jpg" alt="image" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/7c0219ca-003b-40b2-9391-088efcc29ad6-8352070.jpg" class="lozad post-image"></p>
+<p>如果满了, 就会出现 <code>OutOfMemroyError</code>; </p>
+<p>堆内存还可以细分为 : <strong>新生代</strong>(<code>Eden</code>, <code>From Survivor(s0)</code> 和 <code>To Survivor(s1)</code>)和<strong>老年代</strong> (<code>Old</code>)</p>
+<h3 id="三-虚拟机栈"><a href="#三-虚拟机栈" class="headerlink" title="(三) 虚拟机栈"></a>(三) 虚拟机栈</h3><p>随线程的生命周期创建和销毁, 每个线程都在在这个空间有一个私有的空间, 这个空间称为线程栈; </p>
+<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/bf4e950f-0afd-4be0-9215-8eadf2dbc0fe-8352070.jpg" alt="image" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/bf4e950f-0afd-4be0-9215-8eadf2dbc0fe-8352070.jpg" class="lozad post-image"></p>
+<p>线程栈由多个<u>栈帧 (Stack Frame)</u> 组成; 栈帧内容包含 : 局部变量表, 操作数栈, 动态链接, 方法返回地址和附加信息等; </p>
+<p><strong>一个线程会执行一个或多个方法, 一个方法对应一个栈帧</strong>; </p>
+<p>栈内存默认最大是 <strong>1M</strong>, 超出则抛出 <code>StackOverflowError</code></p>
+<h3 id="四-本地方法栈"><a href="#四-本地方法栈" class="headerlink" title="(四) 本地方法栈"></a>(四) 本地方法栈</h3><p>和虚拟机栈功能类似, 虚拟机栈是为虚拟机执行java方法而准备的, 本地方法栈是为虚拟机使用 <code>Native</code> 本地方法而准备的;</p>
+<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/907d972d-624b-4234-ad09-d3aa1488cb1e-8352070.jpg" alt="img" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/907d972d-624b-4234-ad09-d3aa1488cb1e-8352070.jpg" class="lozad post-image"></p>
+<p>虚拟机规范没有规定具体的实现, 由不同的虚拟机厂商去实现;</p>
+<p>HotSpot 虚拟机中虚拟机栈和本地方法栈的实现是一样的; 同样, 超出大小以后也会抛出 <code>StackOverflowError</code></p>
+<h3 id="五-程序计数器"><a href="#五-程序计数器" class="headerlink" title="(五) 程序计数器"></a>(五) 程序计数器</h3><p>程序计数器 (Program Counter Register) 记录当前线程执行字节码的位置, 存储的是<u>字节码指令地址</u>, </p>
+<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/68e21cbe-9300-41aa-b2b0-056e069b1a3e-8352070.jpg" alt="img" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/68e21cbe-9300-41aa-b2b0-056e069b1a3e-8352070.jpg" class="lozad post-image"></p>
+<p>如果执行Native方法, 则计数器值为空;</p>
+<p><strong>每个线程都在这个空间有一个私有的空间, 占用内存空间很少;</strong></p>
+<p>CPU 同一时间, 只会执行一条线程中的指令; <code>jvm</code> 多线程会轮流切换并分配 <code>CPU</code> 执行时间; 线程切换后, 需要通过程序计数器, 来恢复正确的执行位置</p>
+<h2 id="三-class文件内容"><a href="#三-class文件内容" class="headerlink" title="三 : class文件内容"></a>三 : class文件内容</h2><h3 id="一-概述-1"><a href="#一-概述-1" class="headerlink" title="(一) 概述"></a>(一) 概述</h3><p>class 文件包含 java 程序执行的字节码; 数据严格按照格式紧凑排列在class文件中的二进制流,中间无任何分隔符; 文件开头有一个<code>ca fe ba be</code> (16进制)特殊的一个标志; </p>
+<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/5292090a-3c9a-49b4-b75d-6193f27cc906-8352070.jpg" alt="img" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/5292090a-3c9a-49b4-b75d-6193f27cc906-8352070.jpg" class="lozad post-image"></p>
+<p>这个文件具有复杂且严格的格式, 专门给 jvm 读取其中的内容, 人类可以借助工具查看; 其中包含 : 版本信息, 访问标志, 常量池, 当前类, 超级类, 接口, 字段, 方法, 属性等信息</p>
 <h3 id="二-内容分析"><a href="#二-内容分析" class="headerlink" title="(二) 内容分析"></a>(二) 内容分析</h3><ul>
 <li><p>示例代码</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Demo</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">x</span> <span class="hljs-operator">=</span> <span class="hljs-number">500</span>;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">y</span> <span class="hljs-operator">=</span> <span class="hljs-number">100</span>;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">a</span> <span class="hljs-operator">=</span> x / y;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">b</span> <span class="hljs-operator">=</span> <span class="hljs-number">50</span>;<br>        System.out.println(a + b);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>反编译class文件并重定向到txt</p>
+<li><p>反编译 class 文件并重定向到 txt</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">编译命令</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">javac Demo.java</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">反编译将其写入txt文件</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">javap -v Demo.class &gt; Demo.txt</span><br></code></pre></td></tr></table></figure>
 </li>
-<li><p>版本号&#x2F;访问控制, 版本号规则 : JDK5,6,7,8分别对应49,50,51,52</p>
+<li><p>版本号&#x2F;访问控制, 版本号规则 : JDK5,6,7,8 分别对应 49,50,51,52</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">public class Demo<br>  minor version: 0 //次版本号<br>  major version: 52 //主版本号<br>  flags: ACC_PUBLIC, ACC_SUPER //访问标志<br></code></pre></td></tr></table></figure>
 </li>
 <li><p>常量池</p>
@@ -588,107 +549,65 @@
 <li><p>程序入口 main 方法 : stack(操作数栈), locals(为本地变量表)</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">public static void main(java.lang.String[]);<br>  descriptor: ([Ljava/lang/String;)V<br>  flags: ACC_PUBLIC, ACC_STATIC	//访问控制<br>  Code:<br>    stack=3, locals=5, args_size=1<br>      /**<br>       * jvm执行引擎去执行这些源码编译过后的指令码<br>       * javap编译出来是操作符,class文件内存的是指令码<br>       * 前面的数字,是偏移量(字节),jvm根据这个去区分不同的指令(查看jvm指令码表)<br>       */<br>       0: sipush        500<br>       3: istore_1<br>       4: bipush        100<br>       6: istore_2<br>       7: iload_1<br>       8: iload_2<br>       9: idiv<br>      10: istore_3<br>      11: bipush        50<br>      13: istore        4<br>      15: getstatic     #2        // Field java/lang/System.out:Ljava/io/PrintStream;<br>      18: iload_3<br>      19: iload         4<br>      21: iadd<br>      22: invokevirtual #3        // Method java/io/PrintStream.println:(I)V<br>      25: return<br>    LineNumberTable:<br>      line 3: 0<br>      line 4: 4<br>      line 5: 7<br>      line 6: 11<br>      line 7: 15<br>      line 8: 25<br></code></pre></td></tr></table></figure></li>
 </ul>
-<h2 id="三-程序完整运行分析"><a href="#三-程序完整运行分析" class="headerlink" title="三 : 程序完整运行分析"></a>三 : 程序完整运行分析</h2><h3 id="一-加载信息到方法区"><a href="#一-加载信息到方法区" class="headerlink" title="(一) 加载信息到方法区"></a>(一) 加载信息到方法区</h3><ul>
-<li>此时属于线程共享部分的<strong>方法区</strong>会存在大量的类信息同时还存在运行时常量池字符串常量</li>
-<li>HotSpot 虚拟机 : 1.7及之前称为永久代, 1.8开始称为元数据空间</li>
-</ul>
-<h3 id="二-jvm创建线程来执行代码"><a href="#二-jvm创建线程来执行代码" class="headerlink" title="(二) jvm创建线程来执行代码"></a>(二) jvm创建线程来执行代码</h3><ul>
-<li>在虚拟机栈, 程序计数器内存区域中创建线程独占的空间</li>
-<li>虚拟机栈中存放<strong>Thread栈帧</strong>, 程序计数器中存放<strong>Thread执行位置</strong>(字节码指令地址)</li>
-</ul>
+<h2 id="四-程序完整运行分析"><a href="#四-程序完整运行分析" class="headerlink" title="四 : 程序完整运行分析"></a>四 : 程序完整运行分析</h2><h3 id="一-加载信息到方法区"><a href="#一-加载信息到方法区" class="headerlink" title="(一) 加载信息到方法区"></a>(一) 加载信息到方法区</h3><p>此时属于线程共享部分的<strong>方法区</strong>会存在大量的类信息, 同时还存在运行时常量池字符串常量。</p>
+<p>HotSpot 虚拟机 : 1.7及之前称为永久代, 1.8开始称为元数据空间。</p>
+<h3 id="二-jvm-创建线程来执行代码"><a href="#二-jvm-创建线程来执行代码" class="headerlink" title="(二) jvm 创建线程来执行代码"></a>(二) jvm 创建线程来执行代码</h3><p>在虚拟机栈, 程序计数器内存区域中创建线程独占的空间。</p>
+<p>虚拟机栈中存放<strong>Thread栈帧</strong>, 程序计数器中存放<strong>Thread执行位置</strong>(字节码指令地址)。</p>
 <h3 id="三-方法区程序入口"><a href="#三-方法区程序入口" class="headerlink" title="(三) 方法区程序入口"></a>(三) 方法区程序入口</h3><ul>
-<li><p>main方法(5个本地变量, 变量0是方法参数args)</p>
-<table>
-<thead>
-<tr>
-<th>字节码指令</th>
-<th>程序计数器</th>
-<th>虚拟机栈(main方法栈帧包含本地变量表和操作数栈)</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>0: sipush        500</td>
-<td>0</td>
-<td>将500压入操作数栈</td>
-</tr>
-<tr>
-<td>3: istore_1</td>
-<td>3</td>
-<td>弹出操作数栈栈顶500保存到本地变量表1(0是方法参数args)</td>
-</tr>
-<tr>
-<td>4: bipush        100</td>
-<td>4</td>
-<td>将100压入操作数栈</td>
-</tr>
-<tr>
-<td>6: istore_2</td>
-<td>6</td>
-<td>弹出操作数栈栈顶100保存到本地变量表2</td>
-</tr>
-<tr>
-<td>7: iload_1</td>
-<td>7</td>
-<td>读取本地变量1压入操作数栈</td>
-</tr>
-<tr>
-<td>8: iload_2</td>
-<td>8</td>
-<td>读取本地变量2压入操作数栈</td>
-</tr>
-<tr>
-<td>9: idiv</td>
-<td>9</td>
-<td>将栈顶两int类型数相除, 结果入栈 500&#x2F;100&#x3D;5</td>
-</tr>
-<tr>
-<td>10: istore_3</td>
-<td>10</td>
-<td>将栈顶int类型值保存到局部变量3中</td>
-</tr>
-<tr>
-<td>11: bipush        50</td>
-<td>11</td>
-<td>将50压入操作数栈</td>
-</tr>
-<tr>
-<td>13: istore        4</td>
-<td>13</td>
-<td>将栈顶int类型值保存到局部变量4中</td>
-</tr>
-<tr>
-<td>15: getstatic     #2        &#x2F;&#x2F; Field java&#x2F;lang&#x2F;System.out:Ljava&#x2F;io&#x2F;PrintStream;</td>
-<td>15</td>
-<td>获取类或接口字段的值并将其压入操作数栈</td>
-</tr>
-<tr>
-<td>18: iload_3</td>
-<td>18</td>
-<td>将本地变量3取出压入操作数栈</td>
-</tr>
-<tr>
-<td>19: iload         4</td>
-<td>19</td>
-<td>将本地变量4取出压入操作数栈</td>
-</tr>
-<tr>
-<td>21: iadd</td>
-<td>21</td>
-<td>将栈顶两int类型数相加, 结果入栈</td>
-</tr>
-<tr>
-<td>22: invokevirtual #3        &#x2F;&#x2F; Method java&#x2F;io&#x2F;PrintStream.println:(I)V</td>
-<td>22</td>
-<td>调用静态方法; jvm会根据这个方法的描述,创建新栈帧, 方法的参数从操作数栈中弹出来,压入虚拟机栈, 然后虚拟机会开始执行虚拟机栈最上面的栈帧; 执行完毕后,再继续执行main方法对应的栈帧</td>
-</tr>
-<tr>
-<td>25: return</td>
-<td>25</td>
-<td>void函数返回, main方法执行结束</td>
-</tr>
-</tbody></table>
+<li><p>main 方法栈帧初始化 : 5个本地变量, 变量0是方法参数 args</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_00.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_00.png"></p>
 </li>
 </ul>
+<h3 id="四-程序执行过程"><a href="#四-程序执行过程" class="headerlink" title="(四) 程序执行过程"></a>(四) 程序执行过程</h3><ol>
+<li><p>将500压入操作数栈</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_01.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_01.png"></p>
+</li>
+<li><p>弹出操作数栈栈顶500保存到本地变量表1</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_02.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_02.png"></p>
+</li>
+<li><p>将100压入操作数栈</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_03.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_03.png"></p>
+</li>
+<li><p>弹出操作数栈栈顶100保存到本地变量表2</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_04.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_04.png"></p>
+</li>
+<li><p>读取本地变量1压入操作数栈</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_05.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_05.png"></p>
+</li>
+<li><p>读取本地变量2压入操作数栈</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_06.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_06.png"></p>
+</li>
+<li><p>将栈顶两int类型数相除, 结果入栈 500&#x2F;100&#x3D;5</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_07.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_07.png"></p>
+</li>
+<li><p>将栈顶int类型值保存到局部变量3中</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_08.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_08.png"></p>
+</li>
+<li><p>将50压入操作数栈</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_09.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_09.png"></p>
+</li>
+<li><p>将栈顶int类型值保存到局部变量4中</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_10.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_10.png"></p>
+</li>
+<li><p>获取类或接口字段的值并将其压入操作数栈</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_11.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_11.png"></p>
+</li>
+<li><p>将本地变量3取出压入操作数栈</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_12.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_12.png"></p>
+</li>
+<li><p>将本地变量4取出压入操作数栈</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_13.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_13.png"></p>
+</li>
+<li><p>将栈顶两int类型数相加, 结果入栈</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_14.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_14.png"></p>
+</li>
+<li><p>调用静态方法; jvm会根据这个方法的描述,创建新栈帧, 方法的参数从操作数栈中弹出来,压入虚拟机栈, 然后虚拟机会开始执行虚拟机栈最上面的栈帧; 执行完毕后,再继续执行main方法对应的栈帧</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_15.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_15.png"></p>
+</li>
+<li><p>void函数返回, main方法执行结束</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_16.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/execute/execute_16.png"></p>
+</li>
+</ol>
 
   </div>
   <div>
@@ -759,7 +678,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-text">一 : JVM运行时数据区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0"><span class="toc-text">(一) 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-text">(二) 数据区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-class%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="toc-text">二 : class文件内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0-1"><span class="toc-text">(一) 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%86%85%E5%AE%B9%E5%88%86%E6%9E%90"><span class="toc-text">(二) 内容分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%A8%8B%E5%BA%8F%E5%AE%8C%E6%95%B4%E8%BF%90%E8%A1%8C%E5%88%86%E6%9E%90"><span class="toc-text">三 : 程序完整运行分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%8A%A0%E8%BD%BD%E4%BF%A1%E6%81%AF%E5%88%B0%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">(一) 加载信息到方法区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-jvm%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%9D%A5%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81"><span class="toc-text">(二) jvm创建线程来执行代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%B9%E6%B3%95%E5%8C%BA%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3"><span class="toc-text">(三) 方法区程序入口</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0"><span class="toc-text">一 : 概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-text">二 : JVM运行时数据区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">(一) 方法区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%A0%86%E5%86%85%E5%AD%98"><span class="toc-text">(二) 堆内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88"><span class="toc-text">(三) 虚拟机栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88"><span class="toc-text">(四) 本地方法栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-text">(五) 程序计数器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-class%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="toc-text">三 : class文件内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0-1"><span class="toc-text">(一) 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%86%85%E5%AE%B9%E5%88%86%E6%9E%90"><span class="toc-text">(二) 内容分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%A8%8B%E5%BA%8F%E5%AE%8C%E6%95%B4%E8%BF%90%E8%A1%8C%E5%88%86%E6%9E%90"><span class="toc-text">四 : 程序完整运行分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%8A%A0%E8%BD%BD%E4%BF%A1%E6%81%AF%E5%88%B0%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">(一) 加载信息到方法区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-jvm-%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%9D%A5%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81"><span class="toc-text">(二) jvm 创建线程来执行代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%B9%E6%B3%95%E5%8C%BA%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3"><span class="toc-text">(三) 方法区程序入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="toc-text">(四) 程序执行过程</span></a></li></ol></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -773,7 +692,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-text">一 : JVM运行时数据区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0"><span class="toc-text">(一) 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-text">(二) 数据区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-class%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="toc-text">二 : class文件内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0-1"><span class="toc-text">(一) 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%86%85%E5%AE%B9%E5%88%86%E6%9E%90"><span class="toc-text">(二) 内容分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%A8%8B%E5%BA%8F%E5%AE%8C%E6%95%B4%E8%BF%90%E8%A1%8C%E5%88%86%E6%9E%90"><span class="toc-text">三 : 程序完整运行分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%8A%A0%E8%BD%BD%E4%BF%A1%E6%81%AF%E5%88%B0%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">(一) 加载信息到方法区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-jvm%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%9D%A5%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81"><span class="toc-text">(二) jvm创建线程来执行代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%B9%E6%B3%95%E5%8C%BA%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3"><span class="toc-text">(三) 方法区程序入口</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0"><span class="toc-text">一 : 概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-text">二 : JVM运行时数据区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">(一) 方法区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%A0%86%E5%86%85%E5%AD%98"><span class="toc-text">(二) 堆内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88"><span class="toc-text">(三) 虚拟机栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88"><span class="toc-text">(四) 本地方法栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-text">(五) 程序计数器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-class%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="toc-text">三 : class文件内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0-1"><span class="toc-text">(一) 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%86%85%E5%AE%B9%E5%88%86%E6%9E%90"><span class="toc-text">(二) 内容分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%A8%8B%E5%BA%8F%E5%AE%8C%E6%95%B4%E8%BF%90%E8%A1%8C%E5%88%86%E6%9E%90"><span class="toc-text">四 : 程序完整运行分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%8A%A0%E8%BD%BD%E4%BF%A1%E6%81%AF%E5%88%B0%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">(一) 加载信息到方法区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-jvm-%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%9D%A5%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81"><span class="toc-text">(二) jvm 创建线程来执行代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%B9%E6%B3%95%E5%8C%BA%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3"><span class="toc-text">(三) 方法区程序入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="toc-text">(四) 程序执行过程</span></a></li></ol></li></ol>
     </article>
   
   
