@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="差不多得了, 玩什么命呀...">
+  <link 
+    rel="icon" 
+    href="https://img.songhn.com/img/Y67gdd.png">
+  <title>netty责任链</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="netty责任链">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://info4z.github.io/2020/07/24/netty%E8%B4%A3%E4%BB%BB%E9%93%BE/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://img.songhn.com/img/Y67gdd.png">
+    
+    
+      <meta 
+        property="og:img" 
+        content="差不多得了, 玩什么命呀...">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2020-07-24">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-02-11">
+      <meta 
+        property="og:article:author" 
+        content="清月明风">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="高并发网络编程">
+        
+          <meta 
+            property="og:article:tag" 
+            content="Netty">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="https://img.songhn.com/img/Y67gdd.png" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">冰清阁</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://img.songhn.com/img/Y67gdd.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">清月明风</p>
+<p class="author-description">差不多得了, 玩什么命呀...</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>36</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>4</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>12</span>
+    <span>标签</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F"><span class="toc-text">一 : 设计模式 - 责任链模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9E%E7%8E%B0%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F"><span class="toc-text">(一) : 实现责任链模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-Netty-%E4%B8%AD%E7%9A%84-ChannelPipeline-%E8%B4%A3%E4%BB%BB%E9%93%BE"><span class="toc-text">(二) : Netty 中的 ChannelPipeline 责任链</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E4%BA%8B%E4%BB%B6"><span class="toc-text">二 : 事件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E5%92%8C%E5%87%BA%E7%AB%99%E4%BA%8B%E4%BB%B6"><span class="toc-text">(一) 入站事件和出站事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-Netty-%E4%B8%AD%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-text">(二) Netty 中事件的定义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">三 : 处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-Pipeline-%E4%B8%AD%E7%9A%84-handler-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">(一) Pipeline 中的 handler 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E7%BB%B4%E6%8A%A4-Pipeline-%E4%B8%AD%E7%9A%84-handler"><span class="toc-text">(二) 维护 Pipeline 中的 handler</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-handler-%E7%9A%84%E6%89%A7%E8%A1%8C%E5%88%86%E6%9E%90"><span class="toc-text">(三) handler 的执行分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%88%86%E6%9E%90"><span class="toc-text">四 : 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%88%86%E6%9E%90-registered-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(一) 分析 registered 入站事件的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%88%86%E6%9E%90-bind-%E5%87%BA%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(二) 分析 bind 出站事件的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E5%88%86%E6%9E%90-accept-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(三) 分析 accept 入站事件的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E5%88%86%E6%9E%90-read-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(四) 分析 read 入站事件的处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%B0%8F%E7%BB%93"><span class="toc-text">五 : 小结</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/">
+        <div class="categories-list-item">
+          高性能编程
+          <span class="categories-list-item-badge">27</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/">
+        <div class="categories-list-item">
+          博客搭建
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+        <div class="categories-list-item">
+          服务器
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">
+        <div class="categories-list-item">
+          数据库
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" 
+        title="多线程并发编程">
+        <div class="tags-list-item">多线程并发编程</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" 
+        title="线程安全">
+        <div class="tags-list-item">线程安全</div>
+      </a>
+    
+      <a 
+        href="/tags/java%E5%9F%BA%E7%A1%80/" 
+        title="java基础">
+        <div class="tags-list-item">java基础</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+        title="高并发网络编程">
+        <div class="tags-list-item">高并发网络编程</div>
+      </a>
+    
+      <a 
+        href="/tags/J-U-C%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%8C%85/" 
+        title="J.U.C并发编程包">
+        <div class="tags-list-item">J.U.C并发编程包</div>
+      </a>
+    
+      <a 
+        href="/tags/Netty/" 
+        title="Netty">
+        <div class="tags-list-item">Netty</div>
+      </a>
+    
+      <a 
+        href="/tags/NIO%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+        title="NIO网络编程">
+        <div class="tags-list-item">NIO网络编程</div>
+      </a>
+    
+      <a 
+        href="/tags/shell/" 
+        title="shell">
+        <div class="tags-list-item">shell</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%86%85%E5%AD%98/" 
+        title="内存">
+        <div class="tags-list-item">内存</div>
+      </a>
+    
+      <a 
+        href="/tags/mysql/" 
+        title="mysql">
+        <div class="tags-list-item">mysql</div>
+      </a>
+    
+      <a 
+        href="/tags/%E8%AF%8A%E6%96%AD/" 
+        title="诊断">
+        <div class="tags-list-item">诊断</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%9B%91%E6%8E%A7/" 
+        title="监控">
+        <div class="tags-list-item">监控</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      netty责任链
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2020-07-23T16:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2020-07-24</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/" 
+          class="post-meta-link">
+          高性能编程
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>1.7k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+            class="post-meta-link">
+            高并发网络编程
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/Netty/" 
+            class="post-meta-link">
+            Netty
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <blockquote>
+<p>netty的责任链称为pipeline, 类似流水线作业, 一定要结合源码, 多看几遍</p>
+</blockquote>
+<h2 id="一-设计模式-责任链模式"><a href="#一-设计模式-责任链模式" class="headerlink" title="一 : 设计模式 - 责任链模式"></a>一 : 设计模式 - 责任链模式</h2><p>责任链模式(Chain of Responsibility Pattern)为请求创建了一个处理对象的链。<br><strong>发起请求和具体处理请求的过程进行解耦</strong> : 职责链上的处理者负责处理请求，客户只需要将请求发送到职责链上即可, 无须关心请求的处理细节和请求的传递</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230207212922203.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230207212922203.png"></p>
+<h3 id="一-实现责任链模式"><a href="#一-实现责任链模式" class="headerlink" title="(一) : 实现责任链模式"></a>(一) : 实现责任链模式</h3><p>实现责任链模式4个要素 : </p>
+<ol>
+<li>处理器抽象类</li>
+<li>具体的处理器实现类</li>
+<li>保存处理器信息</li>
+<li>处理执行</li>
+</ol>
+<p>伪代码示例</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 集合形式存储: 类似tomcat中filters</span><br><span class="hljs-comment">// 1.处理器抽象类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">doHandler</span><span class="hljs-params">(Object arg0)</span>; <br>&#125;<br><br><span class="hljs-comment">// 2.处理器具体实现类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler1</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue; &#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler2</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue; &#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler3</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue; &#125;<br><br><span class="hljs-comment">// 3.创建集合并存储所有处理器实例信息</span><br><span class="hljs-type">List</span> <span class="hljs-variable">handlers</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">List</span>();<br>handlers.add(handler1, handler2, handler3);<br><br><span class="hljs-comment">// 4.处理请求，调用处理器()</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">Process</span><span class="hljs-params">(request)</span>&#123;<br>    <span class="hljs-keyword">for</span>( handler in handlers)&#123;<br>        handler.doHandler(request) ;<br>    &#125;<br>&#125;<br><span class="hljs-comment">// 发起请求调用，通过责任链处理请求</span><br>call.process(request);<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//链表形式调用: 参考netty的实现形式</span><br><span class="hljs-comment">// 1.处理器抽象类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">AbstractHandler</span> &#123;<br>    AbstractHandle next;<span class="hljs-comment">//下一个节点</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">doHandler</span> <span class="hljs-params">(Object argo)</span>; <span class="hljs-comment">// handler方法</span><br>&#125;<br><span class="hljs-comment">// 2.处理器具体实现类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler1</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue; &#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler2</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue; &#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler3</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue;&#125;<br><br><span class="hljs-comment">// 3.将处理器串成链表存储</span><br><span class="hljs-comment">// pipeline=头[ handler1 -&gt; handler2 -&gt;handler3]尾</span><br><br><span class="hljs-comment">// 4.处理请求，调用处理器(从头到尾)</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">Process</span><span class="hljs-params">( request)</span>&#123;<br>    handler = pipeline.findOne;<br>    <span class="hljs-comment">//查找第一个</span><br>    <span class="hljs-keyword">while</span>(hand != <span class="hljs-literal">null</span>)&#123;<br>        handler.doHandler(request);<br>        handler = handler.next();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="二-Netty-中的-ChannelPipeline-责任链"><a href="#二-Netty-中的-ChannelPipeline-责任链" class="headerlink" title="(二) : Netty 中的 ChannelPipeline 责任链"></a>(二) : Netty 中的 ChannelPipeline 责任链</h3><p><strong>Pipeline管道</strong>保存了通道所有处理器信息。</p>
+<p>创建新channel时自动创建一个专有的pipeline。入站<strong>事件</strong>和出站<strong>操作</strong>会调用pipeline上的处理器</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230207215047975.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230207215047975.png"> </p>
+<h2 id="二-事件"><a href="#二-事件" class="headerlink" title="二 : 事件"></a>二 : 事件</h2><h3 id="一-入站事件和出站事件"><a href="#一-入站事件和出站事件" class="headerlink" title="(一) 入站事件和出站事件"></a>(一) 入站事件和出站事件</h3><p><strong>入站事件 :</strong> 通常指I&#x2F;O线程生成了入站数据。(通俗理解:从socket底层自己往上冒上来的事件都是入站)</p>
+<p>比如EventLoop收到selector的OP_READ事件，入站处理器调用socketChannel.read(ByteBuffer)接收到数据后，这将导致通道的ChannelPipeline中包含的下一个中的channelRead方法被调用。</p>
+<p><strong>出站事件 :</strong> 经常是指I&#x2F;O线程执行实际的输出操作。(通俗理解:想主动往socket底层操作的事件的都是出站)</p>
+<p>比如bind方法用意是请求server socket绑定到给定的SocketAddress，这将导致通道的ChannelPipeline中包含的下一个出站处理器中的bind方法被调用。</p>
+<h3 id="二-Netty-中事件的定义"><a href="#二-Netty-中事件的定义" class="headerlink" title="(二) Netty 中事件的定义"></a>(二) Netty 中事件的定义</h3><p>入站事件(inbound)</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>fireChannelRegistered</td>
+<td>channel注册事件</td>
+</tr>
+<tr>
+<td>fireChannelUnregistered</td>
+<td>channel解除注册事件</td>
+</tr>
+<tr>
+<td>fireChannelActive</td>
+<td>channel活跃事件</td>
+</tr>
+<tr>
+<td>fireChannelInactive</td>
+<td>channel非活跃事件</td>
+</tr>
+<tr>
+<td>fireExceptionCaught</td>
+<td>异常事件</td>
+</tr>
+<tr>
+<td>fireUserEventTriggered</td>
+<td>用户自定义事件</td>
+</tr>
+<tr>
+<td>fireChannelRead</td>
+<td>channel读事件</td>
+</tr>
+<tr>
+<td>fireChannelReadComplete</td>
+<td>channel读完成事件</td>
+</tr>
+<tr>
+<td>fireChannelWritabilityChanged</td>
+<td>channel写状态变化事件</td>
+</tr>
+</tbody></table>
+<p>出站事件(outbound)</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bind</td>
+<td>端口绑定事件</td>
+</tr>
+<tr>
+<td>connect</td>
+<td>连接事件</td>
+</tr>
+<tr>
+<td>disconnect</td>
+<td>断开连接事件</td>
+</tr>
+<tr>
+<td>close</td>
+<td>关闭事件</td>
+</tr>
+<tr>
+<td>deregister</td>
+<td>解除注册事件</td>
+</tr>
+<tr>
+<td>flush</td>
+<td>刷新数据到网络事件</td>
+</tr>
+<tr>
+<td>read</td>
+<td>读事件，用于注册OP_READ到selector</td>
+</tr>
+<tr>
+<td>write</td>
+<td>写事件</td>
+</tr>
+<tr>
+<td>writeAndFlush</td>
+<td>写出数据事件</td>
+</tr>
+</tbody></table>
+<h2 id="三-处理器"><a href="#三-处理器" class="headerlink" title="三 : 处理器"></a>三 : 处理器</h2><h3 id="一-Pipeline-中的-handler-是什么"><a href="#一-Pipeline-中的-handler-是什么" class="headerlink" title="(一) Pipeline 中的 handler 是什么"></a>(一) Pipeline 中的 handler 是什么</h3><p><strong>ChannelHandler :</strong> 用于处理 I&#x2F;O 事件或拦截 I&#x2F;O 操作, 并转发到 ChannelPipeline 中的下一个处理器; 这个顶级接口定义功能很弱, 实际使用时会去实现以下两大子接口 : 处理入站 I&#x2F;O 事件的 ChannelInBoundHandler, 处理出站 I&#x2F;O 操作的 ChannelOutBoundHandler</p>
+<p><strong>适配器类 :</strong> 为了开发方便, 避免所有 handler 去实现一遍接口方法, Netty 提供了简单的实现类</p>
+<ul>
+<li>处理入站 I&#x2F;O 事件 : ChannelInboundHandlerAdapter</li>
+<li>处理出站 I&#x2F;O 事件 : ChannelOutboundHandlerAdapter</li>
+<li>同时处理入站和出站事件 : ChannelDuplexHandler</li>
+</ul>
+<p><strong>ChannelHandlerContext :</strong> 实际存储在 Pipeline 中的对象并非 ChannelHandler, 而是上下文对象; 将 handler 包裹在上下文对象中, 通过上下文对象与它所属的 ChannelPipeline 交互, 向上或向下传递事件或者修改 pipeline 都是通过上下文对象</p>
+<h3 id="二-维护-Pipeline-中的-handler"><a href="#二-维护-Pipeline-中的-handler" class="headerlink" title="(二) 维护 Pipeline 中的 handler"></a>(二) 维护 Pipeline 中的 handler</h3><p>ChannelPipeline是线程安全的，ChannelHandler可以在任何时候添加或删除。</p>
+<p>例如，你可以在即将交换敏感信息时插入加密处理程序，并在交换后删除它。</p>
+<p>一般操作，初始化的时候增加进去，较少删除。</p>
+<p>Pipeline 中管理 handler 的API</p>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>addFirst</td>
+<td>最前面插入</td>
+</tr>
+<tr>
+<td>addLast</td>
+<td>最后面插入</td>
+</tr>
+<tr>
+<td>addBefore</td>
+<td>插入到指定处理器前面</td>
+</tr>
+<tr>
+<td>addAfter</td>
+<td>插入到指定处理器后面</td>
+</tr>
+<tr>
+<td>remove</td>
+<td>移除指定处理器</td>
+</tr>
+<tr>
+<td>removeFirst</td>
+<td>移除第一个处理器</td>
+</tr>
+<tr>
+<td>removeLast</td>
+<td>移除最后一个处理器</td>
+</tr>
+<tr>
+<td>replace</td>
+<td>替换指定的处理器</td>
+</tr>
+</tbody></table>
+<p>伪代码示例</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> ...;<br>p.addLast(<span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">InboundHandlerA</span>());<br>p.addLast(<span class="hljs-string">&quot;2&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">InboundHandlerB</span>());<br>p.addLast(<span class="hljs-string">&quot;3&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">OutboundHandlerA</span>());<br>p.addLast(<span class="hljs-string">&quot;4&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">OutboundHandlerB</span>());<br>p.addLast(<span class="hljs-string">&quot;5&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">InboundOutboundHandlerX</span>()); <span class="hljs-comment">// 聚合处理器</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="三-handler-的执行分析"><a href="#三-handler-的执行分析" class="headerlink" title="(三) handler 的执行分析"></a>(三) handler 的执行分析</h3><p>按之前伪代码逻辑, 现在的责任链如图所示</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230210151919349.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230210151919349.png"> </p>
+<p>由此可以推断 : </p>
+<ul>
+<li>当入站事件时, 执行顺序是 : 1 &#x3D;&gt; 2 &#x3D;&gt; 3 &#x3D;&gt; 4 &#x3D;&gt; 5</li>
+<li>当出站事件时, 执行顺序是 : 5 &#x3D;&gt; 4 &#x3D;&gt; 3 &#x3D;&gt; 2 &#x3D;&gt; 1</li>
+</ul>
+<p>在这一原则之上, ChannelPipeline在执行时会进行选择3和4为出站处理器, 因此, 实际执行是 :</p>
+<ul>
+<li>入站事件的执行顺序是 1 &#x3D;&gt; 2 &#x3D;&gt; 5, 1和2为入站处理器</li>
+<li>出站事件的执行顺序是 5 &#x3D;&gt; 4 &#x3D;&gt; 3</li>
+</ul>
+<p>不同的入站事件会触发handler不同的方法执行 : </p>
+<ul>
+<li><p>上下文对象中 <code>fire**</code> 开头的方法, 代表<strong>入站</strong>事件传播和处理</p>
+</li>
+<li><p>其余的方法代表<strong>出站</strong>事件的传播和处理。</p>
+</li>
+</ul>
+<h2 id="四-分析"><a href="#四-分析" class="headerlink" title="四 : 分析"></a>四 : 分析</h2><h3 id="一-分析-registered-入站事件的处理"><a href="#一-分析-registered-入站事件的处理" class="headerlink" title="(一) 分析 registered 入站事件的处理"></a>(一) 分析 registered 入站事件的处理</h3><p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211135536424.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211135536424.png"> </p>
+<p>ServerSocketChannel.pipeline的变化</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211135748415.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211135748415.png"> </p>
+<h3 id="二-分析-bind-出站事件的处理"><a href="#二-分析-bind-出站事件的处理" class="headerlink" title="(二) 分析 bind 出站事件的处理"></a>(二) 分析 bind 出站事件的处理</h3><p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211140021280.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211140021280.png"> </p>
+<h3 id="三-分析-accept-入站事件的处理"><a href="#三-分析-accept-入站事件的处理" class="headerlink" title="(三) 分析 accept 入站事件的处理"></a>(三) 分析 accept 入站事件的处理</h3><p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211140848456.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211140848456.png"> </p>
+<p>这是一个分配的过程，main Group负责accept，然后分配sub Group负责read</p>
+<h3 id="四-分析-read-入站事件的处理"><a href="#四-分析-read-入站事件的处理" class="headerlink" title="(四) 分析 read 入站事件的处理"></a>(四) 分析 read 入站事件的处理</h3><p>pipeline分析的关键4要素:什么事件、有哪些处理器、哪些会被触发、执行顺序</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211141208378.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211141208378.png"> </p>
+<h2 id="五-小结"><a href="#五-小结" class="headerlink" title="五 : 小结"></a>五 : 小结</h2><p>用户在管道中有一个或多个 channelhandler 来接收 I&#x2F;O 事件(例如读取)和请求 I&#x2F;O 操作(例如写入和关闭)</p>
+<p>一个典型的服务器在每个通道的管道中都有以下处理程序, 但是根据协议和业务逻辑的复杂性和特征, 可能会有所不同</p>
+<ul>
+<li><p>协议解码器 : 将二进制数据(例如 ByteBuf)转换为 Java 对象</p>
+</li>
+<li><p>协议编码器 : 将 Java 对象转换为二进制数据</p>
+</li>
+<li><p>业务逻辑处理程序 : 执行实际的业务逻辑(例如数据库访问)</p>
+</li>
+</ul>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            清月明风
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://info4z.github.io/2020/07/24/netty%E8%B4%A3%E4%BB%BB%E9%93%BE/">
+            https://info4z.github.io/2020/07/24/netty%E8%B4%A3%E4%BB%BB%E9%93%BE/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2020/07/31/netty%E9%9B%B6%E6%8B%B7%E8%B4%9D/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">netty零拷贝 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2020/07/17/Netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Netty线程模型 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F"><span class="toc-text">一 : 设计模式 - 责任链模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9E%E7%8E%B0%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F"><span class="toc-text">(一) : 实现责任链模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-Netty-%E4%B8%AD%E7%9A%84-ChannelPipeline-%E8%B4%A3%E4%BB%BB%E9%93%BE"><span class="toc-text">(二) : Netty 中的 ChannelPipeline 责任链</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E4%BA%8B%E4%BB%B6"><span class="toc-text">二 : 事件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E5%92%8C%E5%87%BA%E7%AB%99%E4%BA%8B%E4%BB%B6"><span class="toc-text">(一) 入站事件和出站事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-Netty-%E4%B8%AD%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-text">(二) Netty 中事件的定义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">三 : 处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-Pipeline-%E4%B8%AD%E7%9A%84-handler-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">(一) Pipeline 中的 handler 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E7%BB%B4%E6%8A%A4-Pipeline-%E4%B8%AD%E7%9A%84-handler"><span class="toc-text">(二) 维护 Pipeline 中的 handler</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-handler-%E7%9A%84%E6%89%A7%E8%A1%8C%E5%88%86%E6%9E%90"><span class="toc-text">(三) handler 的执行分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%88%86%E6%9E%90"><span class="toc-text">四 : 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%88%86%E6%9E%90-registered-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(一) 分析 registered 入站事件的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%88%86%E6%9E%90-bind-%E5%87%BA%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(二) 分析 bind 出站事件的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E5%88%86%E6%9E%90-accept-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(三) 分析 accept 入站事件的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E5%88%86%E6%9E%90-read-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(四) 分析 read 入站事件的处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%B0%8F%E7%BB%93"><span class="toc-text">五 : 小结</span></a></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F"><span class="toc-text">一 : 设计模式 - 责任链模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9E%E7%8E%B0%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F"><span class="toc-text">(一) : 实现责任链模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-Netty-%E4%B8%AD%E7%9A%84-ChannelPipeline-%E8%B4%A3%E4%BB%BB%E9%93%BE"><span class="toc-text">(二) : Netty 中的 ChannelPipeline 责任链</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E4%BA%8B%E4%BB%B6"><span class="toc-text">二 : 事件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E5%92%8C%E5%87%BA%E7%AB%99%E4%BA%8B%E4%BB%B6"><span class="toc-text">(一) 入站事件和出站事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-Netty-%E4%B8%AD%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-text">(二) Netty 中事件的定义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">三 : 处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-Pipeline-%E4%B8%AD%E7%9A%84-handler-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">(一) Pipeline 中的 handler 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E7%BB%B4%E6%8A%A4-Pipeline-%E4%B8%AD%E7%9A%84-handler"><span class="toc-text">(二) 维护 Pipeline 中的 handler</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-handler-%E7%9A%84%E6%89%A7%E8%A1%8C%E5%88%86%E6%9E%90"><span class="toc-text">(三) handler 的执行分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%88%86%E6%9E%90"><span class="toc-text">四 : 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%88%86%E6%9E%90-registered-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(一) 分析 registered 入站事件的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%88%86%E6%9E%90-bind-%E5%87%BA%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(二) 分析 bind 出站事件的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E5%88%86%E6%9E%90-accept-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(三) 分析 accept 入站事件的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E5%88%86%E6%9E%90-read-%E5%85%A5%E7%AB%99%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">(四) 分析 read 入站事件的处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%B0%8F%E7%BB%93"><span class="toc-text">五 : 小结</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-02-03</div>
+        <a href="/2023/02/03/shell%E7%BC%96%E7%A8%8B/"><div class="recent-posts-item-content">shell编程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-27</div>
+        <a href="/2023/01/27/shell%E5%85%A5%E9%97%A8/"><div class="recent-posts-item-content">shell入门</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-20</div>
+        <a href="/2023/01/20/%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/"><div class="recent-posts-item-content">服务器内存占用过高</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-13</div>
+        <a href="/2023/01/13/arthas/"><div class="recent-posts-item-content">Arthas</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          冰清阁
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>

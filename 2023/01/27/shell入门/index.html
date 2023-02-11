@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="差不多得了, 玩什么命呀...">
+  <link 
+    rel="icon" 
+    href="https://img.songhn.com/img/Y67gdd.png">
+  <title>shell入门</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="shell入门">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://info4z.github.io/2023/01/27/shell%E5%85%A5%E9%97%A8/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://img.songhn.com/img/Y67gdd.png">
+    
+    
+      <meta 
+        property="og:img" 
+        content="差不多得了, 玩什么命呀...">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-01-27">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-02-04">
+      <meta 
+        property="og:article:author" 
+        content="清月明风">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="shell">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="https://img.songhn.com/img/Y67gdd.png" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">冰清阁</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://img.songhn.com/img/Y67gdd.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">清月明风</p>
+<p class="author-description">差不多得了, 玩什么命呀...</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>36</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>4</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>12</span>
+    <span>标签</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-Shell-%E6%A6%82%E8%BF%B0"><span class="toc-text">一 : Shell 概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E4%BB%80%E4%B9%88%E6%98%AF-Shell"><span class="toc-text">(一) 什么是 Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-Shell-%E8%84%9A%E6%9C%AC"><span class="toc-text">(二) Shell 脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-shell-%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-text">(三) shell 的分类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%89%B9%E6%AE%8A%E7%AC%A6%E5%8F%B7"><span class="toc-text">二 : 特殊符号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%8F%98%E9%87%8F"><span class="toc-text">三 : 变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-text">(一) 用户自定义变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">(二) 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%8F%98%E9%87%8F"><span class="toc-text">(三) 位置参数变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E9%A2%84%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-text">(四) 预定义变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E9%80%9A%E9%85%8D%E7%AC%A6%E5%92%8C%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">四 : 通配符和正则表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E9%80%9A%E9%85%8D%E7%AC%A6"><span class="toc-text">(一) 通配符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F-regex"><span class="toc-text">(二) 正则表达式(regex)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%80%BB%E7%BB%93"><span class="toc-text">(三) 总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4"><span class="toc-text">五 : 常用指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E8%A1%8C%E6%8F%90%E5%8F%96-grep"><span class="toc-text">(一) 行提取 grep</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E6%9C%AC%E6%88%AA%E5%8F%96-awk"><span class="toc-text">(二) 文本截取 awk</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%87%E6%9C%AC%E6%93%8D%E4%BD%9C-sed"><span class="toc-text">(三) 文本操作 sed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E5%88%97%E6%8F%90%E5%8F%96-cut"><span class="toc-text">(四) 列提取 cut</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94-%E6%8E%92%E5%BA%8F%E5%91%BD%E4%BB%A4-sort"><span class="toc-text">(五) 排序命令 sort</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD-%E5%8E%BB%E9%87%8D%E5%91%BD%E4%BB%A4-uniq"><span class="toc-text">(六) 去重命令 uniq</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%83-%E7%BB%9F%E8%AE%A1%E5%91%BD%E4%BB%A4-wc"><span class="toc-text">(七) 统计命令 wc</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text"></span></a>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/">
+        <div class="categories-list-item">
+          高性能编程
+          <span class="categories-list-item-badge">27</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/">
+        <div class="categories-list-item">
+          博客搭建
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+        <div class="categories-list-item">
+          服务器
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">
+        <div class="categories-list-item">
+          数据库
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" 
+        title="多线程并发编程">
+        <div class="tags-list-item">多线程并发编程</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" 
+        title="线程安全">
+        <div class="tags-list-item">线程安全</div>
+      </a>
+    
+      <a 
+        href="/tags/java%E5%9F%BA%E7%A1%80/" 
+        title="java基础">
+        <div class="tags-list-item">java基础</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+        title="高并发网络编程">
+        <div class="tags-list-item">高并发网络编程</div>
+      </a>
+    
+      <a 
+        href="/tags/J-U-C%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%8C%85/" 
+        title="J.U.C并发编程包">
+        <div class="tags-list-item">J.U.C并发编程包</div>
+      </a>
+    
+      <a 
+        href="/tags/Netty/" 
+        title="Netty">
+        <div class="tags-list-item">Netty</div>
+      </a>
+    
+      <a 
+        href="/tags/NIO%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+        title="NIO网络编程">
+        <div class="tags-list-item">NIO网络编程</div>
+      </a>
+    
+      <a 
+        href="/tags/shell/" 
+        title="shell">
+        <div class="tags-list-item">shell</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%86%85%E5%AD%98/" 
+        title="内存">
+        <div class="tags-list-item">内存</div>
+      </a>
+    
+      <a 
+        href="/tags/mysql/" 
+        title="mysql">
+        <div class="tags-list-item">mysql</div>
+      </a>
+    
+      <a 
+        href="/tags/%E8%AF%8A%E6%96%AD/" 
+        title="诊断">
+        <div class="tags-list-item">诊断</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%9B%91%E6%8E%A7/" 
+        title="监控">
+        <div class="tags-list-item">监控</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      shell入门
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-01-26T16:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-01-27</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/" 
+          class="post-meta-link">
+          服务器
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>5.5k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/shell/" 
+            class="post-meta-link">
+            shell
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <blockquote>
+<p>Linux三剑客, grep主打查找功能, sed主要是编辑, awk主要是分割处理</p>
+</blockquote>
+<h2 id="一-Shell-概述"><a href="#一-Shell-概述" class="headerlink" title="一 : Shell 概述"></a>一 : Shell 概述</h2><h3 id="一-什么是-Shell"><a href="#一-什么是-Shell" class="headerlink" title="(一) 什么是 Shell"></a>(一) 什么是 Shell</h3><p>Shell 是一个用 C 语言编写的程序, 它是用户使用 Linux 的桥梁。Shell 既是一种命令语言, 又是一种程序设计语言。</p>
+<p>Shell 是指一种应用程序, 这个应用程序提供了一个界面, 用户通过这个界面访问操作系统内核的服务。</p>
+<p>硬件 &#x3D;&gt; 内核 &#x3D;&gt; shell命令解释器 &#x3D;&gt; 外层应用程序</p>
+<p>Ken Thompson 的 sh 是第一种 Unix Shell, Windows Explorer 是一个典型的图形界面 Shell。</p>
+<h3 id="二-Shell-脚本"><a href="#二-Shell-脚本" class="headerlink" title="(二) Shell 脚本"></a>(二) Shell 脚本</h3><p>Shell 脚本(shell script), 是一种为 shell 编写的脚本程序。</p>
+<p>业界所说的 shell 通常都是指 shell 脚本, 但读者朋友要知道, shell 和 shell script 是两个不同的概念。</p>
+<p>由于习惯的原因, 简洁起见, 本文出现的 “shell编程” 都是指 shell 脚本编程, 不是指开发 shell 自身。</p>
+<p>shell命令解释器 : 把命令翻译成机器语言, 再把结果翻译成命令</p>
+<h3 id="三-shell-的分类"><a href="#三-shell-的分类" class="headerlink" title="(三) shell 的分类"></a>(三) shell 的分类</h3><table>
+<thead>
+<tr>
+<th>Shell 类别</th>
+<th>易学性</th>
+<th>可移植性</th>
+<th>编辑性</th>
+<th>快捷性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bourne Shell (sh)</td>
+<td>容易</td>
+<td>好</td>
+<td>较差</td>
+<td>较差</td>
+</tr>
+<tr>
+<td>Korn Shell (ksh)</td>
+<td>较难</td>
+<td>较好</td>
+<td>好</td>
+<td>较好</td>
+</tr>
+<tr>
+<td><strong>Bourne Again (Bash)</strong></td>
+<td><strong>难</strong></td>
+<td><strong>较好</strong></td>
+<td><strong>好</strong></td>
+<td><strong>好</strong></td>
+</tr>
+<tr>
+<td>POSIX Shell (psh)</td>
+<td>较难</td>
+<td>好</td>
+<td>好</td>
+<td>较好</td>
+</tr>
+<tr>
+<td>C Shell (csh)</td>
+<td>较难</td>
+<td>差</td>
+<td>较好</td>
+<td>较好</td>
+</tr>
+<tr>
+<td>TC Shell (tcsh)</td>
+<td>难</td>
+<td>差</td>
+<td>好</td>
+<td>好</td>
+</tr>
+</tbody></table>
+<p>Shell 的两种主要语法类型有 Bourne 和 C, 这两种语法彼此不兼容。</p>
+<ul>
+<li>Bourne 家族主要包括 sh、ksh、Bash、psh、zsh；</li>
+<li>C 家族主要包括:csh、tcsh (Bash 和 zsh 在不同程度上支持 csh 的语法)。</li>
+</ul>
+<p>我们可以通过 <code>/etc/shells</code> 文件来查询 Linux 支持的 Shell。命令如下 :</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi /etc/shells<br><br>/bin/sh<br>/bin/Bash<br>/sbin/nologin<br>/bin/tcsh<br>/bin/csh<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="二-特殊符号"><a href="#二-特殊符号" class="headerlink" title="二 : 特殊符号"></a>二 : 特殊符号</h2><table>
+<thead>
+<tr>
+<th>符 号</th>
+<th>作 用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>‘’</td>
+<td>单引号。在单引号中所有的特殊符号, 如”$”和”&#96;”(反引号)都没有特殊含义。</td>
+</tr>
+<tr>
+<td>“”</td>
+<td>双引号。在双引号中特殊符号都没有特殊含义, 但是”$”、”&#96;”和”\“是例外, 拥有”调用变量的值”、”引用命令”和”转义符”的特殊含义。</td>
+</tr>
+<tr>
+<td>&#96;&#96;</td>
+<td>反引号。反引号括起来的内容是系统命令, 在 Bash 中会先执行它。和$()作用一样, <strong>不过推荐使用$()</strong>, 因为反引号非常容易看错。</td>
+</tr>
+<tr>
+<td>$</td>
+<td>用于调用变量的值, 如需要调用变量 name 的值时, 需要用 <code>$name</code> 的方式得到变量的值。</td>
+</tr>
+<tr>
+<td>${}</td>
+<td>括号里面写变量, 相当于 <code>$name</code></td>
+</tr>
+<tr>
+<td>$()</td>
+<td>和反引号作用一样, 用来引用系统命令。例如: <code>$(df -h)</code></td>
+</tr>
+<tr>
+<td>$[]</td>
+<td>括号里面运算式, 也可以用 <code>$((...))</code>, 例如: <code>$[1+2]</code></td>
+</tr>
+<tr>
+<td>$(())</td>
+<td>括号里面写运算式, 和 <code>$[]</code> 作用一样, 例如: <code>$((1+2))</code></td>
+</tr>
+<tr>
+<td>()</td>
+<td>用于一串命令执行时, ()中的命令会在子 Shell 中运行</td>
+</tr>
+<tr>
+<td>{}</td>
+<td>用于一串命令执行时, {}中的命令会在当前 Shell 中执行。也可以用于变量变形与替换。</td>
+</tr>
+<tr>
+<td>[]</td>
+<td>用于变量的测试。</td>
+</tr>
+<tr>
+<td>#</td>
+<td>在 Shell 脚本中, #开头的行代表注释。</td>
+</tr>
+<tr>
+<td>\</td>
+<td>转义符, 跟在 \ 之后的特殊符号将失去特殊含义, 变为普通字符。如 <code>\$</code> 将输出”$”符号, 而不当做是变量引用。</td>
+</tr>
+</tbody></table>
+<h2 id="三-变量"><a href="#三-变量" class="headerlink" title="三 : 变量"></a>三 : 变量</h2><h3 id="一-用户自定义变量"><a href="#一-用户自定义变量" class="headerlink" title="(一) 用户自定义变量"></a>(一) 用户自定义变量</h3><p>这种变量是最常见的变量, 由用户自由定义变量名和变量的值。</p>
+<p>注意变量定义的时候 : 变量名不能以数字开头, <code>=</code>两边不要写空格, 变量值必须是连续的字符串</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">变量名不能用数字开头</span><br>[root@localhost ~]# 2name=&quot;Bob Han&quot;<br>-bash: 2name=Bob: command not found<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">等号左右两侧不能有空格</span><br>[root@localhost ~]# name = &quot;Bob Han&quot;<br>-bash: name: command not found<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">变量的值如果有空格, 必须用引号包含</span><br>[root@localhost ~]# name=Bob Han<br>-bash: Han: command not found<br></code></pre></td></tr></table></figure>
+
+<p>变量调用就直接使用 <code>$变量名</code> 即可</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">输出变量 name 的值</span><br>[root@localhost ~]# echo $name<br>Bob<br></code></pre></td></tr></table></figure>
+
+<p>变量查看 : 直接使用 <code>set</code> 命令, 会查询系统中所有的变量, 包含用户自定义变量和环境变量</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# set [选项]<br>选项:<br>-u: 如果设定此选项, 调用未声明变量时会报错(默认无任何提示)<br>-x: 如果设定此选项, 在命令执行之前, 会把命令先输出一次<br></code></pre></td></tr></table></figure>
+
+<p>删除变量 : <code>unset</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">注意: 直接写变量名,不加$符号</span><br>[root@localhost ~]# unset name	<br></code></pre></td></tr></table></figure>
+
+<h3 id="二-环境变量"><a href="#二-环境变量" class="headerlink" title="(二) 环境变量"></a>(二) 环境变量</h3><p>这种变量中主要保存的是和系统操作环境相关的数据, 比如当前登录用户, 用户的家目录, 命令的提示符等</p>
+<ul>
+<li>环境变量的变量名可以自由定义, 但是一般对系统起作用的环境变量的变量名是系统预先设定好的</li>
+<li>系统自带的环境变量 : <strong>命令是确定的, 作用是确定的, 但内容可以自定义</strong></li>
+<li>用户自定义的环境变量 : <strong>命令, 作用和内容都可以自定义</strong></li>
+<li><strong>环境变量名建议大写, 便于区分</strong></li>
+</ul>
+<p>环境变量设置</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">使用 <span class="hljs-built_in">export</span> 声明的变量即是环境变量</span><br>[root@localhost ~]# export age=&quot;18&quot;<br></code></pre></td></tr></table></figure>
+
+<p>环境变量查询和删除</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">查询环境变量gender,<span class="hljs-built_in">env</span> 命令只能查看环境变量,而<span class="hljs-built_in">set</span>命令可以查看所有变量</span><br>[root@localhost ~]# env | grep gender<br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除环境变量gender</span><br>[root@localhost ~]# unset gender<br></code></pre></td></tr></table></figure>
+
+<p>系统默认环境变量 <code>PATH</code> : 系统查找命令的路径</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">PATH变量的值是用<span class="hljs-string">&quot;:&quot;</span>分割的路径,这些路径就是系统查找命令的路径</span><br>[root@localhost ~]# echo $PATH<br>/usr/lib/qt-3.3/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>也就是说, 如果将test.sh放到 <code>/root/bin</code> (其中一个目录)下, 程序也可以直接执行; 或者定义 <code>PATH=$PATH:/root/sh</code> 将脚本所在目录追加进去</li>
+</ul>
+<p>系统默认环境变量 <code>PS1</code> : 命令提示符设置</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">默认的提示符是显示<span class="hljs-string">&quot;[用户名@简写主机名 最后所在目录]提示符&quot;</span></span><br>[root@localhost ~]# echo $PS1<br>[\u@\h \W]\$<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>如果需要永久修改, 可以写入配置文件 <code>/etc/bashrc</code></li>
+</ul>
+<p>系统默认环境变量 <code>LANG</code> : 语系变量</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost src]# echo $LANG<br>zh_CN.UTF-8<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查询支持的语系</span><br>[root@localhost src]# locale -a | more<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查询当前系统的语系(当前系统使用的语系)</span><br>[root@localhost src]# locale<br>LANG=zh_CN.UTF-8<br>LC_CTYPE=&quot;zh_CN.UTF-8&quot;<br>LC_NUMERIC=&quot;zh_CN.UTF-8&quot;<br>LC_TIME=&quot;zh_CN.UTF-8&quot;<br>LC_COLLATE=&quot;zh_CN.UTF-8&quot;<br>LC_MONETARY=&quot;zh_CN.UTF-8&quot;<br>LC_MESSAGES=&quot;zh_CN.UTF-8&quot;<br>LC_PAPER=&quot;zh_CN.UTF-8&quot;<br>LC_NAME=&quot;zh_CN.UTF-8&quot;<br>LC_ADDRESS=&quot;zh_CN.UTF-8&quot;<br>LC_TELEPHONE=&quot;zh_CN.UTF-8&quot;<br>LC_MEASUREMENT=&quot;zh_CN.UTF-8&quot;<br>LC_IDENTIFICATION=&quot;zh_CN.UTF-8&quot;<br>LC_ALL=<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查询系统的默认语系(下次重启之后系统所使用的语系)</span><br>[root@localhost src]# cat /etc/sysconfig/i18n <br>LANG=&quot;zh_CN.UTF-8&quot;<br></code></pre></td></tr></table></figure>
+
+<h3 id="三-位置参数变量"><a href="#三-位置参数变量" class="headerlink" title="(三) 位置参数变量"></a>(三) 位置参数变量</h3><p>这种变量主要是用来向脚本当中传递参数或数据的, 变量名不能自定义, 变量作用是固定的; <strong>只有内容可以自定义</strong></p>
+<table>
+<thead>
+<tr>
+<th>位置参数变量</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>$n</code></td>
+<td>n 为数字, $0 代表命令本身, $1-$9 代表第一到第九个参数, <strong>十以上的参数需要用大括号包含, 如${10}</strong></td>
+</tr>
+<tr>
+<td><code>$*</code></td>
+<td>这个变量代表命令行中所有的参数, <strong><code>$*</code>把所有的参数看成一个整体</strong></td>
+</tr>
+<tr>
+<td><code>$@</code></td>
+<td>这个变量也代表命令行中所有的参数, 不过**<code>$@</code>把每个参数区分对待**</td>
+</tr>
+<tr>
+<td><code>$#</code></td>
+<td>这个变量代表命令行中所有参数的个数</td>
+</tr>
+</tbody></table>
+<h3 id="四-预定义变量"><a href="#四-预定义变量" class="headerlink" title="(四) 预定义变量"></a>(四) 预定义变量</h3><p>是 Bash 中已经定义好的变量, 变量名不能自定义, 变量作用也是固定的; <strong>只有内容可以自定义</strong></p>
+<table>
+<thead>
+<tr>
+<th>预定义变量</th>
+<th>作 用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$?</td>
+<td>最后一次执行的命令的返回状态。<br />如果这个变量的值为 0, 证明上一个命令正确执行；<br />如果这个变量的值为非 0(具体是哪个数, 由命令<br/>自己来决定), 则证明上一个命令执行不正确了</td>
+</tr>
+<tr>
+<td>$$</td>
+<td>当前进程的进程号(PID)</td>
+</tr>
+<tr>
+<td>$!</td>
+<td>后台运行的最后一个进程的进程号(PID)</td>
+</tr>
+</tbody></table>
+<h2 id="四-通配符和正则表达式"><a href="#四-通配符和正则表达式" class="headerlink" title="四 : 通配符和正则表达式"></a>四 : 通配符和正则表达式</h2><h3 id="一-通配符"><a href="#一-通配符" class="headerlink" title="(一) 通配符"></a>(一) 通配符</h3><table>
+<thead>
+<tr>
+<th>通配符</th>
+<th>作 用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>?</td>
+<td>匹配一个任意字符</td>
+<td></td>
+</tr>
+<tr>
+<td>*</td>
+<td>匹配 0 个或任意多个任意字符, 也就是可以匹配任何内容</td>
+<td></td>
+</tr>
+<tr>
+<td>[]</td>
+<td>匹配中括号中任意一个字符</td>
+<td><code>[abc]</code> 代表一定匹配一个字符, 或者是 a, 或者是 b, 或者是 c</td>
+</tr>
+<tr>
+<td>[-]</td>
+<td>匹配中括号中任意一个字符, <code>-</code>代表一个范围</td>
+<td><code>[a-z]</code>代表匹配一个小写字母。</td>
+</tr>
+<tr>
+<td>[^]</td>
+<td>逻辑非, 表示匹配不是中括号内的一个字符</td>
+<td><code>[^0-9]</code>代表匹配一个不是数字的字符</td>
+</tr>
+</tbody></table>
+<h3 id="二-正则表达式-regex"><a href="#二-正则表达式-regex" class="headerlink" title="(二) 正则表达式(regex)"></a>(二) 正则表达式(regex)</h3><table>
+<thead>
+<tr>
+<th>元字符</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>*</code></td>
+<td>前一个字符匹配 <strong>0 次或任意多次</strong></td>
+<td><code>aa*</code> 查询a出现1次及以上</td>
+</tr>
+<tr>
+<td><code>.</code></td>
+<td>匹配除了换行符外<strong>任意一个</strong>字符</td>
+<td><code>s..d</code> 会匹配在s和d这两个字母之间一定有两个字符的单词</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>匹配<strong>行首</strong></td>
+<td><code>^hello</code> 会匹配以 hello 开头的行</td>
+</tr>
+<tr>
+<td>$</td>
+<td>匹配<strong>行尾</strong></td>
+<td><code>hello$</code> 会匹配以 hello 结尾的行</td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td>匹配中括号中指定的<strong>任意一个</strong>字符, 只匹配一个字符</td>
+<td><code>[aeiou]</code> 匹配任意一个元音字母, <code>[0-9]</code> 匹配任意一位数字, <code>[a-z][0-9]</code>匹配小写字和一位数字构成的两位字符</td>
+</tr>
+<tr>
+<td><code>[^]</code></td>
+<td>匹配除中括号的字符以外的任意一个字符。</td>
+<td><code>[^0-9]</code> 匹配任意一位非数字字符, <code>[^a-z]</code>表示任意一位非小写字母</td>
+</tr>
+<tr>
+<td><code>\</code></td>
+<td>转义符。用于取消特殊符号的含义</td>
+<td><code>\.$</code> 查找以字符 <code>.</code> 结尾的行</td>
+</tr>
+<tr>
+<td><code>\&#123;n\&#125;</code></td>
+<td>表示其前面的字符恰好出现 n 次</td>
+<td><code>[0-9]\&#123;4\&#125;</code> 匹配 4 位数字, <code>[1][3-8][0-9]\&#123;9\&#125;</code> 匹配手机号码</td>
+</tr>
+<tr>
+<td><code>\&#123;n,\&#125;</code></td>
+<td>表示其前面的字符出现不小于 n 次</td>
+<td><code>[0-9]\&#123;2,\&#125;</code> 表示两位及以上的数字</td>
+</tr>
+<tr>
+<td><code>\&#123;n,m\&#125;</code></td>
+<td>表示其前面的字符至少出现n次, 最多出现m次</td>
+<td><code>[a-z]\&#123;6,8\&#125;</code> 匹配 6~8 位的小写字母</td>
+</tr>
+</tbody></table>
+<h3 id="三-总结"><a href="#三-总结" class="headerlink" title="(三) 总结"></a>(三) 总结</h3><p>通常 : 正则表达式和通配符使用的场景是不同的</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>正则表达式</td>
+<td>用来在<strong>文件内容</strong>中匹配符合条件的字符串</td>
+</tr>
+<tr>
+<td>通配符</td>
+<td>用来匹配符合条件的<strong>文件名</strong></td>
+</tr>
+</tbody></table>
+<p>其实这种区别只在 Shell 当中适用, 因为用来在文件当中搜索字符串的命令, 如 <code>grep</code>, <code>awk</code>, <code>sed</code> 等命令可以<strong>支持正则</strong>表达式; 而在系统当中搜索文件的命令, 如 <code>ls</code>, <code>find</code>, <code>cp</code> 这些命令<strong>不支持正则</strong>表达式, 所以只能使用 shell 自己的通配符来进行匹配了</p>
+<h2 id="五-常用指令"><a href="#五-常用指令" class="headerlink" title="五 : 常用指令"></a>五 : 常用指令</h2><p><code>grep</code>, <code>awk</code>, <code>sed</code> 也被称为Linux三剑客, <strong>grep主打查找功能</strong>，<strong>sed主要是编辑</strong>，<strong>awk主要是分割处理</strong>; 基础中的基础, 重点中的重点</p>
+<h3 id="一-行提取-grep"><a href="#一-行提取-grep" class="headerlink" title="(一) 行提取 grep"></a>(一) 行提取 grep</h3><p>命令格式</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# grep [选项] &quot;搜索内容&quot; 文件名<br>选项:<br>    -A 数字: 列出符合条件的行,并列出后续的n行 <br>    -B 数字: 列出符合条件的行,并列出前面的n行 <br>    -c: 统计找到的符合条件的字符串的次数<br>    -i: 忽略大小写<br>    -n: 输出行号<br>    -v: 反向查找<br>    --color=auto 搜索出的关键字用颜色显示<br></code></pre></td></tr></table></figure>
+
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">查找用户信息文件/etc/passwd 中, 有多少可以登录的用户</span><br>[root@localhost ~]# grep &quot;/bin/bash&quot; /etc/passwd<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查找包含有<span class="hljs-string">&quot;root&quot;</span>的行, 并列出后续的3行</span><br>[root@localhost ~]# grep -A 3 &quot;root&quot; /etc/passwd<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查找可以登录的用户, 并显示行号</span><br>[root@localhost ~]# grep -n &quot;/bin/bash&quot; /etc/passwd<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查找不含有<span class="hljs-string">&quot;/bin/bash&quot;</span>的行, 其实就是列出所有的伪用户</span><br>[root@localhost ~]# grep -v &quot;/bin/bash&quot; /etc/passwd <br></code></pre></td></tr></table></figure>
+
+<h3 id="二-文本截取-awk"><a href="#二-文本截取-awk" class="headerlink" title="(二) 文本截取 awk"></a>(二) 文本截取 awk</h3><p><code>awk</code> 是一个强大的文本分析工具, 相对于 <code>grep</code> 的查找, <code>sed</code> 的编辑, <code>awk</code> 在其<strong>对数据分析并生成报告</strong>时, 显得尤为强大。</p>
+<p>简单来说<code>awk</code> 就是把文件<strong>逐行的读入</strong>, <strong>以空格</strong>为默认分隔符<strong>将每行切片</strong>, 切开的部分再进行各种分析处理。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# awk &#x27;条件1&#123;动作1&#125; 条件2&#123;动作2&#125;…&#x27; 文件名<br>条件(Pattern) : <br>    x &gt; 10 	: 判断变量 x 是否大于 10<br>    x == y 	: 判断变量 x 是否等于变量 y<br>    A ~ B 	: 判断字符串 A 中是否包含能匹配 B 表达式的子字符串<br>    A !~ B 	: 判断字符串 A 中是否不包含能匹配 B 表达式的子字符串<br>动作(Action) : <br>    格式化输出<br>    流程控制语句<br></code></pre></td></tr></table></figure>
+
+<p>awk 提供了一些内置变量</p>
+<table>
+<thead>
+<tr>
+<th>awk 内置变量</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>$0</strong></td>
+<td>代表目前 awk 所读入的整行数据。我们已知 awk 是一行一行读入数据的, $0 就代表当前读入行的整行数据</td>
+</tr>
+<tr>
+<td><strong>$n</strong></td>
+<td>代表目前读入行的第 n 个字段</td>
+</tr>
+<tr>
+<td><strong>NF</strong></td>
+<td>当前行拥有的字段(列)总数</td>
+</tr>
+<tr>
+<td><strong>NR</strong></td>
+<td>当前 awk 所处理的行, 是总数据的第几行</td>
+</tr>
+<tr>
+<td><strong>FS</strong></td>
+<td>用户定义分隔符。awk 的默认分隔符是任何空格, 如果想要使用其他分隔符(如” : “), 就需要 <code>FS</code> 变量定义</td>
+</tr>
+<tr>
+<td>ARGC</td>
+<td>命令行参数个数</td>
+</tr>
+<tr>
+<td>ARGV</td>
+<td>命令行参数数组</td>
+</tr>
+<tr>
+<td>FNR</td>
+<td>当前文件中的当前记录数(对输入文件起始为 1)</td>
+</tr>
+<tr>
+<td>OFMT</td>
+<td>数值的输出格式(默认为%.6g)</td>
+</tr>
+<tr>
+<td>OFS</td>
+<td>输出字段的分隔符(默认为空格)</td>
+</tr>
+<tr>
+<td>ORS</td>
+<td>输出记录分隔符(默认为换行符)</td>
+</tr>
+<tr>
+<td>RS</td>
+<td>输入记录分隔符(默认为换行符)</td>
+</tr>
+</tbody></table>
+<p>简单代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">输出第1列和第3列</span><br>[root@localhost ~]# df -h | awk &#x27;&#123;print $1 &quot;\t&quot; $3&#125;&#x27;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查询可以登录的用户的用户名和 UID</span><br>[root@localhost ~]# awk &#x27;BEGIN&#123;FS=&quot;:&quot;&#125; &#123;print $1 &quot;\t&quot; $3 &#125;&#x27; /etc/passwd<br></code></pre></td></tr></table></figure>
+
+<p>awk 还提供了保留字, 保留字可以看作是<u>条件的一种</u>, 必须大写</p>
+<table>
+<thead>
+<tr>
+<th>保留字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>BEGIN</code></td>
+<td>在 awk 程序一开始时,尚未读取任何数据之前执行; BEGIN 后的动作只在程序开始时执行一次</td>
+</tr>
+<tr>
+<td><code>END</code></td>
+<td>在 awk 程序处理完所有数据,即将结束时执行; END 后的动作只在程序结束时执行一次</td>
+</tr>
+</tbody></table>
+<p>保留字代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">BEGIN和END都只会执行一次</span><br>[root@localhost ~]# df -h | grep -v Used | awk &#x27;BEGIN&#123;print &quot;开始&quot;&#125; &#123;print $1 &quot;:&quot; $3&#125; END&#123;print &quot;完毕&quot;&#125;&#x27; <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">awk命令只要检测不到完整的单引号不会执行,所以这个命令的换行不用加入<span class="hljs-string">&quot;\&quot;,就是一行命令</span></span><br>[root@localhost ~]# df -h | grep -v Used | awk &#x27;BEGIN&#123;print &quot;统计开始:&quot;&#125; <br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash"><span class="hljs-string">&#123;print &quot;</span>系统分区<span class="hljs-string">&quot; <span class="hljs-variable">$1</span> &quot;</span>已使用:<span class="hljs-string">&quot; <span class="hljs-variable">$3</span>&#125; END&#123;print &quot;</span>统计完毕<span class="hljs-string">&quot;&#125;&#x27;</span></span><br></code></pre></td></tr></table></figure>
+
+<p>awk 的条件 : 关系运算符</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&gt;</td>
+<td>大于</td>
+</tr>
+<tr>
+<td>&lt;</td>
+<td>小于</td>
+</tr>
+<tr>
+<td>&gt;&#x3D;</td>
+<td>大于等于</td>
+</tr>
+<tr>
+<td>&lt;&#x3D;</td>
+<td>小于等于</td>
+</tr>
+<tr>
+<td>&#x3D;&#x3D;</td>
+<td>等于。用于判断两个值是否相等,如果是给变量赋值,请使用<code>=</code>号</td>
+</tr>
+<tr>
+<td>!&#x3D;</td>
+<td>不等于</td>
+</tr>
+<tr>
+<td>A~B</td>
+<td>判断字符串 A 中是否包含能匹配 B 表达式的子字符串, 比字符串要加 <code>//</code>, 例如 : <code>$2 ~ /shell/</code></td>
+</tr>
+<tr>
+<td>A!~B</td>
+<td>判断字符串 A 中是否不包含能匹配 B 表达式的子字符串</td>
+</tr>
+</tbody></table>
+<p>条件示例代码</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">输出使用大于0的分区及使用情况</span><br>[root@localhost ~]# df -h | grep -v Used | awk &#x27;$3&gt;0&#123;print &quot;系统分区&quot; $1 &quot;已使用:&quot; $3&#125;&#x27;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">输出vda的使用情况</span><br>[root@localhost ~]# df -h | grep -v Used | awk &#x27;$1 ~ /vda/ &#123;print &quot;系统分区&quot; $1 &quot;已使用:&quot; $3&#125;&#x27;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">如果在//中可以写入字符,也可以支持正则表达式,查询包含有vda的行,并打印第一字段和第五字段</span><br>[root@localhost ~]# df -h | awk &#x27;/vda[0-9]/ &#123;printf $1 &quot;\t&quot; $5 &quot;\n&quot;&#125; &#x27;<br></code></pre></td></tr></table></figure>
+
+<p>awk 流程控制</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">统计 PHP 成绩的总分</span> <br>[root@localhost ~]# awk &#x27;NR==2&#123;php1=$3&#125; <br>NR==3&#123;php2=$3&#125; <br>NR==4&#123;php3=$3;totle=php1+php2+php3;print &quot;totle php is &quot; totle&#125;&#x27; awk_test.txt<br></code></pre></td></tr></table></figure>
+
+<p><code>awk</code> 编程也允许在编程时使用函数(不常用)</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">定义函数<span class="hljs-built_in">test</span>,包含两个参数,函数体的内容是输出这两个参数的值</span><br>[root@localhost ~]# awk &#x27;function test(a,b) &#123; printf a &quot;\t&quot; b &quot;\n&quot; &#125; <br><span class="hljs-meta prompt_">#</span><span class="language-bash">调用函数 <span class="hljs-built_in">test</span>,并向两个参数传递值</span><br>&#123; test($2,$6) &#125; &#x27; student.txt<br></code></pre></td></tr></table></figure>
+
+<p>awk 调用脚本<code>(-f)</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">编写脚本</span><br>[root@localhost ~]# vi pass.awk<br>BEGIN &#123;FS=&quot;:&quot;&#125;<br>&#123; print $1 &quot;\t&quot; $3&#125;<br><span class="hljs-meta prompt_"># </span><span class="language-bash">调用脚本 -f</span><br>[root@localhost ~]# awk -f pass.awk /etc/passwd<br></code></pre></td></tr></table></figure>
+
+<p><strong>在 <code>awk</code> 编程中,因为命令语句非常长, 在输入格式时需要注意以下内容 :</strong> </p>
+<ul>
+<li>多个 <code>条件&#123;动作&#125;</code> 可以用空格分割, 也可以用回车分割</li>
+<li>在一个动作中, 如果需要执行多个命令, 需要用 <code>;</code> 分割, 或用回车分割</li>
+<li>在 <code>awk</code> 中, 变量的赋值与调用都不需要加入 <code>$</code> 符</li>
+<li>条件中判断两个值是否相同, 请使用<code>==</code>, 以便和变量赋值进行区分</li>
+</ul>
+<h3 id="三-文本操作-sed"><a href="#三-文本操作-sed" class="headerlink" title="(三) 文本操作 sed"></a>(三) 文本操作 sed</h3><p><code>sed</code> 主要是用来将数据进行<strong>选取</strong>, <strong>替换</strong>, <strong>删除</strong>, <strong>新增</strong>的命令</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# sed [OPTION]... &#123;script-only-if-no-other-script&#125; [input-file]...<br>选项 : <br>    -n : 把经过sed处理的结果输出到屏幕(只查看sed命令操作的数据,如果不加则把所有数据都输出到屏幕)。<br>    -e : 允许对输入数据应用多条sed命令编辑,中间用&quot;;&quot;隔开。<br>    -r :  在 sed 中支持扩展正则表达式。<br>    -i :  用 sed 的修改结果直接修改读取数据的文件,而不是由屏幕输出<br>    -f 脚本文件名 : 从 sed 脚本中读入 sed 操作。和 awk 命令的 -f 非常类似。<br>动作 : <br>    a \ : 追加(append),在当前行后添加一行或多行; 添加多行时,除最后一行外,每行末尾需要用&quot;\&quot;代表数据未完结。<br>    c \ : 行替换(replace),用 c 后面的字符串替换原数据行; 替换多行时,除最后一行外,每行末尾需用&quot;\&quot;代表数据未完结<br>    i \ : 插入(insert),在当期行前插入一行或多行; 插入多行时,除最后一行外每行末尾需要用&quot;\&quot;代表数据未完结<br>    d :  删除(delete),删除指定的行<br>    p :  打印(print),输出指定的行<br>    s :  字串替换,用一个字符串替换另外一个字符串;格式为&quot;行范围s/旧字串/新字串/&quot;(和vim中的替换格式类似)<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>注意 :</strong> <code>sed</code> 所做的修改并<strong>不会直接改变文件的内容</strong>(如果是用管道符接收的命令的输出,这种情况连文件都没有), 而是把修改结果只显示到屏幕上, <strong>除非使用 <code>-i</code> 选项才会直接修改文件</strong>。</li>
+</ul>
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">打印第二行</span><br>[root@localhost ~]# sed -n &#x27;2p&#x27; /etc/passwd<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除第二行到第四行的数据,但是文件本身并不会发生改变</span><br>[root@localhost ~]# sed &#x27;2,4d&#x27; /etc/passwd<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">在第二行后加入hello</span><br>[root@localhost ~]# sed &#x27;2a hello&#x27; /etc/passwd<br><span class="hljs-meta prompt_"># </span><span class="language-bash">如果需要多插几行,则需要用\换行</span><br>[root@localhost ~]# sed &#x27;2a hello \<br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">world<span class="hljs-string">&#x27; /etc/passwd</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">在第二行前插入hello,如果需要插入多行也需要\</span></span><br><span class="hljs-string"><span class="language-bash">[root@localhost ~]# sed &#x27;</span>2i hello<span class="hljs-string">&#x27; /etc/passwd</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">将第二行数据替换掉</span></span><br>[root@localhost ~]# sed &#x27;2c hello world&#x27; /etc/passwd <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">将第二行的bin替换成hello</span></span><br>[root@localhost ~]# sed &#x27;2s/bin/hello/&#x27; /etc/passwd<br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">将第二行注释掉</span></span><br>[root@localhost ~]# sed &#x27;2s/^/#/&#x27; /etc/passwd<br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">将第二行和第四行注释掉,用;隔开</span></span><br>[root@localhost ~]# sed &#x27;2s/bin/hello/;3s/daemon/world/&#x27; /etc/passwd<br></code></pre></td></tr></table></figure>
+
+<h3 id="四-列提取-cut"><a href="#四-列提取-cut" class="headerlink" title="(四) 列提取 cut"></a>(四) 列提取 cut</h3><p>cut 命令的默认分隔符是制表符, 也就是 <code>tab</code> 键, <strong>不支持空格</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# cut OPTION... [FILE]...<br>选项 : <br>-f column_number 	: 提取第几列<br>-d separate 		: 按照指定分隔符分割列(默认分隔符是制表符)<br>-c number 			: 不依赖分隔符来区分列,而是通过字符范围(行首为0)来进行字段提取(了解)<br>						&quot;n-&quot;表示从第n个字符到行尾; <br>						&quot;n-m&quot;从第n个字符到第m个字符; <br>						&quot;-m&quot;表示从第1个字符到第m个字符。<br></code></pre></td></tr></table></figure>
+
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">提取第二列内容</span><br>[root@localhost ~]# cut -f 2 test.txt<br><span class="hljs-meta prompt_"># </span><span class="language-bash">那如果想要提取多列呢? 只要列号直接用<span class="hljs-string">&quot;,&quot;</span>分开</span><br>[root@localhost ~]# cut -f 2,3 cut_test.txt <br><span class="hljs-meta prompt_"># </span><span class="language-bash">查询普通用户的用户名和用户ID</span><br>[yuelu@localhost ~]$ grep &quot;/bin/bash&quot; /etc/passwd | grep -v &quot;root&quot; | cut -d &quot;:&quot; -f 1,3<br><span class="hljs-meta prompt_"># </span><span class="language-bash">按照字符进行提取,c表示character,后面跟表达式,8-代表的是提取所有行的第8个字符开始到行尾(10-20代表提取所有行的第10个字符到第20个字符,-8代表提取所有行从行首到第8个字符)</span> <br>[root@localhost ~]# cut -c 8- cut_test.txt <br></code></pre></td></tr></table></figure>
+
+<h3 id="五-排序命令-sort"><a href="#五-排序命令-sort" class="headerlink" title="(五) 排序命令 sort"></a>(五) 排序命令 sort</h3><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# sort [选项] 文件名<br>选项 : <br>-f :  忽略大小写<br>-b :  忽略每行前面的空白部分<br>-n :  以数值型进行排序,默认使用字符串型排序<br>-r :  反向排序<br>-u :  删除重复行。就是 uniq 命令<br>-t :  指定分隔符,默认是分隔符是制表符<br>-k n[,m] :  按照指定的字段范围排序。从第n字段开始,m字段结束(默认到行尾)<br></code></pre></td></tr></table></figure>
+
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">排序用户信息文件,默认是用每行开头第一个字符来进行排序</span><br>[root@localhost ~]# sort /etc/passwd<br><span class="hljs-meta prompt_"># </span><span class="language-bash">反向排序-r</span><br>[root@localhost ~]# sort -r /etc/passwd<br><span class="hljs-meta prompt_"># </span><span class="language-bash">指定分隔符是<span class="hljs-string">&quot;:&quot;</span>,排序范围是第三个(用第三字段开头,第三字段结尾排序)</span><br>[root@localhost ~]# sort -t &quot;:&quot; -k 3,3 /etc/passwd<br></code></pre></td></tr></table></figure>
+
+<h3 id="六-去重命令-uniq"><a href="#六-去重命令-uniq" class="headerlink" title="(六) 去重命令 uniq"></a>(六) 去重命令 uniq</h3><p><code>uniq</code> 命令是用来取消重复行的命令, 其实和 <code>sort -u</code> 选项是一样的</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# uniq [选项] 文件名<br>选项 : <br>	-i :  忽略大小写<br></code></pre></td></tr></table></figure>
+
+<h3 id="七-统计命令-wc"><a href="#七-统计命令-wc" class="headerlink" title="(七) 统计命令 wc"></a>(七) 统计命令 wc</h3><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# wc [选项] 文件名<br>选项 : <br>    -l : 只统计行数(print the newline counts)<br>    -w : 只统计单词数(print the word counts)<br>    -m : 只统计字符数(print the character counts)<br>    -c : print the byte counts<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1>
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            清月明风
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://info4z.github.io/2023/01/27/shell%E5%85%A5%E9%97%A8/">
+            https://info4z.github.io/2023/01/27/shell%E5%85%A5%E9%97%A8/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/02/03/shell%E7%BC%96%E7%A8%8B/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">shell编程 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/01/20/%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">服务器内存占用过高 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-Shell-%E6%A6%82%E8%BF%B0"><span class="toc-text">一 : Shell 概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E4%BB%80%E4%B9%88%E6%98%AF-Shell"><span class="toc-text">(一) 什么是 Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-Shell-%E8%84%9A%E6%9C%AC"><span class="toc-text">(二) Shell 脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-shell-%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-text">(三) shell 的分类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%89%B9%E6%AE%8A%E7%AC%A6%E5%8F%B7"><span class="toc-text">二 : 特殊符号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%8F%98%E9%87%8F"><span class="toc-text">三 : 变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-text">(一) 用户自定义变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">(二) 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%8F%98%E9%87%8F"><span class="toc-text">(三) 位置参数变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E9%A2%84%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-text">(四) 预定义变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E9%80%9A%E9%85%8D%E7%AC%A6%E5%92%8C%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">四 : 通配符和正则表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E9%80%9A%E9%85%8D%E7%AC%A6"><span class="toc-text">(一) 通配符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F-regex"><span class="toc-text">(二) 正则表达式(regex)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%80%BB%E7%BB%93"><span class="toc-text">(三) 总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4"><span class="toc-text">五 : 常用指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E8%A1%8C%E6%8F%90%E5%8F%96-grep"><span class="toc-text">(一) 行提取 grep</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E6%9C%AC%E6%88%AA%E5%8F%96-awk"><span class="toc-text">(二) 文本截取 awk</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%87%E6%9C%AC%E6%93%8D%E4%BD%9C-sed"><span class="toc-text">(三) 文本操作 sed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E5%88%97%E6%8F%90%E5%8F%96-cut"><span class="toc-text">(四) 列提取 cut</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94-%E6%8E%92%E5%BA%8F%E5%91%BD%E4%BB%A4-sort"><span class="toc-text">(五) 排序命令 sort</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD-%E5%8E%BB%E9%87%8D%E5%91%BD%E4%BB%A4-uniq"><span class="toc-text">(六) 去重命令 uniq</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%83-%E7%BB%9F%E8%AE%A1%E5%91%BD%E4%BB%A4-wc"><span class="toc-text">(七) 统计命令 wc</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text"></span></a>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-Shell-%E6%A6%82%E8%BF%B0"><span class="toc-text">一 : Shell 概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E4%BB%80%E4%B9%88%E6%98%AF-Shell"><span class="toc-text">(一) 什么是 Shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-Shell-%E8%84%9A%E6%9C%AC"><span class="toc-text">(二) Shell 脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-shell-%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-text">(三) shell 的分类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%89%B9%E6%AE%8A%E7%AC%A6%E5%8F%B7"><span class="toc-text">二 : 特殊符号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%8F%98%E9%87%8F"><span class="toc-text">三 : 变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-text">(一) 用户自定义变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">(二) 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%8F%98%E9%87%8F"><span class="toc-text">(三) 位置参数变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E9%A2%84%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-text">(四) 预定义变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E9%80%9A%E9%85%8D%E7%AC%A6%E5%92%8C%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">四 : 通配符和正则表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E9%80%9A%E9%85%8D%E7%AC%A6"><span class="toc-text">(一) 通配符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F-regex"><span class="toc-text">(二) 正则表达式(regex)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%80%BB%E7%BB%93"><span class="toc-text">(三) 总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4"><span class="toc-text">五 : 常用指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E8%A1%8C%E6%8F%90%E5%8F%96-grep"><span class="toc-text">(一) 行提取 grep</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E6%9C%AC%E6%88%AA%E5%8F%96-awk"><span class="toc-text">(二) 文本截取 awk</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%87%E6%9C%AC%E6%93%8D%E4%BD%9C-sed"><span class="toc-text">(三) 文本操作 sed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E5%88%97%E6%8F%90%E5%8F%96-cut"><span class="toc-text">(四) 列提取 cut</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94-%E6%8E%92%E5%BA%8F%E5%91%BD%E4%BB%A4-sort"><span class="toc-text">(五) 排序命令 sort</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD-%E5%8E%BB%E9%87%8D%E5%91%BD%E4%BB%A4-uniq"><span class="toc-text">(六) 去重命令 uniq</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%83-%E7%BB%9F%E8%AE%A1%E5%91%BD%E4%BB%A4-wc"><span class="toc-text">(七) 统计命令 wc</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text"></span></a>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-02-03</div>
+        <a href="/2023/02/03/shell%E7%BC%96%E7%A8%8B/"><div class="recent-posts-item-content">shell编程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-27</div>
+        <a href="/2023/01/27/shell%E5%85%A5%E9%97%A8/"><div class="recent-posts-item-content">shell入门</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-20</div>
+        <a href="/2023/01/20/%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/"><div class="recent-posts-item-content">服务器内存占用过高</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-13</div>
+        <a href="/2023/01/13/arthas/"><div class="recent-posts-item-content">Arthas</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          冰清阁
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>

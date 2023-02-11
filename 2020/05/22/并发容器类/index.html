@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="差不多得了, 玩什么命呀...">
+  <link 
+    rel="icon" 
+    href="https://img.songhn.com/img/Y67gdd.png">
+  <title>并发容器类</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="并发容器类">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://info4z.github.io/2020/05/22/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8%E7%B1%BB/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://img.songhn.com/img/Y67gdd.png">
+    
+    
+      <meta 
+        property="og:img" 
+        content="差不多得了, 玩什么命呀...">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2020-05-22">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-02-03">
+      <meta 
+        property="og:article:author" 
+        content="清月明风">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="多线程并发编程">
+        
+          <meta 
+            property="og:article:tag" 
+            content="J.U.C并发编程包">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="https://img.songhn.com/img/Y67gdd.png" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">冰清阁</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://img.songhn.com/img/Y67gdd.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">清月明风</p>
+<p class="author-description">差不多得了, 玩什么命呀...</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>36</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>4</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>12</span>
+    <span>标签</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95"><span class="toc-text">一 : 学习方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%8E%A8%E7%90%86-HashMap-%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">二 : 推理 HashMap 的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-HashMap"><span class="toc-text">三 : HashMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-ConcurrentHashMap"><span class="toc-text">四 : ConcurrentHashMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-ConcurrentSkipListMap"><span class="toc-text">五 : ConcurrentSkipListMap</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/">
+        <div class="categories-list-item">
+          高性能编程
+          <span class="categories-list-item-badge">27</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/">
+        <div class="categories-list-item">
+          博客搭建
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+        <div class="categories-list-item">
+          服务器
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">
+        <div class="categories-list-item">
+          数据库
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" 
+        title="多线程并发编程">
+        <div class="tags-list-item">多线程并发编程</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" 
+        title="线程安全">
+        <div class="tags-list-item">线程安全</div>
+      </a>
+    
+      <a 
+        href="/tags/java%E5%9F%BA%E7%A1%80/" 
+        title="java基础">
+        <div class="tags-list-item">java基础</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+        title="高并发网络编程">
+        <div class="tags-list-item">高并发网络编程</div>
+      </a>
+    
+      <a 
+        href="/tags/J-U-C%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%8C%85/" 
+        title="J.U.C并发编程包">
+        <div class="tags-list-item">J.U.C并发编程包</div>
+      </a>
+    
+      <a 
+        href="/tags/Netty/" 
+        title="Netty">
+        <div class="tags-list-item">Netty</div>
+      </a>
+    
+      <a 
+        href="/tags/NIO%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+        title="NIO网络编程">
+        <div class="tags-list-item">NIO网络编程</div>
+      </a>
+    
+      <a 
+        href="/tags/shell/" 
+        title="shell">
+        <div class="tags-list-item">shell</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%86%85%E5%AD%98/" 
+        title="内存">
+        <div class="tags-list-item">内存</div>
+      </a>
+    
+      <a 
+        href="/tags/mysql/" 
+        title="mysql">
+        <div class="tags-list-item">mysql</div>
+      </a>
+    
+      <a 
+        href="/tags/%E8%AF%8A%E6%96%AD/" 
+        title="诊断">
+        <div class="tags-list-item">诊断</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%9B%91%E6%8E%A7/" 
+        title="监控">
+        <div class="tags-list-item">监控</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      并发容器类
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2020-05-21T16:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2020-05-22</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/" 
+          class="post-meta-link">
+          高性能编程
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>1.5k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" 
+            class="post-meta-link">
+            多线程并发编程
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/J-U-C%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%8C%85/" 
+            class="post-meta-link">
+            J.U.C并发编程包
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <blockquote>
+<p>容器主要就分类单列和双列两种, 掌握Map是重中之重</p>
+</blockquote>
+<h2 id="一-学习方法"><a href="#一-学习方法" class="headerlink" title="一 : 学习方法"></a>一 : 学习方法</h2><p><strong>逻辑思维能力是梳理学习方法的基础</strong>; 养成线程思维: 两个或者多个给概念,像一条线串起来</p>
+<p>首先要经过<strong>演绎推导法</strong>进行<strong>因果推理</strong>; 比如java中网络编程只提供了BIO和NIO两种方式, 所以一切框架中, 涉及到网络处理的, 都可以用这两个知识点去探究原理</p>
+<p>然后采用<strong>归纳总结法</strong>提出可能正确的<strong>猜想</strong>; 比如线上10台服务器, 有三台总是每天会自动重启, 收集相关信息后, 发现是运维在修改监控系统配置的时候, 漏掉了提高这三台服务器的重启阈值</p>
+<p>最后要使用<strong>类比法</strong>进行思维固化; 比如<strong>集群</strong>概念就好像是马在拉车,一匹马拉不动的时候,就是用多匹马去拉; <strong>分布式</strong>的概念, 就像是理发的过程中, 洗头发和剪头发是不同的人负责的</p>
+<h2 id="二-推理-HashMap-的实现"><a href="#二-推理-HashMap-的实现" class="headerlink" title="二 : 推理 HashMap 的实现"></a>二 : 推理 HashMap 的实现</h2><p>数据要存储</p>
+<ul>
+<li>涉及到数据结构 : <strong>数组</strong>, <strong>链表</strong>, <strong>栈</strong>, <strong>树</strong>, <strong>队列</strong></li>
+</ul>
+<p>数组的插入和查找</p>
+<ul>
+<li><strong>顺序查找 :</strong> 插入时按先后顺序插入, 查找时轮询扫描进行对比</li>
+<li><strong>二分查找 :</strong> 插入时进行排序; 查找时将 n 个元素分成大致相等的两部分, 减少复杂度</li>
+<li><strong>分块查找 :</strong> 分块查找是二分查找和顺序查找的一种改进</li>
+<li><strong>哈希表 :</strong> 对元素的关键信息进行 hash 计算, 求出下标后直接插入或查找; 常用的实现是除留余数法</li>
+</ul>
+<p>哈希冲突, 数组位置已存在值</p>
+<ul>
+<li>hash(key2) &#x3D; hash(key1); 链地址法; ReHash1(key2) 再次计算 hash;</li>
+</ul>
+<p>合理控制数组和链表的长度</p>
+<ul>
+<li>动态扩容 resize()</li>
+</ul>
+<h2 id="三-HashMap"><a href="#三-HashMap" class="headerlink" title="三 : HashMap"></a>三 : HashMap</h2><p>jdk1.7:</p>
+<ul>
+<li>数据结构 : 数组 + 链表, Entry&lt;K,V&gt;[] table;</li>
+<li>实现原理 : 计算key的hash值,然后根据数组长度进行除留余数法确定数组位置; 如果是存入,先判定key存在不存在,若存在覆盖value的值;若不存在,则放在链表的最后, 如果是读取采用顺序查找法进行比对</li>
+<li>扩容规则 : 初始容量 16, 扩容因子 0.75;<ol>
+<li>如果有初始长度, 则会以最靠近指定长度的2的幂次进行定容,例如: 519则会定为1024</li>
+<li>如果储存的值超过容量的 0.75 倍, 以 2 倍方式进行扩容, 存储的元素会重新排列</li>
+</ol>
+</li>
+</ul>
+<p>jdk1.8:</p>
+<ul>
+<li>数据结构: Node&lt;K,V&gt;[] table; 别以为有啥变化, Node 和 Entry 结构一样; 在jdk1.7的基础上进行了改进,在数据结构上引入了树形结构</li>
+<li>链表阈值8, 最小容量 64<ol>
+<li>如果单个链表容量超过 8, 该链表则自动转为红黑树</li>
+<li>如果链表达到8, 但是数组没有超过 64, 只会 resize 而不会生成树</li>
+</ol>
+</li>
+<li>由于有扩容机制的存在, 所以用到红黑树的概率很低, 同时, 维护树也是对性能的消耗</li>
+</ul>
+<h2 id="四-ConcurrentHashMap"><a href="#四-ConcurrentHashMap" class="headerlink" title="四 : ConcurrentHashMap"></a>四 : ConcurrentHashMap</h2><p>jdk1.7</p>
+<ul>
+<li>数据结构 : Segment&lt;K,V&gt;[] segments;<ul>
+<li>Segment是个啥? 每个存储单元称为segment, 结构上没有任何区别, 但是它继承了ReentrantLock, 每个segment中包含一个 HashEntry[]</li>
+<li>那HashEntry又是个啥? 主要包含hash值, key, value 和 next, 就是HashMap中的Entry呀! 那 Segment 不就是个map吗, 也就是说每个 segment 就是一个 HashMap</li>
+</ul>
+</li>
+<li>设计原理 :<ul>
+<li>也就是说 ConcurrentHashMap 不能扩容,但是 Segment 可以扩容</li>
+<li>这不是有病吗? 这设计太鬼才了! 是否会存在设计过度的嫌疑, 我感觉有点绕弯; Segment 的数量定死就是16个,还高大上的起了个名字叫<strong>分段锁</strong>, 但实质上也就只能支持16个并发量</li>
+<li>既然是为了提高并发操作的安全性, 那我为什么不在每个 HashMap 中的每个 Entry 上加一把锁呢</li>
+</ul>
+</li>
+<li>扩容规则 : 和 HashMap 稍微有些区别, 数组的容量是固定的16个</li>
+</ul>
+<p>jdk1.8</p>
+<ul>
+<li>数据结构 : Node&lt;K,V&gt; table; 数组 + 链表</li>
+<li>初始容量16, 扩容银子 0.75, 阈值也是 8, 最小容量 64</li>
+<li>设计原理 : 设计思路完全改变, 和HashMap是一样的; 那怎么保证线程安全和并发量的? synchronized? Lock接口? CAS?; 查看源码,初始化是通过CAS实现的, put 是 sync</li>
+<li>但是它是怎么保证线程安全的呢?<ol>
+<li>初始化采用 cas 机制</li>
+<li>put 的时候, 如果当前位置为 null, 采用 cas 机制</li>
+<li>如果不为 null, 则使用同步关键字</li>
+</ol>
+</li>
+</ul>
+<h2 id="五-ConcurrentSkipListMap"><a href="#五-ConcurrentSkipListMap" class="headerlink" title="五 : ConcurrentSkipListMap"></a>五 : ConcurrentSkipListMap</h2><p>特点 : <strong>有序链表</strong>实现, <strong>无锁</strong>实现; value 不能为空; 层级越高跳跃性越大, 数据越少, 查询理论变快;</p>
+<p>和 HashMap 的结构完全不一样, 跳表中包含了一个 index, 在 index 中存储 Node 节点的引用</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Index</span> &#123;<br>    Node node;<br>    Index right; <span class="hljs-comment">//先比对入口索引, 如果大于入口索引,则向右进行比对</span><br>    Index down;  <span class="hljs-comment">//如果小于右边的索引, 则向下比对</span><br>&#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Node</span> &#123;<br>    String key;<br>    String value;<br>    Node next;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>插入 Node 节点的时候, 随机创建索引(创建一个随机数, 如果是偶数, 就创建索引); 如果数据量大, 索引量大也会导致查询效率降低, 这时候引入索引分级的概念</p>
+<p>索引分级: 根据生成的随机数的<strong>二进制数的连续为 1 的数量</strong>来确定 level ; 每层的元素, headIndex 固定为所有 node 中最小的</p>
+<p>查找数据时, 按照<strong>先从左到右, 后从上到下</strong>的顺序查找; 时间复杂度O(log n), 空间复杂度O(n); 性能提升思路就是常说的空间换时间, 数据库索引类似的概念, skiplist 在很多开源组件中有使用 (level DB, Redis)</p>
+<p>关于线程安全方面, 依然还是采用 CAS 机制</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            清月明风
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://info4z.github.io/2020/05/22/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8%E7%B1%BB/">
+            https://info4z.github.io/2020/05/22/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8%E7%B1%BB/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2020/05/29/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8%E7%B1%BB2/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">并发容器类(二) </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2020/05/15/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%B7%A5%E5%85%B7%E7%B1%BB/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">并发编程工具类 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95"><span class="toc-text">一 : 学习方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%8E%A8%E7%90%86-HashMap-%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">二 : 推理 HashMap 的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-HashMap"><span class="toc-text">三 : HashMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-ConcurrentHashMap"><span class="toc-text">四 : ConcurrentHashMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-ConcurrentSkipListMap"><span class="toc-text">五 : ConcurrentSkipListMap</span></a></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95"><span class="toc-text">一 : 学习方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%8E%A8%E7%90%86-HashMap-%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">二 : 推理 HashMap 的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-HashMap"><span class="toc-text">三 : HashMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-ConcurrentHashMap"><span class="toc-text">四 : ConcurrentHashMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-ConcurrentSkipListMap"><span class="toc-text">五 : ConcurrentSkipListMap</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-02-03</div>
+        <a href="/2023/02/03/shell%E7%BC%96%E7%A8%8B/"><div class="recent-posts-item-content">shell编程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-27</div>
+        <a href="/2023/01/27/shell%E5%85%A5%E9%97%A8/"><div class="recent-posts-item-content">shell入门</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-20</div>
+        <a href="/2023/01/20/%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/"><div class="recent-posts-item-content">服务器内存占用过高</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-13</div>
+        <a href="/2023/01/13/arthas/"><div class="recent-posts-item-content">Arthas</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          冰清阁
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>

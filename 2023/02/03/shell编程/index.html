@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="差不多得了, 玩什么命呀...">
+  <link 
+    rel="icon" 
+    href="https://img.songhn.com/img/Y67gdd.png">
+  <title>shell编程</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="shell编程">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://info4z.github.io/2023/02/03/shell%E7%BC%96%E7%A8%8B/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://img.songhn.com/img/Y67gdd.png">
+    
+    
+      <meta 
+        property="og:img" 
+        content="差不多得了, 玩什么命呀...">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-02-03">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-02-06">
+      <meta 
+        property="og:article:author" 
+        content="清月明风">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="shell">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="https://img.songhn.com/img/Y67gdd.png" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">冰清阁</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://img.songhn.com/img/Y67gdd.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">清月明风</p>
+<p class="author-description">差不多得了, 玩什么命呀...</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>36</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>4</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>12</span>
+    <span>标签</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%A4%9A%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%AC%A6"><span class="toc-text">一 : 多命令执行符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">二 : 数值运算的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E8%BF%90%E7%AE%97%E5%BC%8F-%E6%88%96-%E8%BF%90%E7%AE%97%E5%BC%8F"><span class="toc-text">(一) $((运算式))或$[运算式]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97%E5%B7%A5%E5%85%B7-expr-%E6%88%96-let"><span class="toc-text">(二) 数值运算工具 expr 或 let</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E5%A3%B0%E6%98%8E%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B-declare"><span class="toc-text">(三) 声明变量类型 declare</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD-test"><span class="toc-text">二 : 条件判断 test</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="toc-text">(一) 文件类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90"><span class="toc-text">(二) 文件权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%87%E4%BB%B6%E6%AF%94%E8%BE%83"><span class="toc-text">(三) 文件比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E6%95%B4%E6%95%B0%E6%AF%94%E8%BE%83"><span class="toc-text">(四) 整数比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%A4%E6%96%AD"><span class="toc-text">(五) 字符串判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD-%E5%A4%9A%E9%87%8D%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="toc-text">(六) 多重条件判断</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="toc-text">三 : 条件判断</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%8D%95%E5%88%86%E6%94%AF-if"><span class="toc-text">(一) 单分支 if</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%8F%8C%E5%88%86%E6%94%AF-if-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-text">(二) 双分支 if 条件语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E5%A4%9A%E5%88%86%E6%94%AF-if-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-text">(三) 多分支 if 条件语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-case-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-text">(四) case 条件语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%BE%AA%E7%8E%AF"><span class="toc-text">四 : 循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-for-%E5%BE%AA%E7%8E%AF"><span class="toc-text">(一) for 循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-while-%E5%BE%AA%E7%8E%AF"><span class="toc-text">(二) while 循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-until-%E5%BE%AA%E7%8E%AF"><span class="toc-text">(三) until 循环</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E9%80%80%E5%87%BA"><span class="toc-text">五 : 退出</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-exit-%E8%AF%AD%E5%8F%A5"><span class="toc-text">(一) exit 语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-break-%E8%AF%AD%E5%8F%A5"><span class="toc-text">(二) break 语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-continue-%E8%AF%AD%E5%8F%A5"><span class="toc-text">(三) continue 语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%87%BD%E6%95%B0"><span class="toc-text">六 : 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%8E%A5%E6%94%B6%E9%94%AE%E7%9B%98%E8%BE%93%E5%85%A5"><span class="toc-text">七 : 接收键盘输入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-text">八 : 输入输出重定向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-Bash-%E7%9A%84%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA"><span class="toc-text">(一) Bash 的标准输入输出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E8%BE%93%E5%87%BA%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-text">(二) 输出重定向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E8%BE%93%E5%85%A5%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-text">(三) 输入重定向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E5%9E%83%E5%9C%BE%E6%A1%B6"><span class="toc-text">(四) 垃圾桶</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/">
+        <div class="categories-list-item">
+          高性能编程
+          <span class="categories-list-item-badge">27</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/">
+        <div class="categories-list-item">
+          博客搭建
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+        <div class="categories-list-item">
+          服务器
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">
+        <div class="categories-list-item">
+          数据库
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" 
+        title="多线程并发编程">
+        <div class="tags-list-item">多线程并发编程</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" 
+        title="线程安全">
+        <div class="tags-list-item">线程安全</div>
+      </a>
+    
+      <a 
+        href="/tags/java%E5%9F%BA%E7%A1%80/" 
+        title="java基础">
+        <div class="tags-list-item">java基础</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+        title="高并发网络编程">
+        <div class="tags-list-item">高并发网络编程</div>
+      </a>
+    
+      <a 
+        href="/tags/J-U-C%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%8C%85/" 
+        title="J.U.C并发编程包">
+        <div class="tags-list-item">J.U.C并发编程包</div>
+      </a>
+    
+      <a 
+        href="/tags/Netty/" 
+        title="Netty">
+        <div class="tags-list-item">Netty</div>
+      </a>
+    
+      <a 
+        href="/tags/NIO%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+        title="NIO网络编程">
+        <div class="tags-list-item">NIO网络编程</div>
+      </a>
+    
+      <a 
+        href="/tags/shell/" 
+        title="shell">
+        <div class="tags-list-item">shell</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%86%85%E5%AD%98/" 
+        title="内存">
+        <div class="tags-list-item">内存</div>
+      </a>
+    
+      <a 
+        href="/tags/mysql/" 
+        title="mysql">
+        <div class="tags-list-item">mysql</div>
+      </a>
+    
+      <a 
+        href="/tags/%E8%AF%8A%E6%96%AD/" 
+        title="诊断">
+        <div class="tags-list-item">诊断</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%9B%91%E6%8E%A7/" 
+        title="监控">
+        <div class="tags-list-item">监控</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      shell编程
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-02-02T16:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-02-03</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/" 
+          class="post-meta-link">
+          服务器
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>7.5k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/shell/" 
+            class="post-meta-link">
+            shell
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <blockquote>
+<p>熟练掌握shell的语法, 写出优雅的脚本</p>
+</blockquote>
+<h2 id="一-多命令执行符"><a href="#一-多命令执行符" class="headerlink" title="一 : 多命令执行符"></a>一 : 多命令执行符</h2><table>
+<thead>
+<tr>
+<th>多命令执行符</th>
+<th>格式</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>;</code></td>
+<td>命令1<code>;</code>命令2</td>
+<td>多个命令顺序执行, 命令之间没有任何逻辑联系</td>
+</tr>
+<tr>
+<td><code>&amp;&amp;</code></td>
+<td>命令1<code>&amp;&amp;</code>命令2</td>
+<td>当命令1正确执行($?&#x3D;0), 则命令2才会执行; 当命令1执行不正确($? ≠ 0), 则命令2不会执行</td>
+</tr>
+<tr>
+<td>&#96;</td>
+<td></td>
+<td>&#96;</td>
+</tr>
+</tbody></table>
+<p>示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">判断命令是否正确执行</span><br>[root@localhost ~]# ls &amp;&amp; echo yes || echo no<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="二-数值运算的方法"><a href="#二-数值运算的方法" class="headerlink" title="二 : 数值运算的方法"></a>二 : 数值运算的方法</h2><p>在 linux 中, 所有变量的默认类型是字符串型, 如果我需要进行数值运算, 可以采用的方式有三种</p>
+<p><strong>推荐使用 <code>$((运算式))</code> 的方式</strong></p>
+<h3 id="一-运算式-或-运算式"><a href="#一-运算式-或-运算式" class="headerlink" title="(一) $((运算式))或$[运算式]"></a>(一) <code>$((运算式))</code>或<code>$[运算式]</code></h3><p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">变量 ff 的值是 aa 和 bb 的和</span><br>[root@localhost ~]# aa=11<br>[root@localhost ~]# bb=22<br>[root@localhost ~]# ff=$(( $aa+$bb ))<br>[root@localhost ~]# echo $ff<br>33<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">变量 gg 的值是 aa 和 bb 的和</span><br>[root@localhost ~]# gg=$[ $aa+$bb ]<br>[root@localhost ~]# echo $gg<br>33<br></code></pre></td></tr></table></figure>
+
+<h3 id="二-数值运算工具-expr-或-let"><a href="#二-数值运算工具-expr-或-let" class="headerlink" title="(二) 数值运算工具 expr 或 let"></a>(二) 数值运算工具 expr 或 let</h3><p><strong>expr</strong> 命令要求<strong>运算符左右两侧必须有空格</strong>, 否则运算不执行</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">给变量aa和变量bb赋值</span><br>[root@localhost ~]# aa=11<br>[root@localhost ~]# bb=22<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-built_in">dd</span>的值是aa和bb的和。注意<span class="hljs-string">&quot;+&quot;</span>号左右两侧必须有空格</span><br>[root@localhost ~]# dd=$(expr $aa + $bb)<br><br>[root@localhost ~]# echo $dd <br>33<br></code></pre></td></tr></table></figure>
+
+<p><strong>let</strong> 命令对格式要求比较宽松, 所以<strong>推荐使用 let 命令进行数值运算</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">给变量 aa 和变量 bb 赋值</span><br>[root@localhost ~]# aa=11<br>[root@localhost ~]# bb=22<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">变量 ee 的值是 aa 和 bb 的和</span><br>[root@localhost ~]# let ee=$aa+$bb<br>[root@localhost ~]# echo $ee<br>33<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">定义变量 n</span><br>[root@localhost ~]# n=20<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">变量 n 的值等于变量本身再加 1</span><br>[root@localhost ~]# let n+=1<br>[root@localhost ~]# echo $n<br>21<br></code></pre></td></tr></table></figure>
+
+<h3 id="三-声明变量类型-declare"><a href="#三-声明变量类型-declare" class="headerlink" title="(三) 声明变量类型 declare"></a>(三) 声明变量类型 <code>declare</code></h3><p>既然所有变量的默认类型是字符串型, 那么只要把变量声明为整数型不就可以了吗? 使用 <code>declare</code> 命令就可以实现声明变量的类型</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# declare [+/-][选项] 变量名<br>选项:<br>    -	: 给变量设定类型属性<br>    +	: 取消变量的类型属性<br>    <br>    -a	: 将变量声明为数组型(array)<br>    -i	: 将变量声明为整数型(integer) <br>    -r	: 讲变量声明为只读变量(readonly)。<br>        注意, 一旦设置为只读变量, 既不能修改变量的值, 也不能删除变量, 甚至不能通过+r 取消只读属性<br>    -x	: 将变量声明为环境变量<br>    -p	: 显示指定变量的被声明的类型<br></code></pre></td></tr></table></figure>
+
+<p>代码示例, 了解即可</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">给变量 aa 和 bb 赋值</span><br>[root@localhost ~]# aa=11<br>[root@localhost ~]# bb=22<br><span class="hljs-meta prompt_"># </span><span class="language-bash">声明变量 cc 的类型是整数型, 它的值是 aa 和 bb 的和</span><br>[root@localhost ~]# declare -i cc=$aa+$bb<br><span class="hljs-meta prompt_"># </span><span class="language-bash">这下终于可以相加了</span><br>[root@localhost ~]# echo $cc<br>33<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="二-条件判断-test"><a href="#二-条件判断-test" class="headerlink" title="二 : 条件判断 test"></a>二 : 条件判断 test</h2><h3 id="一-文件类型"><a href="#一-文件类型" class="headerlink" title="(一) 文件类型"></a>(一) 文件类型</h3><p>相关参数 </p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>英文</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-b</code> 文件</td>
+<td>block</td>
+<td>判断该文件是否存在, 并且是否为块设备文件(是块设备文件为真)</td>
+</tr>
+<tr>
+<td><code>-c</code> 文件</td>
+<td>character</td>
+<td>判断该文件是否存在, 并且是否为字符设备文件(是字符设备文件为真)</td>
+</tr>
+<tr>
+<td><strong><code>-d</code> 文件</strong></td>
+<td>directory</td>
+<td>判断该文件是否存在, 并且是否为目录文件(<strong>是目录为真</strong>)</td>
+</tr>
+<tr>
+<td><strong><code>-e</code> 文件</strong></td>
+<td>exists</td>
+<td>判断该文件是否存在(<strong>存在为真</strong>)</td>
+</tr>
+<tr>
+<td><strong><code>-f</code> 文件</strong></td>
+<td>file</td>
+<td>判断该文件是否存在, 并且是否为普通文件(<strong>是普通文件为真</strong>)</td>
+</tr>
+<tr>
+<td><strong><code>-L</code> 文件</strong></td>
+<td>link</td>
+<td>判断该文件是否存在, 并且是否为符号链接文件(<strong>是符号链接文件为真</strong>)</td>
+</tr>
+<tr>
+<td><code>-p</code> 文件</td>
+<td>pipe</td>
+<td>判断该文件是否存在, 并且是否为管道文件(是管道文件为真)</td>
+</tr>
+<tr>
+<td><strong><code>-s</code> 文件</strong></td>
+<td>size &gt; 0</td>
+<td>判断该文件是否存在, 并且是否为非空(<strong>非空为真</strong>)</td>
+</tr>
+<tr>
+<td><code>-S</code> 文件</td>
+<td>socket</td>
+<td>判断该文件是否存在, 并且是否为套接字文件(是套接字文件为真)</td>
+</tr>
+</tbody></table>
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">命令格式</span><br>[root@localhost ~]# test -e /root/sh/<br><span class="hljs-meta prompt_"># </span><span class="language-bash">通常我们喜欢使用另一种格式,而且更通用,如下</span><br>[root@localhost ~]# [ -e /root/sh/ ]<br>[root@localhost ~]# echo $?<br>0 #判断结果为 0,/root/sh/目录是存在的<br><br>[root@localhost ~]# [ -e /root/test ]<br>[root@localhost ~]# echo $? <br>1 #在/root/下并没有test文件或目录,所以&quot;$?&quot;的返回值为非零<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">也可以用&amp;&amp;和||</span><br>[root@localhost ~]# [ -d /root/sh ] &amp;&amp; echo &quot;yes&quot; || echo &quot;no&quot; <br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="二-文件权限"><a href="#二-文件权限" class="headerlink" title="(二) 文件权限"></a>(二) 文件权限</h3><p>相关参数 </p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>作 用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong><code>-r</code> 文件</strong></td>
+<td>判断该文件是否存在, 并且是否该文件拥有读权限(有读权限为真)</td>
+</tr>
+<tr>
+<td><strong><code>-w</code> 文件</strong></td>
+<td>判断该文件是否存在, 并且是否该文件拥有写权限(有写权限为真)</td>
+</tr>
+<tr>
+<td><strong><code>-x</code> 文件</strong></td>
+<td>判断该文件是否存在, 并且是否该文件拥有执行权限(有执行权限为真)</td>
+</tr>
+<tr>
+<td><code>-u</code> 文件</td>
+<td>判断该文件是否存在, 并且是否该文件拥有 SUID 权限(有 SUID 权限为真)</td>
+</tr>
+<tr>
+<td><code>-g</code> 文件</td>
+<td>判断该文件是否存在, 并且是否该文件拥有 SGID 权限(有 SGID 权限为真)</td>
+</tr>
+<tr>
+<td><code>-k</code> 文件</td>
+<td>判断该文件是否存在, 并且是否该文件拥有 SBit 权限(有 SBit 权限为真)</td>
+</tr>
+</tbody></table>
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# ll null.txt <br>-rw-r--r-- 1 root root 0 Nov 16 18:45 null.txt<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断文件是拥有写权限的</span><br>[root@localhost ~]# [ -w null.txt ] &amp;&amp; echo &quot;yes&quot; || echo &quot;no&quot; <br>yes<br></code></pre></td></tr></table></figure>
+
+<h3 id="三-文件比较"><a href="#三-文件比较" class="headerlink" title="(三) 文件比较"></a>(三) 文件比较</h3><p>如何进行两个文件之间的比较</p>
+<table>
+<thead>
+<tr>
+<th>测试选项</th>
+<th>英文</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件1 <code>-nt</code> 文件2</td>
+<td>new</td>
+<td>判断文件1的修改时间是否比文件2的新(如果新则为真)</td>
+</tr>
+<tr>
+<td>文件1 <code>-ot</code> 文件2</td>
+<td>old</td>
+<td>判断文件1的修改时间是否比文件2的旧(如果旧则为真)</td>
+</tr>
+<tr>
+<td><strong>文件1 <code>-ef</code> 文件2</strong></td>
+<td>equal</td>
+<td>判断文件1是否和文件2的Inode号一致,可以理解为两个文件是否为同一个文件(<strong>硬链接</strong>)</td>
+</tr>
+</tbody></table>
+<p>代码示例 : 判断两个文件是否是硬链接呢</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">创建个硬链接吧</span><br>[root@localhost ~]# ln /root/student.txt /tmp/stu.txt<br><span class="hljs-meta prompt_">#</span><span class="language-bash">用 <span class="hljs-built_in">test</span> 测试下,果然很有用</span><br>[root@localhost ~]# [ /root/student.txt -ef /tmp/stu.txt ] &amp;&amp; echo &quot;yes&quot; || echo &quot;no&quot; <br>yes<br></code></pre></td></tr></table></figure>
+
+<h3 id="四-整数比较"><a href="#四-整数比较" class="headerlink" title="(四) 整数比较"></a>(四) 整数比较</h3><p>如何在两个整数之间进行比较</p>
+<table>
+<thead>
+<tr>
+<th>测试选项</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>整数1 <code>-eq</code> 整数2</td>
+<td>判断整数1是否和整数2相等(相等为真)</td>
+</tr>
+<tr>
+<td>整数1 <code>-ne</code> 整数2</td>
+<td>判断整数1是否和整数2不相等(不相等位置)</td>
+</tr>
+<tr>
+<td>整数1 <code>-gt</code> 整数2</td>
+<td>判断整数1是否大于整数2(大于为真)</td>
+</tr>
+<tr>
+<td>整数1 <code>-lt</code> 整数2</td>
+<td>判断整数1是否小于整数2(小于位置)</td>
+</tr>
+<tr>
+<td>整数1 <code>-ge</code> 整数2</td>
+<td>判断整数1是否大于等于整数2(大于等于为真)</td>
+</tr>
+<tr>
+<td>整数1 <code>-le</code> 整数2</td>
+<td>判断整数1是否小于等于整数2(小于等于为真)</td>
+</tr>
+</tbody></table>
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">判断 23 是否大于等于 22,当然是了</span><br>[root@localhost ~]# [ 23 -ge 22 ] &amp;&amp; echo &quot;yes&quot; || echo &quot;no&quot; <br>yes<br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断 23 是否小于等于 22,当然不是了</span><br>[root@localhost ~]# [ 23 -le 22 ] &amp;&amp; echo &quot;yes&quot; || echo &quot;no&quot; <br>no<br></code></pre></td></tr></table></figure>
+
+<h3 id="五-字符串判断"><a href="#五-字符串判断" class="headerlink" title="(五) 字符串判断"></a>(五) 字符串判断</h3><p>字符串的判断</p>
+<table>
+<thead>
+<tr>
+<th>测试选项</th>
+<th>英文</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-z</code> 字符串</td>
+<td>length zero</td>
+<td>判断字符串是否为空(空为真)</td>
+</tr>
+<tr>
+<td><code>-n</code> 字符串</td>
+<td>nonzero</td>
+<td>判断字符串是否为非空(非空为真)</td>
+</tr>
+<tr>
+<td>字串1 <code>==</code> 字串2</td>
+<td></td>
+<td>判断字符串1是否和字符串2相等(相等为真)</td>
+</tr>
+<tr>
+<td>字串1 <code>!=</code> 字串2</td>
+<td></td>
+<td>判断字符串1是否和字符串2不相等(不等为真)</td>
+</tr>
+</tbody></table>
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">判断name变量是否为空</span><br>[root@localhost ~]# [ -z &quot;$name&quot; ] &amp;&amp; echo &quot;yes&quot; || echo &quot;no&quot; <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">给变量 aa 和变量 bb 赋值</span><br>[root@localhost ~]# [ &quot;$aa&quot; == &quot;$bb&quot; ] &amp;&amp; echo &quot;yes&quot; || echo &quot;no&quot; <br></code></pre></td></tr></table></figure>
+
+<h3 id="六-多重条件判断"><a href="#六-多重条件判断" class="headerlink" title="(六) 多重条件判断"></a>(六) 多重条件判断</h3><p>多重条件判断是什么样子的</p>
+<table>
+<thead>
+<tr>
+<th>测试选项</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>判断1 <code>-a</code> 判断2</td>
+<td>逻辑与, 判断1和判断2都成立, 最终的结果才为真</td>
+</tr>
+<tr>
+<td>判断1 <code>-o</code> 判断2</td>
+<td>逻辑或, 判断1和判断2有一个成立, 最终的结果就为真</td>
+</tr>
+<tr>
+<td><code>!</code> 判断</td>
+<td>逻辑非, 使原始的判断式取反</td>
+</tr>
+</tbody></table>
+<p>代码示例 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">判断变量aa是否为空且是否大于 23</span><br>[root@localhost ~]# [ -n &quot;$aa&quot; -a &quot;$aa&quot; -gt 23 ] &amp;&amp; echo &quot;yes&quot; || echo &quot;no&quot;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">本来<span class="hljs-string">&quot;-n&quot;</span>选项是变量aa不为空,加<span class="hljs-string">&quot;!&quot;</span>后相当于<span class="hljs-string">&quot;-z&quot;</span></span><br>[root@localhost ~]# [ ! -n &quot;$aa&quot; ] &amp;&amp; echo &quot;yes&quot; || echo &quot;no&quot; <br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>注意 : <code>!</code> 和 <code>-n</code> 之间必须加入空格,否则会报错的。</strong></li>
+</ul>
+<h2 id="三-条件判断"><a href="#三-条件判断" class="headerlink" title="三 : 条件判断"></a>三 : 条件判断</h2><h3 id="一-单分支-if"><a href="#一-单分支-if" class="headerlink" title="(一) 单分支 if"></a>(一) 单分支 if</h3><p>单分支条件语句最为简单, 就是只有一个判断条件, 如果符合条件则执行某个程序, 否则什么事情都不做; 语法如下 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">if [ 条件判断式 ];then<br>	程序<br>fi<br></code></pre></td></tr></table></figure>
+
+<p>需要注意几个点 : </p>
+<ul>
+<li><p><strong><code>if</code> 语句使用 <code>fi</code> 结尾</strong>, 和一般语言使用大括号结尾不同</p>
+</li>
+<li><p><code>[ 条件判断式 ]</code> 就是使用 <code>test</code> 命令判断,所以<strong>中括号和条件判断式之间必须有空格</strong></p>
+</li>
+<li><p><code>then</code> 后面跟符合条件之后执行的程序, 可以放在 <code>[]</code> 之后用 <code>;</code> 分割。<strong>也可以换行写入, 就不需要 <code>;</code> 了</strong>, 比如单分支 if 语句还可以这样写 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">if [ 条件判断式 ]<br>    then<br>  		程序<br>fi<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi sh/if1.sh<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">统计根分区使用率</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">把根分区使用率作为变量值赋予变量 rate</span><br>rate=$(df -h | grep &quot;/dev/vda1&quot; | awk &#x27;&#123;print $5&#125;&#x27; | cut -d &quot;%&quot; -f 1)<br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断 rate 的值如果大于等于 80,则执行 <span class="hljs-keyword">then</span> 程序</span><br>if [ $rate -ge 80 ]<br>    then <br>    	echo &quot;Warning! /dev/sda3 is full!!&quot;<br>fi<br></code></pre></td></tr></table></figure>
+
+<h3 id="二-双分支-if-条件语句"><a href="#二-双分支-if-条件语句" class="headerlink" title="(二) 双分支 if 条件语句"></a>(二) 双分支 if 条件语句</h3><p>语法格式</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">if [ 条件判断式 ]<br>    then<br>    	条件成立时,执行的程序<br>    else<br>    	条件不成立时,执行的另一个程序<br>fi<br></code></pre></td></tr></table></figure>
+
+<p>代码示例 : 我们写一个数据备份的例子, 来看看双分支 if 条件语句。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">备份 mysql 数据库</span><br>[root@localhost ~]# vi sh/bakmysql.sh<br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">备份 mysql 数据库</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">同步系统时间</span><br>ntpdate asia.pool.ntp.org &amp;&gt;/dev/null<br><span class="hljs-meta prompt_">#</span><span class="language-bash">把当前系统时间按照<span class="hljs-string">&quot;年月日&quot;</span>格式赋予变量 <span class="hljs-built_in">date</span></span><br>date=$(date +%y%m%d)<br><span class="hljs-meta prompt_">#</span><span class="language-bash">统计 mysql 数据库的大小,并把大小赋予 size 变量</span><br>size=$(du -sh /var/lib/mysql)<br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断备份目录是否存在,是否为目录</span><br>if [ -d /tmp/dbbak ]<br><span class="hljs-meta prompt_">	#</span><span class="language-bash">如果判断为真,执行以下脚本</span><br>    then<br>    	#把当前日期写入临时文件<br>        echo &quot;Date : $date!&quot; &gt; /tmp/dbbak/dbinfo.txt<br>        #把数据库大小写入临时文件<br>        echo &quot;Data size : $size&quot; &gt;&gt; /tmp/dbbak/dbinfo.txt<br>        #进入备份目录<br>        cd /tmp/dbbak<br>        #打包压缩数据库与临时文件,把所有输出丢入垃圾箱(不想看到任何输出)<br>        tar -zcf mysql-lib-$date.tar.gz /var/lib/mysql dbinfo.txt &amp;&gt;/dev/null<br>        #删除临时文件<br>        rm -rf /tmp/dbbak/dbinfo.txt<br>    else<br>    	#如果判断为假,则建立备份目录<br>        mkdir /tmp/dbbak<br>        #把日期和数据库大小保存如临时文件<br>        echo &quot;Date : $date!&quot; &gt; /tmp/dbbak/dbinfo.txt<br>        echo &quot;Data size : $size&quot; &gt;&gt; /tmp/dbbak/dbinfo.txt<br>        #压缩备份数据库与临时文件<br>        cd /tmp/dbbak<br>        tar -zcf mysql-lib-$date.tar.gz dbinfo.txt /var/lib/mysql &amp;&gt;/dev/null<br>        #删除临时文件<br>        rm -rf /tmp/dbbak/dbinfo.txt<br>fi<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>注意 :</strong> 解释一下 <strong><code>&amp;&gt;/dev/null</code></strong> 这个命令, <code>&amp;&gt;</code> 输出, <code>/dev/null</code> 这个类似回收站, 任何东西丢到这里面都会消失, 所以通常写脚本的时候, 我们习惯加上 <code>&amp;&gt;/dev/null</code>, <strong>用于屏蔽命令的提示信息</strong></li>
+</ul>
+<p>实例 : 在工作当中,服务器上的服务经常会宕机。如果我们对服务器监控不好,就会造成服务器中服务宕机了,而管理员却不知道的情况, 这时我们可以写一个脚本来监听本机的服务,如果服务停止或宕机了,可以自动重启这些服务。我们拿 apache 服务来举例 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">判断 apache 是否启动,如果没有启动则自动启动</span><br>[root@localhost ~]# vi sh/autostart.sh<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断 apache 是否启动,如果没有启动则自动启动</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">Author: Bob (E-mail: Bob@163.com)</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">使用nmap命令扫描服务器公网ip,并截取 apache 服务的状态,赋予变量 port</span><br>port=$(nmap -sT 192.168.4.210 | grep tcp | grep http | awk &#x27;&#123;print $2&#125;&#x27;)<br><span class="hljs-meta prompt_">#</span><span class="language-bash">如果变量 port 的值是<span class="hljs-string">&quot;open&quot;</span></span><br>if [ &quot;$port&quot; == &quot;open&quot; ]<br>	then<br><span class="hljs-meta prompt_">		#</span><span class="language-bash">则证明 apache 正常启动,在正常日志中写入一句话即可</span><br>		echo &quot;$(date) httpd is ok!&quot; &gt;&gt; /tmp/autostart-acc.log<br>	else<br><span class="hljs-meta prompt_">		#</span><span class="language-bash">否则证明 apache 没有启动,自动启动 apache</span><br>		/etc/rc.d/init.d/httpd start &amp;&gt;/dev/null<br><span class="hljs-meta prompt_">		#</span><span class="language-bash">并在错误日志中记录自动启动 apche 的时间</span><br>		echo &quot;$(date) restart httpd !!&quot; &gt;&gt; /tmp/autostart-err.log<br>fi<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p>我们使用 <code>nmap</code> 端口扫描命令, 它的原理是给指定服务器所有的端口发送请求, 看它是否回复, <code>nmap</code> 命令格式如下 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# nmap -sT 域名或IP(一般用公网IP)<br>选项 : <br>    -s 扫描<br>    -T 扫描所有开启的 TCP 端口<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>这条命令的执行结果如下 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">可以看到这台服务器开启了如下的服务</span><br>[root@localhost ~]# nmap -sT 192.168.4.210<br>Starting Nmap 5.51 ( http://nmap.org ) at 2018-11-25 15:11 CST<br>Nmap scan report for 192.168.4.210<br>Host is up (0.0010s latency).<br>Not shown: 994 closed ports<br>PORT STATE SERVICE<br>22/tcp open ssh<br>80/tcp open http #apache 的状态是 open<br>111/tcp open rpcbind<br>139/tcp open netbios-ssn<br>445/tcp open microsoft-ds<br>3306/tcp open mysql<br>Nmap done: 1 IP address (1 host up) scanned in 0.49 seconds<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>知道了 <code>nmap</code> 命令的用法,我们在脚本中使用的命令就是为了截取 <code>http</code> 的状态,只要状态是 <code>open</code> 就证明 apache 启动正常,否则证明 apache 启动错误。来看看脚本中命令的结果 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">扫描指定计算机,提取包含 tcp 的行,在提取包含 httpd 的行,截取第二列</span><br>[root@localhost ~]# nmap -sT 192.168.4.210 | grep tcp | grep http | awk &#x27;&#123;print $2&#125;&#x27;<br>open<br><span class="hljs-meta prompt_"># </span><span class="language-bash">把截取的值赋予变量 port</span><br></code></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="三-多分支-if-条件语句"><a href="#三-多分支-if-条件语句" class="headerlink" title="(三) 多分支 if 条件语句"></a>(三) 多分支 if 条件语句</h3><p>语法格式</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">if [ 条件判断式 1 ]<br>    then<br>    	当条件判断式 1 成立时,执行程序 1<br>elif [ 条件判断式 2 ]<br>    then<br>        当条件判断式 2 成立时,执行程序 2 <br><span class="hljs-meta prompt_"># </span><span class="language-bash">…省略更多条件…</span><br>else<br>	当所有条件都不成立时,最后执行此程序<br>fi<br></code></pre></td></tr></table></figure>
+
+<p>代码示例 : 判断用户输入的是什么文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi sh/if-elif.sh<br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断用户输入的是什么文件</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">接收键盘的输入,并赋予变量 file</span><br>read -p &quot;Please input a filename: &quot; file<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断 file 变量是否为空</span><br>if [ -z &quot;$file&quot; ]<br>	then<br>        #如果为空,执行程序 1,也就是输出报错信息<br>        echo &quot;Error,please input a filename&quot;<br>        #退出程序,并返回值为 1(把返回值赋予变量$?)<br>		exit 1<br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断 file 的值是否存在</span><br>elif [ ! -e &quot;$file&quot; ]<br>	then<br><span class="hljs-meta prompt_">		#</span><span class="language-bash">如果不存在,则执行程序 2</span><br>		echo &quot;Your input is not a file!&quot;<br>        #退出程序,把并定义返回值为 2<br>        exit 2<br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断 file 的值是否为普通文件</span><br>elif [ -f &quot;$file&quot; ]<br>	then<br><span class="hljs-meta prompt_">		#</span><span class="language-bash">如果是普通文件,则执行程序 3</span><br>        echo &quot;$file is a regulare file!&quot;<br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断 file 的值是否为目录文件</span><br>elif [ -d &quot;$file&quot; ]<br>	then<br><span class="hljs-meta prompt_">		#</span><span class="language-bash">如果是目录文件,则执行程序 4</span><br>		echo &quot;$file is a directory!&quot;<br>else<br><span class="hljs-meta prompt_">	#</span><span class="language-bash">如果以上判断都不是,则执行程序 5</span><br>	echo &quot;$file is an other file!&quot;<br>fi<br></code></pre></td></tr></table></figure>
+
+<h3 id="四-case-条件语句"><a href="#四-case-条件语句" class="headerlink" title="(四) case 条件语句"></a>(四) case 条件语句</h3><p><code>case</code> 语句和 <code>if…elif…else</code> 语句一样都是多分支条件语句, 不过和 <code>if</code> 多分支条件语句不同的是, <code>case</code> 语句只能判断一种条件关系, 而 <code>if</code> 语句可以判断多种条件关系。case 语句语法如下 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">case $变量名 in<br>    &quot;值1&quot;)<br>    如果变量的值等于值 1,则执行程序 1<br>    ;;<br>    &quot;值2&quot;)<br>    如果变量的值等于值 2,则执行程序 2<br>    ;;<br>    …省略其他分支…<br>     *)<br>    如果变量的值都不是以上的值,则执行此程序<br>    ;;<br>esac<br></code></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>以下内容 : </p>
+<ul>
+<li><code>case</code> 语句, 会取出变量中的值, 然后与语句体中的值逐一比较; 如果数值符合, 则执行对应的程序, 如果数值不符, 则依次比较下一个值。如果所有的值都不符合,则执行 <code>*)</code> 中的程序;  <code>*</code>  代表所有其他值</li>
+<li><code>case</code> 语句以 <code>case</code> 开头, 以 <code>esac</code> 结尾; 每一个分支程序之后要通过 <code>;;</code> 双分号结尾, 代表该程序段结束(千万不要忘记)。</li>
+</ul>
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi sh/case.sh<br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断用户输入</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">在屏幕上输出<span class="hljs-string">&quot;请选择 yes/no&quot;</span>,然后把用户选择赋予变量 cho</span><br>read -p &quot;Please choose yes/no: &quot; -t 30 cho<br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断变量 cho 的值</span><br>case $cho in<br><span class="hljs-meta prompt_">	#</span><span class="language-bash">如果是 <span class="hljs-built_in">yes</span></span><br>    &quot;yes&quot;)<br>    	#执行程序 1<br>        echo &quot;Your choose is yes!&quot;<br>        ;;<br><span class="hljs-meta prompt_">	#</span><span class="language-bash">如果是 no</span><br>    &quot;no&quot;)<br><span class="hljs-meta prompt_">		#</span><span class="language-bash">执行程序 2</span><br>        echo &quot;Your choose is no!&quot;<br>        ;;<br><span class="hljs-meta prompt_">	#</span><span class="language-bash">如果既不是 <span class="hljs-built_in">yes</span>,也不是 no</span><br>    *)<br>    	#则执行此程序<br>        echo &quot;Your choose is error!&quot;<br>        ;;<br>esac<br></code></pre></td></tr></table></figure>
+
+<h2 id="四-循环"><a href="#四-循环" class="headerlink" title="四 : 循环"></a>四 : 循环</h2><h3 id="一-for-循环"><a href="#一-for-循环" class="headerlink" title="(一) for 循环"></a>(一) for 循环</h3><p><code>for</code> 循环是固定循环, 也就是在循环时已经知道需要进行几次的循环, 有时也把 <code>for</code> 循环称为<strong>计数循环</strong>。for 的语法有两种 : </p>
+<p><strong>语法一</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">for 变量 in 值1 值2 值3…<br>    do<br>    	程序<br>    done<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>这种语法中 for 循环的次数, 取决于 in 后面值的个数(空格分隔), 有几个值就循环几次, 并且每次循环都把值赋予变量。也就是说,假设 in 后面有三个值, 就会循环三次, 第一次循环会把值1赋予变量, 第二次循环会把值2赋予变量, 以此类推。</li>
+</ul>
+<p><strong>语法二</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">for (( 初始值;循环控制条件;变量变化 ))<br>    do<br>    	程序<br>    done<br></code></pre></td></tr></table></figure>
+
+<p>语法二中<strong>需要注意</strong> : </p>
+<ul>
+<li>初始值 : 在循环开始时, 需要给某个变量赋予初始值, 如 i&#x3D;1;  </li>
+<li>循环控制条件 : 用于指定变量循环的次数,如 i&lt;&#x3D;100, 则只要 i 的值小于等于 100, 循环就会继续; </li>
+<li>变量变化 : 每次循环之后, 变量该如何变化,如 i&#x3D;i+1; 代表每次循环之后, 变量 i 的值都加 1。</li>
+</ul>
+<p>代码示例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi sh/for.sh<br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">打印时间</span><br>for time in morning noon afternoon evening<br>	do<br>		echo &quot;This time is $time!&quot;<br>	done<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi sh/auto-tar.sh<br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">批量解压缩脚本</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">进入压缩包目录</span><br>cd /lamp<br><span class="hljs-meta prompt_"># </span><span class="language-bash">列出.tar.gz的值,有多少个文件,就会循环多少次,每次循环把文件名赋予变量i</span><br>for i in $(ls *.tar.gz)<br>	do<br><span class="hljs-meta prompt_">		#</span><span class="language-bash">解压缩,并把所有输出都丢弃</span><br>		tar -zxf $i &amp;&gt;/dev/null<br>	done<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">从1加到100</span><br><br>s=0<br><span class="hljs-meta prompt_"># </span><span class="language-bash">定义循环 100 次</span><br>for (( i=1;i&lt;=100;i=i+1 ))<br>    do<br>    	# 每次循环给变量 s 赋值<br>        s=$(( $s+$i ))<br>    done<br><span class="hljs-meta prompt_"># </span><span class="language-bash">输出1加到100的和</span><br>echo &quot;The sum of 1+2+...+100 is : $s&quot;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi useradd.sh<br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">批量添加指定数量的用户</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">让用户输入用户名,把输入保存入变量 name</span><br>read -p &quot;Please input user name: &quot; -t 30 name<br><span class="hljs-meta prompt_"># </span><span class="language-bash">让用户输入添加用户的数量,把输入保存入变量 num</span><br>read -p &quot;Please input the number of users: &quot; -t 30 num <br><span class="hljs-meta prompt_"># </span><span class="language-bash">让用户输入初始密码,把输入保存如变量 pass</span><br>read -p &quot;Please input the password of users: &quot; -t 30 pass<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">判断三个变量不为空</span><br>if [ ! -z &quot;$name&quot; -a ! -z &quot;$num&quot; -a ! -z &quot;$pass&quot; ]<br>    then<br>    	# 定义变量的值为后续命令的结果<br>    	# 后续命令作用是,把变量num的值替换为空。如果能替换为空,证明 num 的值为数字<br>    	# 如果不能替换为空,证明 num 的值为非数字。我们使用这种方法判断变量 num 的值为数字<br>    	y=$(echo $num | sed &#x27;s/[0-9]//g&#x27;)<br>        # 如果变量 y 的值为空,证明 num 变量是数字<br>        if [ -z &quot;$y&quot; ]<br>            then<br>                # 循环 num 变量指定的次数<br>                for (( i=1;i&lt;=$num;i=i+1 ))<br>                    do <br>                        # 添加用户,用户名为变量 name 的值加变量 i 的数字<br>                        /usr/sbin/useradd $name$i &amp;&gt;/dev/null<br>                        # 给用户设定初始密码为变量 pass 的值<br>                        echo $pass | /usr/bin/passwd --stdin $name$i &amp;&gt;/dev/null<br>                    done<br>        fi <br>fi<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi sh/userdel.sh<br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">批量删除用户</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">读取用户信息文件,提取可以登录用户,排除root用户,截取第一列就是用户名</span><br>user=$(cat /etc/passwd | grep &quot;/bin/bash&quot; | grep -v &quot;root&quot; |cut -d &quot;:&quot; -f 1)<br><span class="hljs-meta prompt_">#</span><span class="language-bash">循环,有多少个普通用户,循环多少次</span><br>for i in $user<br>    do <br>    	#每次循环,删除指定普通用户<br>        userdel -r $i<br>    done<br></code></pre></td></tr></table></figure>
+
+<h3 id="二-while-循环"><a href="#二-while-循环" class="headerlink" title="(二) while 循环"></a>(二) while 循环</h3><p>对 <code>while</code> 循环来讲, 只要条件判断式成立, 循环就会一直继续, 直到条件判断式不成立, 循环才会停止</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">while [ 条件判断式 ]<br>    do<br>    	程序<br>    done<br></code></pre></td></tr></table></figure>
+
+<p>代码示例 : 1 加到 100</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">从 1 加到 100</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">给变量 i 和变量 s 赋值</span><br>i=1<br>s=0<br><span class="hljs-meta prompt_"># </span><span class="language-bash">如果变量 i 的值小于等于 100,则执行循环</span><br>while [ $i -le 100 ]<br>    do<br>        s=$(( $s+$i ))<br>        i=$(( $i+1 ))<br>    done<br>echo &quot;The sum is: $s&quot; <br></code></pre></td></tr></table></figure>
+
+<h3 id="三-until-循环"><a href="#三-until-循环" class="headerlink" title="(三) until 循环"></a>(三) until 循环</h3><p>和 <code>while</code> 循环相反, <code>until</code> 循环时<strong>只要条件判断式不成立则进行循环</strong>, 并执行循环程序; 一旦循环条件成立,则终止循环</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">until [ 条件判断式 ]<br>    do<br>   		程序<br>    done<br></code></pre></td></tr></table></figure>
+
+<p>还是写从 1 加到 100 这个例子, 注意和 while 循环的区别 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">从 1 加到 100</span><br>[root@localhost ~]# vi sh/until.sh <br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">从 1 加到 100</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">给变量i和s赋值</span><br>i=1<br>s=0<br><span class="hljs-meta prompt_">#</span><span class="language-bash">循环直到变量i的值大于100,就停止循环</span><br>until [ $i -gt 100 ]<br>    do<br>        s=$(( $s+$i ))<br>        i=$(( $i+1 ))<br>    done<br>echo &quot;The sum is: $s&quot;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="五-退出"><a href="#五-退出" class="headerlink" title="五 : 退出"></a>五 : 退出</h2><h3 id="一-exit-语句"><a href="#一-exit-语句" class="headerlink" title="(一) exit 语句"></a>(一) exit 语句</h3><p>系统是有 <code>exit</code> 命令的,用于退出当前用户的登录状态。可是在 Shell 脚本中, <code>exit</code> 语句是用来退出当前脚本的。也就是说, 在 Shell 脚本中, 只要碰到了 <code>exit</code> 语句, 后续的程序就不再执行, 而直接退出脚本。</p>
+<p>exit 的语法如下 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">exit [返回值]<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>如果 <code>exit</code> 命令之后定义了返回值, 那么这个脚本执行之后的返回值就是我们自己定义的返回值; 可以通过查询 <code>$?</code> 这个变量来查看返回值; 如果 exit 之后没有定义返回值, 脚本执行之后的返回值是执行 exit 语句之前, 最后执行的一条命令的返回值。</li>
+</ul>
+<p>代码示例 </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi sh/exit.sh<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">接收用户的输入,并把输入赋予num</span><br>read -p &quot;Please input a number: &quot; -t 30 num <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">如果变num的值是数字,则把num的值替换为空,否则不替换</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">把替换之后的值赋予变量 y</span><br>y=$(echo $num | sed &#x27;s/[0-9]//g&#x27;)<br><span class="hljs-meta prompt_">#</span><span class="language-bash">判断变量 y 的值如果不为空,输出报错信息,退出脚本,退出返回值为 18</span><br>[ -n &quot;$y&quot; ] &amp;&amp; echo &quot;Error! Please input a number!&quot; &amp;&amp; exit 18<br><span class="hljs-meta prompt_">#</span><span class="language-bash">如果没有退出脚本,则打印变量 num 中的数字</span><br>echo &quot;The number is: $num&quot;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>注意 : 这里的字符串变量要用 <code>&quot;&quot;</code> 引一下</strong></li>
+</ul>
+<h3 id="二-break-语句"><a href="#二-break-语句" class="headerlink" title="(二) break 语句"></a>(二) break 语句</h3><p>再来看看特殊流程控制语句 <code>break</code> 的作用, 当程序执行到 <code>break</code> 语句时, <strong>会结束整个当前循环</strong>; 而 <code>continue</code> 语句也是结束循环的语句, 不过 <code>continue</code> 语句单次当前循环, 而下次循环会继续。</p>
+<p>代码示例 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi sh/break.sh<br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">演示 <span class="hljs-built_in">break</span> 跳出循环</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">循环十次</span><br>for (( i=1;i&lt;=10;i=i+1 ))<br>    do <br>    	#如果变量 i 的值等于 4<br>        if [ &quot;$i&quot; -eq 4 ]<br>            then<br>            	#退出整个循环<br>                break<br>        fi <br>        echo $i<br>        #输出变量 i 的值<br>    done<br></code></pre></td></tr></table></figure>
+
+<p>测试结果 : 输出1,2,3后停止脚本</p>
+<h3 id="三-continue-语句"><a href="#三-continue-语句" class="headerlink" title="(三) continue 语句"></a>(三) continue 语句</h3><p>再来看看 continue 语句, continue 也是结束流程控制的语句; 如果在循环中, <code>continue</code> 语句只会<strong>结束单次当前循环</strong></p>
+<p>还是用刚刚的脚本,不过退出语句换成 <code>continue</code> 语句,看看会发生什么情况 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# vi sh/continue.sh<br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">演示 <span class="hljs-built_in">continue</span> 语句</span><br><br>for (( i=1;i&lt;=10;i=i+1 ))<br>    do <br>        if [ &quot;$i&quot; -eq 4 ] <br>            then<br>            	#退出语句换成 continue<br>                continue<br>        fi <br>        echo $i<br>    done<br></code></pre></td></tr></table></figure>
+
+<p>测试结果 : 只有4不会被输出</p>
+<h2 id="六-函数"><a href="#六-函数" class="headerlink" title="六 : 函数"></a>六 : 函数</h2><p>语法格式</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">function 函数名 () &#123;<br>	程序<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>代码示例</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">[root@localhost ~]<span class="hljs-comment"># vi sh/function.sh</span><br><span class="hljs-comment">#!/bin/bash</span><br><span class="hljs-comment">#接收用户输入的数字,然后从1加到这个数字</span><br><br><span class="hljs-comment">#定义函数 sum</span><br><span class="hljs-keyword">function</span> <span class="hljs-function"><span class="hljs-title">sum</span></span> () &#123;<br>    s=0 <br>    <span class="hljs-comment">#循环直到i大于$1为止。$1是函数sum的第一个参数</span><br>    <span class="hljs-comment">#在函数中也可以使用位置参数变量,不过这里的$1指的是函数的第一个参数</span><br>    <span class="hljs-keyword">for</span> (( i=<span class="hljs-number">0</span>;i&lt;=<span class="hljs-variable">$1</span>;i=i+<span class="hljs-number">1</span> ))<br>        <span class="hljs-keyword">do</span> <br>        	s=$(( <span class="hljs-variable">$i</span>+<span class="hljs-variable">$s</span> ))<br>        <span class="hljs-keyword">done</span><br>	<span class="hljs-comment">#输出1加到$1 的和</span><br>    <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;The sum of 1+2+3...+<span class="hljs-variable">$1</span> is : <span class="hljs-variable">$s</span>&quot;</span><br>&#125;<br><br><span class="hljs-comment">#接收用户输入的数字,并把值赋予变量num</span><br><span class="hljs-built_in">read</span> -p <span class="hljs-string">&quot;Please input a number: &quot;</span> -t 30 num <br><span class="hljs-comment">#把变量num的值替换为空,并赋予变量y</span><br>y=$(<span class="hljs-built_in">echo</span> <span class="hljs-variable">$num</span> | sed <span class="hljs-string">&#x27;s/[0-9]//g&#x27;</span>)<br><span class="hljs-comment">#判断变量y是否为空,以确定变量 num 中是否为数字</span><br><span class="hljs-keyword">if</span> [ -z <span class="hljs-string">&quot;<span class="hljs-variable">$y</span>&quot;</span> ]<br>    <span class="hljs-keyword">then</span><br>    	<span class="hljs-comment">#调用sum函数,并把变量num的值作为第一个参数传递给 sum 函数</span><br>        <span class="hljs-built_in">sum</span> <span class="hljs-variable">$num</span><br><span class="hljs-keyword">else</span><br>	<span class="hljs-comment">#如果变量 num 的值不是数字,则输出报错信息</span><br>	<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Error!! Please input a number!&quot;</span><br><span class="hljs-keyword">fi</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="七-接收键盘输入"><a href="#七-接收键盘输入" class="headerlink" title="七 : 接收键盘输入"></a>七 : 接收键盘输入</h2><p>用来从标准输入读取单行数据; 这个命令可以用来读取键盘输入, 当使用重定向的时候, 可以读取文件中的一行数据; 命令格式 : </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# read [选项] [变量名]<br>选项:<br>    -p &quot;message&quot;: 在等待 read 输入时, 输出提示信息(message)<br>    -t second	: read 命令会一直等待用户输入, 使用此选项可以指定等待时间(秒数)<br>    -n number	: read 命令只接受指定的字符数(number), 就会执行<br>    -s 			: 隐藏输入的数据, 适用于机密信息的输入<br>变量名:<br>    变量名可以自定义, 如果不指定变量名, 会把输入保存入默认变量 REPLY<br>    如果只提供了一个变量名, 则整个输入行赋予该变量<br>    如果提供了一个以上的变量名, 则输入行分为若干字, 一个接一个地赋予各个变量, 而命令行上的最后一个变量取得剩余的所有字<br></code></pre></td></tr></table></figure>
+
+<p>还是写个例子来解释下 <code>read</code> 命令:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost sh]# vi read.sh <br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">Author: Bob (E-mail: Bob@163.com)</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">提示<span class="hljs-string">&quot;请输入姓名&quot;</span>并等待 30 秒, 把用户的输入保存入变量 name 中</span><br>read -t 30 -p &quot;Please input your name: &quot; name<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">看看变量<span class="hljs-string">&quot;<span class="hljs-variable">$name</span>&quot;</span>中是否保存了你的输入</span><br>echo &quot;Name is $name&quot;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">提示<span class="hljs-string">&quot;请输入年龄&quot;</span>并等待30秒, 把用户的输入保存入变量age中</span> <br><span class="hljs-meta prompt_"># </span><span class="language-bash">年龄是隐私, 所以我们用<span class="hljs-string">&quot;-s&quot;</span>选项隐藏输入</span><br>read -s -t 30 -p &quot;Please enter your age: &quot; age<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">调整输出格式,如果不输出换行,一会儿的年龄输出不会换行</span><br>echo -e &quot;\n&quot;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">提示<span class="hljs-string">&quot;请选择性别&quot;</span>并等待 30 秒, 把用户的输入保存入变量 gender</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">使用<span class="hljs-string">&quot;-n 1&quot;</span>选项只接收一个输入字符就会执行(都不用输入回车)</span><br>echo &quot;Age is $age&quot;<br>read -n 1 -t 30 -p &quot;Please select your gender[M/F]: &quot; gender<br><br>echo -e &quot;\n&quot;<br>echo &quot;Sex is $gender&quot;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="八-输入输出重定向"><a href="#八-输入输出重定向" class="headerlink" title="八 : 输入输出重定向"></a>八 : 输入输出重定向</h2><h3 id="一-Bash-的标准输入输出"><a href="#一-Bash-的标准输入输出" class="headerlink" title="(一) Bash 的标准输入输出"></a>(一) Bash 的标准输入输出</h3><table>
+<thead>
+<tr>
+<th>设备</th>
+<th>设备文件名</th>
+<th>文件描述符</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>键盘</td>
+<td>&#x2F;dev&#x2F;stdin</td>
+<td>0</td>
+<td>标准输入</td>
+</tr>
+<tr>
+<td>显示器</td>
+<td>&#x2F;dev&#x2F;stdout</td>
+<td>1</td>
+<td>标准输出</td>
+</tr>
+<tr>
+<td>显示器</td>
+<td>&#x2F;dev&#x2F;stderr</td>
+<td>2</td>
+<td>标准错误输出</td>
+</tr>
+</tbody></table>
+<h3 id="二-输出重定向"><a href="#二-输出重定向" class="headerlink" title="(二) 输出重定向"></a>(二) 输出重定向</h3><p>标准输出重定向</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>命令 &gt; 文件</td>
+<td>以覆盖的方式, 把命令的正确输出输出到指定的文件或设备当中</td>
+</tr>
+<tr>
+<td>命令 &gt;&gt; 文件</td>
+<td>以追加的方式, 把命令的正确输出输出到指定的文件或设备当中</td>
+</tr>
+</tbody></table>
+<p>标准错误输出重定向</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>错误命令 2&gt;文件</td>
+<td>以覆盖的方式, 把命令的错误输出输出到指定的文件或设备当中</td>
+</tr>
+<tr>
+<td>错误命令 2&gt;&gt;文件</td>
+<td>以追加的方式, 把命令的错误输出输出到指定的文件或设备当中</td>
+</tr>
+</tbody></table>
+<p>正确输出和错误输出同时保存</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>命令 &gt; 文件 2&gt;&amp;1</td>
+<td>以覆盖的方式, 把正确输出和错误输出都保存到同一个文件当中</td>
+</tr>
+<tr>
+<td><strong>命令 &gt;&gt; 文件 2&gt;&amp;1</strong></td>
+<td>以追加的方式, 把正确输出和错误输出都保存到同一个文件当中</td>
+</tr>
+<tr>
+<td>命令 &amp;&gt;文件</td>
+<td>以覆盖的方式, 把正确输出和错误输出都保存到同一个文件当中</td>
+</tr>
+<tr>
+<td><strong>命令 &amp;&gt;&gt;文件</strong></td>
+<td>以追加的方式, 把正确输出和错误输出都保存到同一个文件当中</td>
+</tr>
+<tr>
+<td><strong>命令 &gt;&gt;文件1  2&gt;&gt;文件2</strong></td>
+<td>把正确的输出追加到文件 1 中, 把错误的输出追加到文件 2 中</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>注意: 错误输出<code>2</code>和<code>&gt;</code>之间不能有空格, 至于<code>&gt;</code>之后有没有空格无所谓, 为了方便记忆, 错误输出前后都不要加空格了</strong></li>
+</ul>
+<h3 id="三-输入重定向"><a href="#三-输入重定向" class="headerlink" title="(三) 输入重定向"></a>(三) 输入重定向</h3><p>同时也支持输入重定向</p>
+<p>代码示例 : 在文件 var.ini 中统一定义变量, 通过脚本读出</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">a=1<br>b=2<br>c=3<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">中心思想就是把a=1,b=2,c=3引入进来声明,这里用到<span class="hljs-built_in">read</span>命令做重定向,可以一次读取一行</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-built_in">eval</span>命令用于重新运算求出参数的内容,还可读取一连串的参数，然后再依参数本身的特性来执行</span><br>while read line;do<br>	eval $line<br>done &lt; var.ini<br>echo $a<br>echo $b<br>echo $c<br></code></pre></td></tr></table></figure>
+
+<p>代码示例 : 统计 err.log 的行数,单词数和字节数</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">[root@localhost ~]# wc &lt; err.log<br></code></pre></td></tr></table></figure>
+
+<h3 id="四-垃圾桶"><a href="#四-垃圾桶" class="headerlink" title="(四) 垃圾桶"></a>(四) 垃圾桶</h3><p>解释一下比较常用的 <strong><code>&amp;&gt;/dev/null</code></strong> 这个命令  </p>
+<p><code>&amp;&gt;</code> 输出, <code>/dev/null</code> 这个类似回收站, 任何东西丢到这里面都会消失, 所以通常写脚本的时候, 我们习惯加上 <code>&amp;&gt;/dev/null</code>, <strong>用于屏蔽命令的提示信息</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">java -jar xxx.jar &amp;&gt;/dev/null<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            清月明风
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://info4z.github.io/2023/02/03/shell%E7%BC%96%E7%A8%8B/">
+            https://info4z.github.io/2023/02/03/shell%E7%BC%96%E7%A8%8B/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/01/27/shell%E5%85%A5%E9%97%A8/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">shell入门 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%A4%9A%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%AC%A6"><span class="toc-text">一 : 多命令执行符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">二 : 数值运算的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E8%BF%90%E7%AE%97%E5%BC%8F-%E6%88%96-%E8%BF%90%E7%AE%97%E5%BC%8F"><span class="toc-text">(一) $((运算式))或$[运算式]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97%E5%B7%A5%E5%85%B7-expr-%E6%88%96-let"><span class="toc-text">(二) 数值运算工具 expr 或 let</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E5%A3%B0%E6%98%8E%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B-declare"><span class="toc-text">(三) 声明变量类型 declare</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD-test"><span class="toc-text">二 : 条件判断 test</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="toc-text">(一) 文件类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90"><span class="toc-text">(二) 文件权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%87%E4%BB%B6%E6%AF%94%E8%BE%83"><span class="toc-text">(三) 文件比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E6%95%B4%E6%95%B0%E6%AF%94%E8%BE%83"><span class="toc-text">(四) 整数比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%A4%E6%96%AD"><span class="toc-text">(五) 字符串判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD-%E5%A4%9A%E9%87%8D%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="toc-text">(六) 多重条件判断</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="toc-text">三 : 条件判断</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%8D%95%E5%88%86%E6%94%AF-if"><span class="toc-text">(一) 单分支 if</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%8F%8C%E5%88%86%E6%94%AF-if-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-text">(二) 双分支 if 条件语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E5%A4%9A%E5%88%86%E6%94%AF-if-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-text">(三) 多分支 if 条件语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-case-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-text">(四) case 条件语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%BE%AA%E7%8E%AF"><span class="toc-text">四 : 循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-for-%E5%BE%AA%E7%8E%AF"><span class="toc-text">(一) for 循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-while-%E5%BE%AA%E7%8E%AF"><span class="toc-text">(二) while 循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-until-%E5%BE%AA%E7%8E%AF"><span class="toc-text">(三) until 循环</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E9%80%80%E5%87%BA"><span class="toc-text">五 : 退出</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-exit-%E8%AF%AD%E5%8F%A5"><span class="toc-text">(一) exit 语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-break-%E8%AF%AD%E5%8F%A5"><span class="toc-text">(二) break 语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-continue-%E8%AF%AD%E5%8F%A5"><span class="toc-text">(三) continue 语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%87%BD%E6%95%B0"><span class="toc-text">六 : 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%8E%A5%E6%94%B6%E9%94%AE%E7%9B%98%E8%BE%93%E5%85%A5"><span class="toc-text">七 : 接收键盘输入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-text">八 : 输入输出重定向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-Bash-%E7%9A%84%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA"><span class="toc-text">(一) Bash 的标准输入输出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E8%BE%93%E5%87%BA%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-text">(二) 输出重定向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E8%BE%93%E5%85%A5%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-text">(三) 输入重定向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E5%9E%83%E5%9C%BE%E6%A1%B6"><span class="toc-text">(四) 垃圾桶</span></a></li></ol></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%A4%9A%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%AC%A6"><span class="toc-text">一 : 多命令执行符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">二 : 数值运算的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E8%BF%90%E7%AE%97%E5%BC%8F-%E6%88%96-%E8%BF%90%E7%AE%97%E5%BC%8F"><span class="toc-text">(一) $((运算式))或$[运算式]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97%E5%B7%A5%E5%85%B7-expr-%E6%88%96-let"><span class="toc-text">(二) 数值运算工具 expr 或 let</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E5%A3%B0%E6%98%8E%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B-declare"><span class="toc-text">(三) 声明变量类型 declare</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD-test"><span class="toc-text">二 : 条件判断 test</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="toc-text">(一) 文件类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90"><span class="toc-text">(二) 文件权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E6%96%87%E4%BB%B6%E6%AF%94%E8%BE%83"><span class="toc-text">(三) 文件比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E6%95%B4%E6%95%B0%E6%AF%94%E8%BE%83"><span class="toc-text">(四) 整数比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%A4%E6%96%AD"><span class="toc-text">(五) 字符串判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD-%E5%A4%9A%E9%87%8D%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="toc-text">(六) 多重条件判断</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="toc-text">三 : 条件判断</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E5%8D%95%E5%88%86%E6%94%AF-if"><span class="toc-text">(一) 单分支 if</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E5%8F%8C%E5%88%86%E6%94%AF-if-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-text">(二) 双分支 if 条件语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E5%A4%9A%E5%88%86%E6%94%AF-if-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-text">(三) 多分支 if 条件语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-case-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-text">(四) case 条件语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%BE%AA%E7%8E%AF"><span class="toc-text">四 : 循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-for-%E5%BE%AA%E7%8E%AF"><span class="toc-text">(一) for 循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-while-%E5%BE%AA%E7%8E%AF"><span class="toc-text">(二) while 循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-until-%E5%BE%AA%E7%8E%AF"><span class="toc-text">(三) until 循环</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E9%80%80%E5%87%BA"><span class="toc-text">五 : 退出</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-exit-%E8%AF%AD%E5%8F%A5"><span class="toc-text">(一) exit 语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-break-%E8%AF%AD%E5%8F%A5"><span class="toc-text">(二) break 语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-continue-%E8%AF%AD%E5%8F%A5"><span class="toc-text">(三) continue 语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%87%BD%E6%95%B0"><span class="toc-text">六 : 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%8E%A5%E6%94%B6%E9%94%AE%E7%9B%98%E8%BE%93%E5%85%A5"><span class="toc-text">七 : 接收键盘输入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-text">八 : 输入输出重定向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-Bash-%E7%9A%84%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA"><span class="toc-text">(一) Bash 的标准输入输出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E8%BE%93%E5%87%BA%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-text">(二) 输出重定向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E8%BE%93%E5%85%A5%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-text">(三) 输入重定向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E5%9E%83%E5%9C%BE%E6%A1%B6"><span class="toc-text">(四) 垃圾桶</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-02-03</div>
+        <a href="/2023/02/03/shell%E7%BC%96%E7%A8%8B/"><div class="recent-posts-item-content">shell编程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-27</div>
+        <a href="/2023/01/27/shell%E5%85%A5%E9%97%A8/"><div class="recent-posts-item-content">shell入门</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-20</div>
+        <a href="/2023/01/20/%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/"><div class="recent-posts-item-content">服务器内存占用过高</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-13</div>
+        <a href="/2023/01/13/arthas/"><div class="recent-posts-item-content">Arthas</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          冰清阁
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>

@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="差不多得了, 玩什么命呀...">
+  <link 
+    rel="icon" 
+    href="https://img.songhn.com/img/Y67gdd.png">
+  <title>Fork/Join并发处理框架</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="Fork/Join并发处理框架">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://info4z.github.io/2020/06/05/Fork&amp;Join/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://img.songhn.com/img/Y67gdd.png">
+    
+    
+      <meta 
+        property="og:img" 
+        content="差不多得了, 玩什么命呀...">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2020-06-05">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-02-03">
+      <meta 
+        property="og:article:author" 
+        content="清月明风">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="多线程并发编程">
+        
+          <meta 
+            property="og:article:tag" 
+            content="J.U.C并发编程包">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="https://img.songhn.com/img/Y67gdd.png" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">冰清阁</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://img.songhn.com/img/Y67gdd.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">清月明风</p>
+<p class="author-description">差不多得了, 玩什么命呀...</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>36</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>4</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>12</span>
+    <span>标签</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%94%A8%E6%9D%A5%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-text">一 : 用来做什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%84%8F%E5%9B%BE%E6%A2%B3%E7%90%86"><span class="toc-text">二 : 意图梳理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%BB%8F%E5%85%B8%E7%BD%91%E5%85%B3%E5%9C%BA%E6%99%AF-%E6%9F%A5%E8%AF%A2%E5%A4%9A%E4%B8%AA%E7%B3%BB%E7%BB%9F%E6%95%B0%E6%8D%AE"><span class="toc-text">三 : 经典网关场景, 查询多个系统数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF"><span class="toc-text">四 : 实现思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E9%80%82%E7%94%A8"><span class="toc-text">五 : 适用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E7%BB%93%E8%AF%AD"><span class="toc-text">六 : 结语</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/">
+        <div class="categories-list-item">
+          高性能编程
+          <span class="categories-list-item-badge">27</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/">
+        <div class="categories-list-item">
+          博客搭建
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+        <div class="categories-list-item">
+          服务器
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">
+        <div class="categories-list-item">
+          数据库
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" 
+        title="多线程并发编程">
+        <div class="tags-list-item">多线程并发编程</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" 
+        title="线程安全">
+        <div class="tags-list-item">线程安全</div>
+      </a>
+    
+      <a 
+        href="/tags/java%E5%9F%BA%E7%A1%80/" 
+        title="java基础">
+        <div class="tags-list-item">java基础</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+        title="高并发网络编程">
+        <div class="tags-list-item">高并发网络编程</div>
+      </a>
+    
+      <a 
+        href="/tags/J-U-C%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%8C%85/" 
+        title="J.U.C并发编程包">
+        <div class="tags-list-item">J.U.C并发编程包</div>
+      </a>
+    
+      <a 
+        href="/tags/Netty/" 
+        title="Netty">
+        <div class="tags-list-item">Netty</div>
+      </a>
+    
+      <a 
+        href="/tags/NIO%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" 
+        title="NIO网络编程">
+        <div class="tags-list-item">NIO网络编程</div>
+      </a>
+    
+      <a 
+        href="/tags/shell/" 
+        title="shell">
+        <div class="tags-list-item">shell</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%86%85%E5%AD%98/" 
+        title="内存">
+        <div class="tags-list-item">内存</div>
+      </a>
+    
+      <a 
+        href="/tags/mysql/" 
+        title="mysql">
+        <div class="tags-list-item">mysql</div>
+      </a>
+    
+      <a 
+        href="/tags/%E8%AF%8A%E6%96%AD/" 
+        title="诊断">
+        <div class="tags-list-item">诊断</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%9B%91%E6%8E%A7/" 
+        title="监控">
+        <div class="tags-list-item">监控</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Fork/Join并发处理框架
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2020-06-04T16:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2020-06-05</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/" 
+          class="post-meta-link">
+          高性能编程
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>1.6k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" 
+            class="post-meta-link">
+            多线程并发编程
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/J-U-C%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%8C%85/" 
+            class="post-meta-link">
+            J.U.C并发编程包
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <blockquote>
+<p>ResursiveAction, RecursiveTask</p>
+</blockquote>
+<h2 id="一-用来做什么"><a href="#一-用来做什么" class="headerlink" title="一 : 用来做什么"></a>一 : 用来做什么</h2><p>ForkJoinPool 是 ExecutorService 接口的实现, 它专为可以递归分解成小块的工作而设计; </p>
+<p>fork&#x2F;join 框架将任务分配给线程池中的工作线程, 充分利用多处理器的优势, 提高程序性能</p>
+<p>使用 fork&#x2F;join 框架的第一步是编写执行一部分工作的代码; 类似的伪代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">如果(当前工作部分足够小)<br>	直接做这项工作<br>其他<br>	把当前工作分成两部分<br>	调用这两个部分并等待结果<br></code></pre></td></tr></table></figure>
+
+<p>将此代码包装在 ForkJoinTask 子类中, 通常是 RecursiveTask (可以返回结果) 或 RecursiveAction</p>
+<h2 id="二-意图梳理"><a href="#二-意图梳理" class="headerlink" title="二 : 意图梳理"></a>二 : 意图梳理</h2><p>关键点 :  : 分解任务fork出新任务, 汇集join任务执行结果</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230201161307792.png" class="lozad post-image"src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230201161307792.png"></p>
+<h2 id="三-经典网关场景-查询多个系统数据"><a href="#三-经典网关场景-查询多个系统数据" class="headerlink" title="三 : 经典网关场景, 查询多个系统数据"></a>三 : 经典网关场景, 查询多个系统数据</h2><p>移动互联网的情况</p>
+<ul>
+<li>一个接口请求要获取很多信息</li>
+<li>后端分布式系统, 拆分成多个子系统</li>
+</ul>
+<p>后端接口执行(大概流程)</p>
+<ol>
+<li>收到一个请求</li>
+<li>调用多个服务接口获取其他系统的数据</li>
+<li>最后汇总返回</li>
+</ol>
+<p>示例代码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Service</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> &#123;<br><br>    <span class="hljs-meta">@Autowired</span><br>    <span class="hljs-keyword">private</span> RestTemplate restTemplate;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 查询多个系统的数据，合并返回</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getUserInfo</span><span class="hljs-params">(String userId)</span> &#123;<br>        <span class="hljs-comment">// 1. 先从调用获取用户基础信息的http接口</span><br>        <span class="hljs-type">long</span> <span class="hljs-variable">userinfoTime</span> <span class="hljs-operator">=</span> System.currentTimeMillis();<br>        <span class="hljs-type">String</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> restTemplate.getForObject(<span class="hljs-string">&quot;http://172.16.0.1/userinfo-api/get?userId=&quot;</span> + userId, String.class);<br>        <span class="hljs-type">JSONObject</span> <span class="hljs-variable">userInfo</span> <span class="hljs-operator">=</span> JSONObject.parseObject(value);<br>        System.out.println(<span class="hljs-string">&quot;userinfo-api用户基本信息接口调用时间为&quot;</span> + (System.currentTimeMillis() - userinfoTime));<br><br>        <span class="hljs-comment">// 2. 再调用获取用户积分信息的接口</span><br>        <span class="hljs-type">long</span> <span class="hljs-variable">integralApiTime</span> <span class="hljs-operator">=</span> System.currentTimeMillis();<br>        <span class="hljs-type">String</span> <span class="hljs-variable">intergral</span> <span class="hljs-operator">=</span> restTemplate.getForObject(<span class="hljs-string">&quot;http://172.16.0.1/integral-api/get?userId=&quot;</span> + userId,<br>                String.class);<br>        <span class="hljs-type">JSONObject</span> <span class="hljs-variable">intergralInfo</span> <span class="hljs-operator">=</span> JSONObject.parseObject(intergral);<br>        System.out.println(<span class="hljs-string">&quot;integral-api积分接口调用时间为&quot;</span> + (System.currentTimeMillis() - integralApiTime));<br><br>        <span class="hljs-comment">// 再调用一个接口 +n秒</span><br><br>        <span class="hljs-comment">// 3. 合并为一个json对象</span><br>        <span class="hljs-type">JSONObject</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">JSONObject</span>();<br>        result.putAll(userInfo);<br>        result.putAll(intergralInfo);<br><br>        <span class="hljs-keyword">return</span> result;<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>注意 : 代码逻辑涉及到串行的过程, 运行时间会发生累计, 随着需要调用的接口的数量的增多, 响应时间会越来越长</p>
+<p>针对于<strong>响应时间限制</strong>, 通常开发公司会有明确规定, 例如 : 内部调用的核心接口的响应时间通常为10ms, 对外可以扩展到50ms</p>
+<p>代码优化</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 任务</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">HttpJsonRequest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">RecursiveTask</span>&lt;JSONObject&gt; &#123;<br><br>    RestTemplate restTemplate;<br>    ArrayList&lt;String&gt; urls;<br>    <span class="hljs-type">int</span> start;<br>    <span class="hljs-type">int</span> end;<br><br>    HttpJsonRequest(RestTemplate restTemplate, ArrayList&lt;String&gt; urls, <span class="hljs-type">int</span> start, <span class="hljs-type">int</span> end) &#123;<br>        <span class="hljs-built_in">this</span>.restTemplate = restTemplate;<br>        <span class="hljs-built_in">this</span>.urls = urls;<br>        <span class="hljs-built_in">this</span>.start = start;<br>        <span class="hljs-built_in">this</span>.end = end;<br>    &#125;<br><br>    <span class="hljs-comment">// 就是实际去执行的一个方法入口(任务拆分)</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> JSONObject <span class="hljs-title function_">compute</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> end - start; <span class="hljs-comment">// 代表当前这个task需要处理多少数据</span><br>        <span class="hljs-comment">// 自行根据业务场景去判断是否是大任务,是否需要拆分</span><br>        <span class="hljs-keyword">if</span> (count == <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">String</span> <span class="hljs-variable">url</span> <span class="hljs-operator">=</span> urls.get(start);<br>            <span class="hljs-comment">// TODO 如果只有一个接口调用,立刻调用</span><br>            <span class="hljs-type">long</span> <span class="hljs-variable">userinfoTime</span> <span class="hljs-operator">=</span> System.currentTimeMillis();<br>            <span class="hljs-type">String</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> restTemplate.getForObject(url, String.class);<br>            <span class="hljs-type">JSONObject</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> JSONObject.parseObject(response);<br>            System.out.println(Thread.currentThread() + <span class="hljs-string">&quot; 接口调用完毕&quot;</span> + (System.currentTimeMillis() - userinfoTime) + <span class="hljs-string">&quot; #&quot;</span> + url);<br>            <span class="hljs-keyword">return</span> value;<br>        &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// 如果是多个接口调用,拆分成子任务  7,8,   9,10</span><br>            System.out.println(Thread.currentThread() + <span class="hljs-string">&quot;任务拆分一次&quot;</span>);<br>            <span class="hljs-type">int</span> <span class="hljs-variable">x</span> <span class="hljs-operator">=</span> (start + end) / <span class="hljs-number">2</span>;<br>            <span class="hljs-type">HttpJsonRequest</span> <span class="hljs-variable">httpJsonRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HttpJsonRequest</span>(restTemplate, urls, start, x);<span class="hljs-comment">// 负责处理哪一部分?</span><br>            httpJsonRequest.fork();<br><br>            <span class="hljs-type">HttpJsonRequest</span> <span class="hljs-variable">httpJsonRequest1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HttpJsonRequest</span>(restTemplate, urls, x + <span class="hljs-number">1</span>, end);<span class="hljs-comment">// 负责处理哪一部分?</span><br>            httpJsonRequest1.fork();<br><br>            <span class="hljs-comment">// join获取处理结果</span><br>            <span class="hljs-type">JSONObject</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">JSONObject</span>();<br>            result.putAll(httpJsonRequest.join());<br>            result.putAll(httpJsonRequest1.join());<br>            <span class="hljs-keyword">return</span> result;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 并行调用http接口</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">@Service</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserServiceForkJoin</span> &#123;<br>    <span class="hljs-comment">// 本质是一个线程池,默认的线程数量:CPU的核数</span><br>    <span class="hljs-type">ForkJoinPool</span> <span class="hljs-variable">forkJoinPool</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ForkJoinPool</span>(<span class="hljs-number">10</span>, ForkJoinPool.defaultForkJoinWorkerThreadFactory,<br>            <span class="hljs-literal">null</span>, <span class="hljs-literal">true</span>);<br>    <span class="hljs-meta">@Autowired</span><br>    <span class="hljs-keyword">private</span> RestTemplate restTemplate;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 查询多个系统的数据，合并返回</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getUserInfo</span><span class="hljs-params">(String userId)</span> <span class="hljs-keyword">throws</span> ExecutionException, InterruptedException &#123;<br>        <span class="hljs-comment">// fork/join</span><br>        <span class="hljs-comment">// forkJoinPool.submit()</span><br>        ArrayList&lt;String&gt; urls = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        urls.add(<span class="hljs-string">&quot;http://172.16.0.1/userinfo-api/get?userId=&quot;</span> + userId);<br>        urls.add(<span class="hljs-string">&quot;http://172.16.0.1/integral-api/get?userId=&quot;</span> + userId);<br><br>        <span class="hljs-type">HttpJsonRequest</span> <span class="hljs-variable">httpJsonRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HttpJsonRequest</span>(restTemplate, urls, <span class="hljs-number">0</span>, urls.size() - <span class="hljs-number">1</span>);<br>        ForkJoinTask&lt;JSONObject&gt; forkJoinTask = forkJoinPool.submit(httpJsonRequest);<br><br>        <span class="hljs-type">JSONObject</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> forkJoinTask.get();<br>        <span class="hljs-keyword">return</span> result;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="四-实现思路"><a href="#四-实现思路" class="headerlink" title="四 : 实现思路"></a>四 : 实现思路</h2><p>每个 Worker 线程都维护一个任务队列, 即 ForkJoinWorkerThread 中的任务队列</p>
+<p>任务队列是双向队列, 这样可以同时实现 LIFO(last in first out, 后进先出) 和 FIFO(first in first out, 先进先出)</p>
+<p>子任务会被加入到原先任务所在 worker 线程的任务队列(workQueue); worker 线程用 LIFO 的方法取出任务, 后进队列的任务先取出来(子任务总是后加入队列, 但是需要先执行); <strong>当任务队列为空, 会随机从其他的 worker 的队列中拿走一个任务执行</strong>(工作窃取: steal work);</p>
+<p>如果一个 worker 线程遇到了 join 操作, 而这时候, 正在处理其他任务, 会等到这个任务结束; 否则直接返回</p>
+<p>如果一个 worker 线程窃取任务失败, 它会用 yield 或者 sleep 之类的方法休息一会儿, 再尝试(如果所有线程都是空闲状态, 即没有任务运行, 那么该线程也会进入阻塞状态等待新任务的到来)</p>
+<h2 id="五-适用"><a href="#五-适用" class="headerlink" title="五 : 适用"></a>五 : 适用</h2><p><strong>使用尽可能少的线程池</strong> : 再大多数情况下, 最好的决定是为每个应用程序或系统使用一个线程池</p>
+<p>如果不需要特定调整, 请使用默认的公共线程池</p>
+<p>使用合理的阈值将 ForkJoinTask 拆分为子任务</p>
+<p>避免在 ForkJoinTask 中出现任何阻塞</p>
+<p><strong>适用场景</strong> : 数据处理, 结果汇总, 统计等; </p>
+<p><strong>java8实例 :</strong> java.util.Arrays 类用于其 parallelSort() 方法就用到了 fork&#x2F;join; 其目的是进行内存运算方面的操作, 因此<strong>不适合</strong>用于网络接口调用, 数据库查询, 文件操作等; 所以如果需要使用, 只定义一个 ForkJoinPool 就好, 线程数量尽量和 CPU 核数差不多, 主要进行非阻塞的代码处理</p>
+<h2 id="六-结语"><a href="#六-结语" class="headerlink" title="六 : 结语"></a>六 : 结语</h2><p>总结 :</p>
+<ol>
+<li>本质上是一个线程池, 如果需要使用, 只需要定义一个 ForkJoinPool 即可</li>
+<li>线程数量尽量和 CPU 核心数差不多; 例如 8 核 CPU 就设置 8 个线程</li>
+<li>适用于非阻塞(non blocking)的代码处理; 如网络接口调用, 数据库查询, 文件操作等操作<strong>并不适用</strong></li>
+</ol>
+<p>工作窃取带来的性能提升偏理论, API 的复杂性高, 实际研发中可控性来说不如其他 API, <strong>非内存操作并不适用</strong></p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            清月明风
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://info4z.github.io/2020/06/05/Fork&amp;Join/">
+            https://info4z.github.io/2020/06/05/Fork&amp;Join/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2020/06/12/FutureTask/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">FutureTask源码剖析 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2020/05/29/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8%E7%B1%BB2/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">并发容器类(二) </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%94%A8%E6%9D%A5%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-text">一 : 用来做什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%84%8F%E5%9B%BE%E6%A2%B3%E7%90%86"><span class="toc-text">二 : 意图梳理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%BB%8F%E5%85%B8%E7%BD%91%E5%85%B3%E5%9C%BA%E6%99%AF-%E6%9F%A5%E8%AF%A2%E5%A4%9A%E4%B8%AA%E7%B3%BB%E7%BB%9F%E6%95%B0%E6%8D%AE"><span class="toc-text">三 : 经典网关场景, 查询多个系统数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF"><span class="toc-text">四 : 实现思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E9%80%82%E7%94%A8"><span class="toc-text">五 : 适用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E7%BB%93%E8%AF%AD"><span class="toc-text">六 : 结语</span></a></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%94%A8%E6%9D%A5%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-text">一 : 用来做什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%84%8F%E5%9B%BE%E6%A2%B3%E7%90%86"><span class="toc-text">二 : 意图梳理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%BB%8F%E5%85%B8%E7%BD%91%E5%85%B3%E5%9C%BA%E6%99%AF-%E6%9F%A5%E8%AF%A2%E5%A4%9A%E4%B8%AA%E7%B3%BB%E7%BB%9F%E6%95%B0%E6%8D%AE"><span class="toc-text">三 : 经典网关场景, 查询多个系统数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF"><span class="toc-text">四 : 实现思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E9%80%82%E7%94%A8"><span class="toc-text">五 : 适用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E7%BB%93%E8%AF%AD"><span class="toc-text">六 : 结语</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-02-03</div>
+        <a href="/2023/02/03/shell%E7%BC%96%E7%A8%8B/"><div class="recent-posts-item-content">shell编程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-27</div>
+        <a href="/2023/01/27/shell%E5%85%A5%E9%97%A8/"><div class="recent-posts-item-content">shell入门</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-20</div>
+        <a href="/2023/01/20/%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/"><div class="recent-posts-item-content">服务器内存占用过高</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-13</div>
+        <a href="/2023/01/13/arthas/"><div class="recent-posts-item-content">Arthas</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          冰清阁
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>
