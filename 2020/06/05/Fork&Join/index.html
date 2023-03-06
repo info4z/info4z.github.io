@@ -23,14 +23,12 @@
 <meta property="og:site_name" content="冰清阁">
 <meta property="og:description" content="ResursiveAction, RecursiveTask">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230201161307792.png">
 <meta property="article:published_time" content="2020-06-04T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-02-24T10:52:14.060Z">
+<meta property="article:modified_time" content="2023-03-06T11:26:32.165Z">
 <meta property="article:author" content="清月明风">
 <meta property="article:tag" content="多线程并发编程">
 <meta property="article:tag" content="J.U.C并发编程包">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230201161307792.png">
   
   
   
@@ -223,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.6k 字
+          4.9k 字
         
       </span>
     
@@ -234,7 +232,7 @@
         
         
         
-          39 分钟
+          41 分钟
         
       </span>
     
@@ -284,7 +282,21 @@
 
 <p>将此代码包装在 ForkJoinTask 子类中, 通常是 RecursiveTask (可以返回结果) 或 RecursiveAction</p>
 <h2 id="二-意图梳理"><a href="#二-意图梳理" class="headerlink" title="二 : 意图梳理"></a>二 : 意图梳理</h2><p>关键点 :  : 分解任务fork出新任务, 汇集join任务执行结果</p>
-<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230201161307792.png" srcset="/img/loading.gif" lazyload></p>
+<pre><code class=" mermaid">graph TD
+提交任务 --&gt; ForkJoinTask
+ForkJoinTask --fork--&gt; process-1
+process-1 --&gt; process-1.1
+process-1 --&gt; process-1.2
+
+ForkJoinTask --fork--&gt; process-2
+process-2 --&gt; process-2.1
+process-2 --&gt; process-2.2
+process-2.1 -. join .-&gt; process-2
+process-2.2 -. join .-&gt; process-2
+</code></pre>
+
+
+
 <h2 id="三-经典网关场景-查询多个系统数据"><a href="#三-经典网关场景-查询多个系统数据" class="headerlink" title="三 : 经典网关场景, 查询多个系统数据"></a>三 : 经典网关场景, 查询多个系统数据</h2><p>移动互联网的情况</p>
 <ul>
 <li>一个接口请求要获取很多信息</li>

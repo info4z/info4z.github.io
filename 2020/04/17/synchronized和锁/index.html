@@ -23,17 +23,17 @@
 <meta property="og:site_name" content="冰清阁">
 <meta property="og:description" content="要使用多线程技术, 能够合理的使用锁总是绕不开的">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230120130607774.png">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230120130718713.png">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230120131237732.png">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230120131530631.png">
+<meta property="og:image" content="d:\blog\source\java\image-2020041701.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020041702.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020041703.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020041704.png">
 <meta property="article:published_time" content="2020-04-16T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-02-24T10:49:33.994Z">
+<meta property="article:modified_time" content="2023-03-06T10:51:05.769Z">
 <meta property="article:author" content="清月明风">
 <meta property="article:tag" content="多线程并发编程">
 <meta property="article:tag" content="线程安全">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230120130607774.png">
+<meta name="twitter:image" content="d:\blog\source\java\image-2020041701.png">
   
   
   
@@ -339,13 +339,13 @@
 <h3 id="一-轻量级锁"><a href="#一-轻量级锁" class="headerlink" title="(一) 轻量级锁"></a>(一) 轻量级锁</h3><p>对象初始化的时候是无锁的, mark word 记录的是 hashCode, age 和偏移状态</p>
 <p><strong>加锁原理 :</strong> 线程栈开辟一个空间, 存储当前锁定对象的 mark word 信息; 这个空间就是 lock record, 它可以存储多个锁定的对象信息, 如果对象被锁定了, mark word 的内容会变为 lock record address</p>
 <p>加锁前</p>
-<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230120130607774.png" srcset="/img/loading.gif" lazyload> </p>
+<p><img src="D:\blog\source\java\image-2020041701.png" srcset="/img/loading.gif" lazyload> </p>
 <p>加锁后</p>
-<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230120130718713.png" srcset="/img/loading.gif" lazyload> </p>
+<p><img src="/../java/image-2020041702.png" srcset="/img/loading.gif" lazyload> </p>
 <p>使用 CAS 修改 mark word 完毕, 则 mark word 中的 tag 进入 00 状态</p>
 <p>解锁的过程, 则是一个逆向恢复 mark word 的过程</p>
 <h3 id="二-偏向锁到轻量级锁"><a href="#二-偏向锁到轻量级锁" class="headerlink" title="(二) 偏向锁到轻量级锁"></a>(二) 偏向锁到轻量级锁</h3><p>偏向锁默认是开启的, <strong>偏向锁其实也是无锁</strong>, tag 值和无锁对象一样, 都是 01, 若出现锁竞争会升迁到轻量级锁</p>
-<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230120131237732.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/../java/image-2020041703.png" srcset="/img/loading.gif" lazyload></p>
 <p>未锁定或不可偏向对象经过自旋重锁之后, 会升迁为轻量级锁, mark word 的内容会修改为线程栈的 lock record address, 同时 tag 会修改为 00, 如果锁再次升级, 就会编程重量级锁, mark word 内容会修改为 monitor address , 同时 tag 会修改为 10</p>
 <p>开启偏向锁的对象 mark word 内容为 thread ID|age|1 , tag 值仍然是 01, 这里需要注意的是 Thread ID 初始值为 0, 当第一个线程进行操作的时候, 会将 Thread ID 修改为自己的线程 ID, 一旦出现争抢会出现两种情况: 一种情况是如果对象没锁定, 则会变成未锁定且不偏向的对象, 也就是无锁对象; 如果对象已经锁定, 则会直接变成被轻量级锁定的对象</p>
 <p><strong>总结 :</strong></p>
@@ -358,7 +358,7 @@
 </ul>
 <h3 id="三-重量级锁-监视器-monitor"><a href="#三-重量级锁-监视器-monitor" class="headerlink" title="(三) 重量级锁 - 监视器(monitor)"></a>(三) 重量级锁 - 监视器(monitor)</h3><p>修改 mark word 如果失败, 会自旋 CAS 一定次数, 该次数可以通过参数配置</p>
 <p>超过次数, 仍未抢到锁, 则锁升级为重量级锁, 进入阻塞</p>
-<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230120131530631.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/../java/image-2020041704.png" srcset="/img/loading.gif" lazyload></p>
 <p>monitor 也叫做管程, 计算机操作系统原理中有提及类似概念, 一个对象会有一个对应的 monitor</p>
 
                 

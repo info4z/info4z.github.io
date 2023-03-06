@@ -23,19 +23,19 @@
 <meta property="og:site_name" content="冰清阁">
 <meta property="og:description" content="netty的责任链称为pipeline, 类似流水线作业, 一定要结合源码, 多看几遍">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230207215047975.png">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211135536424.png">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211135748415.png">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211140021280.png">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211140848456.png">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211141208378.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020072401.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020072402.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020072403.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020072404.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020072405.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020072406.png">
 <meta property="article:published_time" content="2020-07-23T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-02-24T13:02:28.108Z">
+<meta property="article:modified_time" content="2023-03-06T11:01:46.014Z">
 <meta property="article:author" content="清月明风">
 <meta property="article:tag" content="高并发网络编程">
 <meta property="article:tag" content="Netty">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230207215047975.png">
+<meta name="twitter:image" content="https://info4z.github.io/java/image-2020072401.png">
   
   
   
@@ -303,7 +303,7 @@
 
 <h3 id="二-Netty-中的-ChannelPipeline-责任链"><a href="#二-Netty-中的-ChannelPipeline-责任链" class="headerlink" title="(二) : Netty 中的 ChannelPipeline 责任链"></a>(二) : Netty 中的 ChannelPipeline 责任链</h3><p><strong>Pipeline管道</strong>保存了通道所有处理器信息。</p>
 <p>创建新channel时自动创建一个专有的pipeline。入站<strong>事件</strong>和出站<strong>操作</strong>会调用pipeline上的处理器</p>
-<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230207215047975.png" srcset="/img/loading.gif" lazyload> </p>
+<p><img src="/../java/image-2020072401.png" srcset="/img/loading.gif" lazyload> </p>
 <h2 id="二-事件"><a href="#二-事件" class="headerlink" title="二 : 事件"></a>二 : 事件</h2><h3 id="一-入站事件和出站事件"><a href="#一-入站事件和出站事件" class="headerlink" title="(一) 入站事件和出站事件"></a>(一) 入站事件和出站事件</h3><p><strong>入站事件 :</strong> 通常指I&#x2F;O线程生成了入站数据。(通俗理解:从socket底层自己往上冒上来的事件都是入站)</p>
 <p>比如EventLoop收到selector的OP_READ事件，入站处理器调用socketChannel.read(ByteBuffer)接收到数据后，这将导致通道的ChannelPipeline中包含的下一个中的channelRead方法被调用。</p>
 <p><strong>出站事件 :</strong> 经常是指I&#x2F;O线程执行实际的输出操作。(通俗理解:想主动往socket底层操作的事件的都是出站)</p>
@@ -475,14 +475,14 @@ E[ChannelDuplexHandler5] --- D[Outbound Handler 4] --- C[Outbound Handler 3] ---
 <li><p>其余的方法代表<strong>出站</strong>事件的传播和处理。</p>
 </li>
 </ul>
-<h2 id="四-分析"><a href="#四-分析" class="headerlink" title="四 : 分析"></a>四 : 分析</h2><h3 id="一-分析-registered-入站事件的处理"><a href="#一-分析-registered-入站事件的处理" class="headerlink" title="(一) 分析 registered 入站事件的处理"></a>(一) 分析 registered 入站事件的处理</h3><p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211135536424.png" srcset="/img/loading.gif" lazyload> </p>
+<h2 id="四-分析"><a href="#四-分析" class="headerlink" title="四 : 分析"></a>四 : 分析</h2><h3 id="一-分析-registered-入站事件的处理"><a href="#一-分析-registered-入站事件的处理" class="headerlink" title="(一) 分析 registered 入站事件的处理"></a>(一) 分析 registered 入站事件的处理</h3><p><img src="/../java/image-2020072402.png" srcset="/img/loading.gif" lazyload> </p>
 <p>ServerSocketChannel.pipeline的变化</p>
-<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211135748415.png" srcset="/img/loading.gif" lazyload> </p>
-<h3 id="二-分析-bind-出站事件的处理"><a href="#二-分析-bind-出站事件的处理" class="headerlink" title="(二) 分析 bind 出站事件的处理"></a>(二) 分析 bind 出站事件的处理</h3><p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211140021280.png" srcset="/img/loading.gif" lazyload> </p>
-<h3 id="三-分析-accept-入站事件的处理"><a href="#三-分析-accept-入站事件的处理" class="headerlink" title="(三) 分析 accept 入站事件的处理"></a>(三) 分析 accept 入站事件的处理</h3><p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211140848456.png" srcset="/img/loading.gif" lazyload> </p>
+<p><img src="/../java/image-2020072403.png" srcset="/img/loading.gif" lazyload alt="image-2020072403"> </p>
+<h3 id="二-分析-bind-出站事件的处理"><a href="#二-分析-bind-出站事件的处理" class="headerlink" title="(二) 分析 bind 出站事件的处理"></a>(二) 分析 bind 出站事件的处理</h3><p><img src="/../java/image-2020072404.png" srcset="/img/loading.gif" lazyload alt="image-2020072404"> </p>
+<h3 id="三-分析-accept-入站事件的处理"><a href="#三-分析-accept-入站事件的处理" class="headerlink" title="(三) 分析 accept 入站事件的处理"></a>(三) 分析 accept 入站事件的处理</h3><p><img src="/../java/image-2020072405.png" srcset="/img/loading.gif" lazyload alt="image-2020072405"> </p>
 <p>这是一个分配的过程，main Group负责accept，然后分配sub Group负责read</p>
 <h3 id="四-分析-read-入站事件的处理"><a href="#四-分析-read-入站事件的处理" class="headerlink" title="(四) 分析 read 入站事件的处理"></a>(四) 分析 read 入站事件的处理</h3><p>pipeline分析的关键4要素:什么事件、有哪些处理器、哪些会被触发、执行顺序</p>
-<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230211141208378.png" srcset="/img/loading.gif" lazyload> </p>
+<p><img src="/../java/image-2020072406.png" srcset="/img/loading.gif" lazyload alt="image-2020072406"> </p>
 <h2 id="五-小结"><a href="#五-小结" class="headerlink" title="五 : 小结"></a>五 : 小结</h2><p>用户在管道中有一个或多个 channelhandler 来接收 I&#x2F;O 事件(例如读取)和请求 I&#x2F;O 操作(例如写入和关闭)</p>
 <p>一个典型的服务器在每个通道的管道中都有以下处理程序, 但是根据协议和业务逻辑的复杂性和特征, 可能会有所不同</p>
 <ul>

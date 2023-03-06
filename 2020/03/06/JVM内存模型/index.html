@@ -23,15 +23,15 @@
 <meta property="og:site_name" content="冰清阁">
 <meta property="og:description" content="理解 jvm 内存模型可以有助于分析解决多线程种遇到的问题">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230115181740141.png">
-<meta property="og:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230115181751188.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020030601.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020030602.png">
 <meta property="article:published_time" content="2020-03-05T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-02-24T10:45:26.551Z">
+<meta property="article:modified_time" content="2023-03-06T11:13:26.023Z">
 <meta property="article:author" content="清月明风">
 <meta property="article:tag" content="多线程并发编程">
 <meta property="article:tag" content="线程安全">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230115181740141.png">
+<meta name="twitter:image" content="https://info4z.github.io/java/image-2020030601.png">
   
   
   
@@ -285,10 +285,10 @@
 <li>错误很难重现</li>
 </ol>
 <h2 id="二-从内存结构到内存模型"><a href="#二-从内存结构到内存模型" class="headerlink" title="二 : 从内存结构到内存模型"></a>二 : 从内存结构到内存模型</h2><p>每个线程都有自己的工作内存; 如果想要数据共享, 需要存放在主内存中</p>
-<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230115181740141.png" srcset="/img/loading.gif" lazyload> </p>
+<p><img src="/../java/image-2020030601.png" srcset="/img/loading.gif" lazyload alt="image-2020030601"> </p>
 <p>因为这种内存结构, 在多线程下数据交互会有各种情况出现</p>
 <h2 id="三-工作内存缓存"><a href="#三-工作内存缓存" class="headerlink" title="三 : 工作内存缓存"></a>三 : 工作内存缓存</h2><p>cpu 运行时, 与 cpu 交互的主要是 cpu 缓存, 此时可能会出现不同 cpu 缓存中的数据不一致的情况</p>
-<p><img src="https://gcore.jsdelivr.net/gh/info4z/blog_images@main/images/image-20230115181751188.png" srcset="/img/loading.gif" lazyload> </p>
+<p><img src="/../java/image-2020030602.png" srcset="/img/loading.gif" lazyload alt="image-2020030601"> </p>
 <h2 id="四-内存模型的含义"><a href="#四-内存模型的含义" class="headerlink" title="四 : 内存模型的含义"></a>四 : 内存模型的含义</h2><p>内存模型描述程序的可能行为</p>
 <p><strong>java 编程语言内存模型</strong>通过检查执行跟踪中的每个操作, 并根据某些规则检查该读操作观察到的写操作是否有效来工作</p>
 <p>只要程序的所有执行产生结果都可以由内存模型预测; 具体的实现者任意实现, 包括操作的重新排序和删除不必要的同步</p>
