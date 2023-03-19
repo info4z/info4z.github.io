@@ -16,22 +16,23 @@
   <meta name="author" content="清月明风">
   <meta name="keywords" content="">
   
-    <meta name="description" content="统计数据占用磁盘空间的大小">
+    <meta name="description" content="如果我们自己设计消息中间件应该怎么去做,可以怎么去做?">
 <meta property="og:type" content="article">
-<meta property="og:title" content="mysql数据统计">
-<meta property="og:url" content="https://info4z.github.io/2023/01/06/mysql%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/index.html">
+<meta property="og:title" content="分布式消息中间件设计">
+<meta property="og:url" content="https://info4z.github.io/2020/09/18/%E5%88%86%E5%B8%83%E5%BC%8F%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6%E8%AE%BE%E8%AE%A1/index.html">
 <meta property="og:site_name" content="冰清阁">
-<meta property="og:description" content="统计数据占用磁盘空间的大小">
+<meta property="og:description" content="如果我们自己设计消息中间件应该怎么去做,可以怎么去做?">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-01-05T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-02-24T11:02:44.979Z">
+<meta property="article:published_time" content="2020-09-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-03-18T10:56:01.837Z">
 <meta property="article:author" content="清月明风">
-<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="分布式消息中间">
+<meta property="article:tag" content="设计原理">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>mysql数据统计 - 冰清阁</title>
+  <title>分布式消息中间件设计 - 冰清阁</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -197,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="mysql数据统计"></span>
+            <span id="subtitle" data-typed-text="分布式消息中间件设计"></span>
           
         </div>
 
@@ -208,8 +209,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-06 00:00" pubdate>
-          2023年1月6日 凌晨
+        <time datetime="2020-09-18 00:00" pubdate>
+          2020年9月18日 凌晨
         </time>
       </span>
     
@@ -220,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.6k 字
+          3.8k 字
         
       </span>
     
@@ -231,7 +232,7 @@
         
         
         
-          13 分钟
+          32 分钟
         
       </span>
     
@@ -269,59 +270,294 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">mysql数据统计</h1>
+            <h1 style="display: none">分布式消息中间件设计</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="一-库表结构"><a href="#一-库表结构" class="headerlink" title="一 : 库表结构"></a>一 : 库表结构</h2><ul>
-<li><p>MySQL 的 information_schema 数据库, 保存着数据库的容量和使用信息, 可查询数据库中每个表占用的空间, 表记录的行数</p>
+                <h2 id="一-什么是分布式消息中间件"><a href="#一-什么是分布式消息中间件" class="headerlink" title="一 : 什么是分布式消息中间件"></a>一 : 什么是分布式消息中间件</h2><p>单体架构</p>
+<pre><code class=" mermaid">flowchart LR
+subgraph A[XX商城系统]
+商品
+会员
+订单
+登录
+注册
+...
+end
+A --&gt; B[(数据库)]
+</code></pre>
+
+<p>分布式系统架构 : 一个请求后台多系统协同处理</p>
+<pre><code class=" mermaid">flowchart LR
+A[前端系统] --&gt; B[订单系统]
+B &lt;-.相互调用.-&gt; C
+A --&gt; C[会员系统]
+B --&gt; D[(数据库)]
+C --&gt; E((缓存)) --&gt; D
+</code></pre>
+
+<p>基于消息中间件的分布式系统架构</p>
+<pre><code class=" mermaid">graph LR
+A[前端系统] --发送注册消息--&gt; B&#123;消息中间件&#125;
+A[前端系统] --创建订单消息--&gt; B&#123;消息中间件&#125;
+A[前端系统] --发送支付消息--&gt; B&#123;消息中间件&#125;
+B --接收注册消息--&gt; C[会员系统]
+B --接收订单消息--&gt; D[订单系统]
+B --接收支付消息--&gt; E[支付系统]
+</code></pre>
+
+<h3 id="一-消息中间件概述"><a href="#一-消息中间件概述" class="headerlink" title="(一) 消息中间件概述"></a>(一) 消息中间件概述</h3><p>什么是消息中间件</p>
+<ul>
+<li>利用高效可靠的消息传递机制进行平台无关的数据交流;</li>
+<li>并基于数据通信来进行分布式系统的集成;</li>
+<li>通过提供消息传递和消息排队模型, 它可以在分布式环境下扩展进程间的通信;</li>
+</ul>
+<p>消息中间件的应用场景</p>
+<ul>
+<li>跨系统数据传递</li>
+<li>高并发流量削峰</li>
+<li>数据异步处理…等等</li>
+</ul>
+<p>常用的消息中间件</p>
+<ul>
+<li>ActiveMQ, RabbitMQ, kafka, RocketMQ</li>
+</ul>
+<h3 id="二-消息中间件核心设计"><a href="#二-消息中间件核心设计" class="headerlink" title="(二) 消息中间件核心设计"></a>(二) 消息中间件核心设计</h3><ul>
+<li>本质<ul>
+<li>一种具备接收请求, 保存数据, 发送数据等功能的网络应用</li>
+<li>和一般网络应用程序的区别是它主要负责数据的接收和传递, 所以性能一般都高于普通程序</li>
+</ul>
 </li>
-<li><p>TABLES 表结构</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">CREATE</span> TEMPORARY <span class="hljs-keyword">TABLE</span> `TABLES` (<br>  `TABLE_CATALOG` <span class="hljs-type">varchar</span>(<span class="hljs-number">512</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-string">&#x27;&#x27;</span>,<br>  `TABLE_SCHEMA` <span class="hljs-type">varchar</span>(<span class="hljs-number">64</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-string">&#x27;&#x27;</span>,<br>  `TABLE_NAME` <span class="hljs-type">varchar</span>(<span class="hljs-number">64</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-string">&#x27;&#x27;</span>,<br>  `TABLE_TYPE` <span class="hljs-type">varchar</span>(<span class="hljs-number">64</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-string">&#x27;&#x27;</span>,<br>  `ENGINE` <span class="hljs-type">varchar</span>(<span class="hljs-number">64</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `VERSION` <span class="hljs-type">bigint</span>(<span class="hljs-number">21</span>) unsigned <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `ROW_FORMAT` <span class="hljs-type">varchar</span>(<span class="hljs-number">10</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `TABLE_ROWS` <span class="hljs-type">bigint</span>(<span class="hljs-number">21</span>) unsigned <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `AVG_ROW_LENGTH` <span class="hljs-type">bigint</span>(<span class="hljs-number">21</span>) unsigned <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `DATA_LENGTH` <span class="hljs-type">bigint</span>(<span class="hljs-number">21</span>) unsigned <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `MAX_DATA_LENGTH` <span class="hljs-type">bigint</span>(<span class="hljs-number">21</span>) unsigned <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `INDEX_LENGTH` <span class="hljs-type">bigint</span>(<span class="hljs-number">21</span>) unsigned <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `DATA_FREE` <span class="hljs-type">bigint</span>(<span class="hljs-number">21</span>) unsigned <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `AUTO_INCREMENT` <span class="hljs-type">bigint</span>(<span class="hljs-number">21</span>) unsigned <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `CREATE_TIME` datetime <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `UPDATE_TIME` datetime <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `CHECK_TIME` datetime <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `TABLE_COLLATION` <span class="hljs-type">varchar</span>(<span class="hljs-number">32</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `CHECKSUM` <span class="hljs-type">bigint</span>(<span class="hljs-number">21</span>) unsigned <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `CREATE_OPTIONS` <span class="hljs-type">varchar</span>(<span class="hljs-number">255</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `TABLE_COMMENT` <span class="hljs-type">varchar</span>(<span class="hljs-number">2048</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-string">&#x27;&#x27;</span><br>) ENGINE<span class="hljs-operator">=</span>MEMORY <span class="hljs-keyword">DEFAULT</span> CHARSET<span class="hljs-operator">=</span>utf8<br></code></pre></td></tr></table></figure>
+<li>5大核心组成<ul>
+<li>协议</li>
+<li>持久化机制</li>
+<li>消息分发机制</li>
+<li>高可用设计</li>
+<li>高可靠设计</li>
+</ul>
 </li>
-<li><p>重点字段说明</p>
+</ul>
+<h2 id="二-协议"><a href="#二-协议" class="headerlink" title="二 : 协议"></a>二 : 协议</h2><h3 id="一-协议是什么"><a href="#一-协议是什么" class="headerlink" title="(一) 协议是什么"></a>(一) 协议是什么</h3><p>协议是计算机之间通信时共同遵从的一组约定, 都遵守相同的约定, 计算机之间才能相互交流; </p>
+<p>是对数据格式和计算机之间交换数据时必须遵守的规则的正式描述</p>
+<p><strong>协议三要素 :</strong> </p>
+<ol>
+<li>语法 : 即数据与控制信息的结构或格式</li>
+<li>语义 : 即需要发出何种控制信息, 完成何种动作以及做出何种响应</li>
+<li>时许(同步) : 即事件实现顺序的详细说明</li>
+</ol>
+<p><strong>举例 : Http 协议三要素</strong> </p>
+<ol>
+<li>语法 : http 规定了请求报文和响应报文的具体格式</li>
+<li>语义 : 客户端主动发起的操作称为请求</li>
+<li>时序 : 一个请求对应一个响应</li>
+</ol>
+<h3 id="二-消息中间件常见协议"><a href="#二-消息中间件常见协议" class="headerlink" title="(二) 消息中间件常见协议"></a>(二) 消息中间件常见协议</h3><p><strong>OpenWire :</strong> ActiveMQ专属</p>
+<p><strong>AMQP :</strong> Advanced Message Queuing Protocol, 高级消息队列协议, 2004 年 JPMorgan Chase (摩根大通集团)联合其他公司共同设计</p>
+<ul>
+<li><strong>特性 :</strong> 事务支持, 持久化支持, 出生金融行业, 在可靠性消息处理上具备天然的优势</li>
+<li>代表产品 : ActiveMQ, RabbitMQ</li>
+</ul>
+<p><strong>MQTT :</strong> Message Queuing Telemrtry Transport, 消息队列遥测传输, 是IBM开发的一个即时通讯协议, 物联网系统架构中的重要组成部分</p>
+<ul>
+<li><strong>特性 :</strong> 轻量, 结构简单, 传输快, 没有事务支持, 没有持久化相关设计</li>
+<li><strong>应用场景 :</strong> 适用于计算能力有限, 低带宽, 网络不稳定的场景</li>
+<li>代表产品 : ActiveMQ, RabbitMQ</li>
+</ul>
+<p><strong>Kafka :</strong> 基于 TCP 的二进制协议; 消息内部是通过长度来分割, 由一些基本数据类型组成</p>
+<ul>
+<li><strong>特性 :</strong> 结构简单, 解析快, 无事务设计, 有持久化设计</li>
+</ul>
+<p><strong>OpenMessae :</strong> 近一两年由阿里发起, 与雅虎, 滴滴出行, Streamlio 等公司共同参与创立的分布式消息中间件, 流处理领域的应用开发标准; 是<strong>国内首个</strong>在全球范围内发起的分布式消息领域国际标准</p>
+<ul>
+<li><strong>特性 :</strong> 结构简单, 解析快, 有事务设计, 有持久化设计</li>
+<li>代表产品 : Apache RocketMQ</li>
+</ul>
+<p><strong>问题 : 为什么消息中间件不直接使用 Http 协议 ?</strong></p>
+<ol>
+<li>首先 http 的内容很多,请求报文和响应报文很复杂</li>
+<li>http 大部分情况都是短连接, 不利于消息中间件的场景, 消息中间件要求客户端长期的获取信息或者是往消息中间件中发送数据</li>
+</ol>
+<h2 id="三-持久化"><a href="#三-持久化" class="headerlink" title="三 : 持久化"></a>三 : 持久化</h2><h3 id="一-持久化是什么"><a href="#一-持久化是什么" class="headerlink" title="(一) 持久化是什么"></a>(一) 持久化是什么</h3><p>简单来说就是数据存入磁盘, 而不是存在内存中随服务重启而消失, 使数据能够永久保存叫做持久化</p>
+<pre><code class=" mermaid">graph LR
+A[前台系统] --&gt; B&#123;消息中间件&#125; --&gt; C[订单系统]
+B --- D((&quot;磁盘&lt;br&gt;(持久存储)&quot;))
+</code></pre>
+
+<h3 id="二-常用持久化方式"><a href="#二-常用持久化方式" class="headerlink" title="(二) 常用持久化方式"></a>(二) 常用持久化方式</h3><ul>
+<li><p>文件系统和数据库, 举例说明</p>
 <table>
 <thead>
 <tr>
-<th>字段</th>
-<th>解释</th>
+<th></th>
+<th>ActiveMQ</th>
+<th>RabbitMQ</th>
+<th>Kafka</th>
+<th>RocketMQ</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>TABLE_SCHEMA</td>
-<td>数据库名</td>
+<td>文件系统</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
 </tr>
 <tr>
-<td>TABLE_NAME</td>
-<td>表名</td>
-</tr>
-<tr>
-<td>ENGINE</td>
-<td>存储引擎</td>
-</tr>
-<tr>
-<td>TABLE_ROWS</td>
-<td>记录数</td>
-</tr>
-<tr>
-<td>DATA_LENGTH</td>
-<td>数据大小(单位B)</td>
-</tr>
-<tr>
-<td>INDEX_LENGTH</td>
-<td>索引大小</td>
+<td>数据库</td>
+<td>支持</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
 </tr>
 </tbody></table>
 </li>
 </ul>
-<h2 id="二-查询示例"><a href="#二-查询示例" class="headerlink" title="二 : 查询示例"></a>二 : 查询示例</h2><h3 id="一-数据总占用量"><a href="#一-数据总占用量" class="headerlink" title="(一) 数据总占用量"></a>(一) 数据总占用量</h3><ul>
-<li><p>求和 &#x3D;&gt; 单位转换 &#x3D;&gt; 加单位</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">select</span> <br>	concat(round(<span class="hljs-built_in">sum</span>(DATA_LENGTH<span class="hljs-operator">/</span><span class="hljs-number">1024</span><span class="hljs-operator">/</span><span class="hljs-number">1024</span><span class="hljs-operator">/</span><span class="hljs-number">1024</span>),<span class="hljs-number">2</span>),<span class="hljs-string">&#x27;GB&#x27;</span>) <span class="hljs-keyword">as</span> data <br><span class="hljs-keyword">from</span> information_schema.TABLES<br></code></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="二-每个表占用量"><a href="#二-每个表占用量" class="headerlink" title="(二) 每个表占用量"></a>(二) 每个表占用量</h3><ul>
-<li><p>table_name, table_rows, data_length</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">select</span> <br>	table_name, <br>	concat(round(<span class="hljs-built_in">sum</span>(data_length<span class="hljs-operator">/</span><span class="hljs-number">1024</span><span class="hljs-operator">/</span><span class="hljs-number">1024</span><span class="hljs-operator">/</span><span class="hljs-number">1024</span>),<span class="hljs-number">2</span>),<span class="hljs-string">&#x27;G&#x27;</span>) <span class="hljs-keyword">as</span> data <br><span class="hljs-keyword">from</span> information_schema.tables <br><span class="hljs-keyword">where</span> table_schema<span class="hljs-operator">=</span><span class="hljs-string">&#x27;dbname&#x27;</span> <br><span class="hljs-keyword">group</span> <span class="hljs-keyword">by</span> table_name <br><span class="hljs-keyword">order</span> <span class="hljs-keyword">by</span> data <span class="hljs-keyword">desc</span>;<br></code></pre></td></tr></table></figure></li>
+<h2 id="四-消息分发"><a href="#四-消息分发" class="headerlink" title="四 : 消息分发"></a>四 : 消息分发</h2><h3 id="一-为什么要有消息分发策略"><a href="#一-为什么要有消息分发策略" class="headerlink" title="(一) 为什么要有消息分发策略"></a>(一) 为什么要有消息分发策略</h3><p><strong>业务场景一 :</strong> 前台系统创建订单, 然后传递数据到消息中间件, 那这条消息要给后端的哪个系统呢? 因为一个消息中间件会有多个子系统进行连接, 这个时候就<strong>需要有消息分发策略, 根据什么策略将消息分发给一个正确的系统</strong>; 例如订单系统要接收订单消息, 而购物车系统和用户系统就不需要接收</p>
+<pre><code class=" mermaid">graph LR
+A[前台系统] --创建订单--&gt; B&#123;消息中间件&#125; --订单消息--&gt; C[订单系统]
+B --订单消息--&gt; 购物车系统
+B --订单消息--&gt; 用户系统
+</code></pre>
+
+<p><strong>业务场景二 :</strong> 下了订单要支付, 支付会有一个支付成功或者失败的消息, 支付失败之后, 可能由于支付系统处理发生失败, 这个时候需要有重试的机制, 我们要求<strong>不仅可以正确的分发, 还要求能够支持重发</strong></p>
+<pre><code class=" mermaid">graph LR
+A[前台系统] --支付--&gt; B[消息中间件] 
+B --支付消息--&gt; C[支付系统]
+C --失败--&gt; B
+</code></pre>
+
+<h3 id="二-常用的消息中间件分发策略"><a href="#二-常用的消息中间件分发策略" class="headerlink" title="(二) 常用的消息中间件分发策略"></a>(二) 常用的消息中间件分发策略</h3><p>发布订阅, 轮询分发, 公平分发, 重发, 消息拉取</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>ActiveMQ</th>
+<th>RabbitMQ</th>
+<th>Kafka</th>
+<th>RocketMQ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>发布订阅</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>轮询分发</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>&#x2F;</td>
+</tr>
+<tr>
+<td>公平分发</td>
+<td>&#x2F;</td>
+<td>支持</td>
+<td>支持</td>
+<td>&#x2F;</td>
+</tr>
+<tr>
+<td>重发</td>
+<td>支持</td>
+<td>支持</td>
+<td>&#x2F;</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>消息拉取</td>
+<td>&#x2F;</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+</tbody></table>
+<h2 id="五-高可用"><a href="#五-高可用" class="headerlink" title="五 : 高可用"></a>五 : 高可用</h2><h3 id="一-高可用机制"><a href="#一-高可用机制" class="headerlink" title="(一) 高可用机制"></a>(一) 高可用机制</h3><p><strong>高可用性</strong>是指产品在规定的条件和规定的时刻或时间区间内处于可执行规定功能状态的能力</p>
+<p>当业务量大时, 一台消息中间件服务器可能无法满足需求, 所以需要消息中间件能够集群部署, 来达到高可用的目的</p>
+<h3 id="二-实现方式"><a href="#二-实现方式" class="headerlink" title="(二) 实现方式"></a>(二) 实现方式</h3><p>Master-Slave 主从共享数据的部署方式</p>
+<pre><code class=" mermaid">graph BT
+B1[Broker1 Master] --&gt; A[&quot;消息存储&lt;br&gt;(文件系统/数据库...)&quot;]
+B2[Broker2 Slave] --&gt; A
+B3[Broker3 Slave] --&gt; A
+
+C1[Client] --&gt; B1
+C2[Client] --&gt; B1
+</code></pre>
+
+<p>Master-Slave 主从同步部署方式</p>
+<pre><code class=" mermaid">flowchart LR
+A[生产者] --&gt; B[消息] --&gt; C1
+subgraph C[ ]
+	subgraph C1[broker1-master]
+	C11[消息数据]
+	end
+	subgraph C2[broker2-slave]
+	C21[&quot;消息数据&lt;br&gt;(副本)&quot;]
+	end
+	subgraph C3[broker3-slave]
+	C31[&quot;消息数据&lt;br&gt;(副本)&quot;]
+	end
+	C1 -.-&gt; C2
+	C1 -.-&gt; C3
+end
+C2 --&gt; D[消费者]
+C3 --&gt; E[消费者]
+</code></pre>
+
+<p>Broker-Cluster 多主集群同步部署方式</p>
+<pre><code class=" mermaid">flowchart LR
+A[生产者] --&gt; B[消息] --&gt; C1
+subgraph C[ ]
+	subgraph C1[broker1]
+	C11[消息数据]
+	end
+	subgraph C2[broker2]
+	C21[&quot;消息数据&lt;br&gt;(副本)&quot;]
+	end
+	subgraph C3[broker3]
+	C31[&quot;消息数据&lt;br&gt;(副本)&quot;]
+	end
+	C1 -.-&gt; C2
+	C1 -.-&gt; C3
+end
+C2 --&gt; D[消费者]
+C3 --&gt; E[消费者]
+</code></pre>
+
+<p>Broker-Cluster 多主集群转发部署方式</p>
+<pre><code class=" mermaid">flowchart LR
+A[生产者] --&gt; B[消息] --&gt; C
+subgraph C[broker1]
+C1[&quot;元数据&lt;br&gt;(队列内容)&quot;]
+end
+subgraph D[broker2]
+D1[&quot;元数据&lt;br&gt;(队列内容)&quot;]
+end
+C &lt;-.转发数据&lt;br&gt;转发请求.-&gt; D
+D --&gt; E[消费者]
+</code></pre>
+
+<p>Master-Slave 与 Broker-Cluster 结合</p>
+<pre><code class=" mermaid">flowchart LR
+A1[Master1] --- B1[Slave1] --- C1[Slave1]  --- A1
+A2[Master2] --- B2[Slave2] --- C2[Slave2]  --- A2
+A3[Master3] --- B3[Slave3] --- C3[Slave3]  --- A3
+D[Load Balance] --&gt; A1
+D --&gt; A2
+D --&gt; A3
+E[Client] --&gt; D
+</code></pre>
+
+
+
+<h2 id="六-高可靠"><a href="#六-高可靠" class="headerlink" title="六 : 高可靠"></a>六 : 高可靠</h2><p><strong>高可靠性</strong>是指系统可以无故障持续运行; 比如一个系统从来不崩溃, 报错, 或者崩溃, 报错的几率极低, 那就是高可靠</p>
+<p>在高并发业务场景下, 如果不能保证系统的高可靠, 那造成的损失将会非常严重</p>
+<p>保证消息中间件的高可靠性, 可以从以下几方面考虑 : </p>
+<ul>
+<li><strong>消息传输可靠 :</strong> 通过协议来保证系统间数据解析的正确性</li>
+<li><strong>消息存储可靠 :</strong> 通过持久化来保证消息的存储可靠性</li>
 </ul>
 
                 
@@ -341,7 +577,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">数据库</a>
+  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="category-chain-item">中间件</a>
   
   
 
@@ -356,7 +592,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/mysql/">#mysql</a>
+        <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4/">#分布式消息中间</a>
+      
+        <a href="/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E7%90%86/">#设计原理</a>
       
     </div>
   
@@ -368,8 +606,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>mysql数据统计</div>
-      <div>https://info4z.github.io/2023/01/06/mysql数据统计/</div>
+      <div>分布式消息中间件设计</div>
+      <div>https://info4z.github.io/2020/09/18/分布式消息中间件设计/</div>
     </div>
     <div class="license-meta">
       
@@ -381,7 +619,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年1月6日</div>
+          <div>2020年9月18日</div>
         </div>
       
       
@@ -413,9 +651,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/13/arthas/" title="Arthas">
+                      <a href="/2023/01/06/mysql%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/" title="mysql数据统计">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Arthas</span>
+                        <span class="hidden-mobile">mysql数据统计</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -423,8 +661,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2020/09/18/%E5%88%86%E5%B8%83%E5%BC%8F%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6%E8%AE%BE%E8%AE%A1/" title="分布式消息中间件设计">
-                        <span class="hidden-mobile">分布式消息中间件设计</span>
+                      <a href="/2020/09/11/Tomcat%E8%B0%83%E4%BC%98%E5%8F%82%E6%95%B0/" title="Tomcat参数调优">
+                        <span class="hidden-mobile">Tomcat参数调优</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
