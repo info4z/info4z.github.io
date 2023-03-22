@@ -24,7 +24,7 @@
 <meta property="og:description" content="如果我们自己设计消息中间件应该怎么去做,可以怎么去做?">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-09-17T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-03-18T10:56:01.837Z">
+<meta property="article:modified_time" content="2023-03-21T23:13:59.987Z">
 <meta property="article:author" content="清月明风">
 <meta property="article:tag" content="分布式消息中间">
 <meta property="article:tag" content="设计原理">
@@ -275,7 +275,7 @@
             
               <div class="markdown-body">
                 
-                <h2 id="一-什么是分布式消息中间件"><a href="#一-什么是分布式消息中间件" class="headerlink" title="一 : 什么是分布式消息中间件"></a>一 : 什么是分布式消息中间件</h2><p>单体架构</p>
+                <h2 id="一-消息中间件概述"><a href="#一-消息中间件概述" class="headerlink" title="一 : 消息中间件概述"></a>一 : 消息中间件概述</h2><p>单体架构</p>
 <pre><code class=" mermaid">flowchart LR
 subgraph A[XX商城系统]
 商品
@@ -307,11 +307,11 @@ B --接收订单消息--&gt; D[订单系统]
 B --接收支付消息--&gt; E[支付系统]
 </code></pre>
 
-<h3 id="一-消息中间件概述"><a href="#一-消息中间件概述" class="headerlink" title="(一) 消息中间件概述"></a>(一) 消息中间件概述</h3><p>什么是消息中间件</p>
+<h3 id="一-什么是消息中间件"><a href="#一-什么是消息中间件" class="headerlink" title="(一) 什么是消息中间件"></a>(一) 什么是消息中间件</h3><p>什么是消息中间件</p>
 <ul>
 <li>利用高效可靠的消息传递机制进行平台无关的数据交流;</li>
 <li>并基于数据通信来进行分布式系统的集成;</li>
-<li>通过提供消息传递和消息排队模型, 它可以在分布式环境下扩展进程间的通信;</li>
+<li>通过提供消息传递和消息排队模型, 它可以在分布式环境下扩展进程间的通信</li>
 </ul>
 <p>消息中间件的应用场景</p>
 <ul>
@@ -346,13 +346,13 @@ B --接收支付消息--&gt; E[支付系统]
 <li>语义 : 即需要发出何种控制信息, 完成何种动作以及做出何种响应</li>
 <li>时许(同步) : 即事件实现顺序的详细说明</li>
 </ol>
-<p><strong>举例 : Http 协议三要素</strong> </p>
+<p><strong>举例 : Http 协议</strong> </p>
 <ol>
 <li>语法 : http 规定了请求报文和响应报文的具体格式</li>
 <li>语义 : 客户端主动发起的操作称为请求</li>
 <li>时序 : 一个请求对应一个响应</li>
 </ol>
-<h3 id="二-消息中间件常见协议"><a href="#二-消息中间件常见协议" class="headerlink" title="(二) 消息中间件常见协议"></a>(二) 消息中间件常见协议</h3><p><strong>OpenWire :</strong> ActiveMQ专属</p>
+<h3 id="二-消息中间件常见协议"><a href="#二-消息中间件常见协议" class="headerlink" title="(二) 消息中间件常见协议"></a>(二) 消息中间件常见协议</h3><p><strong>OpenWire :</strong> Apache的一种跨语言的协议, 允许从不同的语言和平台访问ActiveMQ, 是ActiveMQ 4.x以后的版本默认的传输协议。</p>
 <p><strong>AMQP :</strong> Advanced Message Queuing Protocol, 高级消息队列协议, 2004 年 JPMorgan Chase (摩根大通集团)联合其他公司共同设计</p>
 <ul>
 <li><strong>特性 :</strong> 事务支持, 持久化支持, 出生金融行业, 在可靠性消息处理上具备天然的优势</li>
@@ -368,20 +368,20 @@ B --接收支付消息--&gt; E[支付系统]
 <ul>
 <li><strong>特性 :</strong> 结构简单, 解析快, 无事务设计, 有持久化设计</li>
 </ul>
-<p><strong>OpenMessae :</strong> 近一两年由阿里发起, 与雅虎, 滴滴出行, Streamlio 等公司共同参与创立的分布式消息中间件, 流处理领域的应用开发标准; 是<strong>国内首个</strong>在全球范围内发起的分布式消息领域国际标准</p>
+<p><strong>OpenMessage :</strong> 近一两年由阿里发起, 与雅虎, 滴滴出行, Streamlio 等公司共同参与创立的分布式消息中间件, 流处理领域的应用开发标准; 是<strong>国内首个</strong>在全球范围内发起的分布式消息领域国际标准</p>
 <ul>
 <li><strong>特性 :</strong> 结构简单, 解析快, 有事务设计, 有持久化设计</li>
 <li>代表产品 : Apache RocketMQ</li>
 </ul>
-<p><strong>问题 : 为什么消息中间件不直接使用 Http 协议 ?</strong></p>
+<h3 id="三-问题"><a href="#三-问题" class="headerlink" title="(三) 问题"></a>(三) 问题</h3><p><strong>为什么消息中间件不直接使用 Http 协议 ?</strong></p>
 <ol>
 <li>首先 http 的内容很多,请求报文和响应报文很复杂</li>
 <li>http 大部分情况都是短连接, 不利于消息中间件的场景, 消息中间件要求客户端长期的获取信息或者是往消息中间件中发送数据</li>
 </ol>
 <h2 id="三-持久化"><a href="#三-持久化" class="headerlink" title="三 : 持久化"></a>三 : 持久化</h2><h3 id="一-持久化是什么"><a href="#一-持久化是什么" class="headerlink" title="(一) 持久化是什么"></a>(一) 持久化是什么</h3><p>简单来说就是数据存入磁盘, 而不是存在内存中随服务重启而消失, 使数据能够永久保存叫做持久化</p>
 <pre><code class=" mermaid">graph LR
-A[前台系统] --&gt; B&#123;消息中间件&#125; --&gt; C[订单系统]
-B --- D((&quot;磁盘&lt;br&gt;(持久存储)&quot;))
+A[前台系统] --发送消息--&gt; B&#123;消息中间件&#125; --消费消息--&gt; C[订单系统]
+B --存储消息--&gt; D((&quot;磁盘&lt;br&gt;(持久存储)&quot;))
 </code></pre>
 
 <h3 id="二-常用持久化方式"><a href="#二-常用持久化方式" class="headerlink" title="(二) 常用持久化方式"></a>(二) 常用持久化方式</h3><ul>
@@ -489,7 +489,7 @@ C2[Client] --&gt; B1
 <p>Master-Slave 主从同步部署方式</p>
 <pre><code class=" mermaid">flowchart LR
 A[生产者] --&gt; B[消息] --&gt; C1
-subgraph C[ ]
+subgraph C[Master-Slave]
 	subgraph C1[broker1-master]
 	C11[消息数据]
 	end
@@ -503,7 +503,6 @@ subgraph C[ ]
 	C1 -.-&gt; C3
 end
 C2 --&gt; D[消费者]
-C3 --&gt; E[消费者]
 </code></pre>
 
 <p>Broker-Cluster 多主集群同步部署方式</p>
@@ -651,9 +650,9 @@ E[Client] --&gt; D
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/06/mysql%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/" title="mysql数据统计">
+                      <a href="/2020/09/25/ActiveMQ%E5%85%A5%E9%97%A8/" title="ActiveMQ入门">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">mysql数据统计</span>
+                        <span class="hidden-mobile">ActiveMQ入门</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

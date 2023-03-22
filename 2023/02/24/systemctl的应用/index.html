@@ -1,0 +1,941 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="清月明风">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="systemctl是一个systemd工具, 主要负责控制systemd系统和服务管理器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="systemctl的应用">
+<meta property="og:url" content="https://info4z.github.io/2023/02/24/systemctl%E7%9A%84%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="冰清阁">
+<meta property="og:description" content="systemctl是一个systemd工具, 主要负责控制systemd系统和服务管理器">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-03-21T07:07:55.914Z">
+<meta property="article:author" content="清月明风">
+<meta property="article:tag" content="shell">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>systemctl的应用 - 冰清阁</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"info4z.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>冰清阁</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="systemctl的应用"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-02-24 00:00" pubdate>
+          2023年2月24日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          38 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">systemctl的应用</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一-概述"><a href="#一-概述" class="headerlink" title="一 : 概述"></a>一 : 概述</h2><p>systemctl 是 linux 系统继 init.d 之后的一个 systemd 工具, 主要负责控制 systemd 系统和管理系统服务。</p>
+<p>systemd 即为 system daemon(系统守护进程), 是 linux 下的一种 init 软件。</p>
+<p>Systemd 可以管理所有系统资源, 将<strong>系统资源</strong>划分为12类; 将每个系统资源称为一个 <strong>Unit</strong>; 12类包括 : Service、Target、Device等, 其中 <code>.service</code> 是最常见的单元文件。</p>
+<p>以 nginx.service 文件为例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs shell">[Unit]<br>Description=The nginx HTTP and reverse proxy server<br>After=network-online.target remote-fs.target nss-lookup.target<br>Wants=network-online.target<br><br>[Service]<br>Type=forking<br>PIDFile=/run/nginx.pid<br><span class="hljs-meta prompt_"># </span><span class="language-bash">Nginx will fail to start <span class="hljs-keyword">if</span> /run/nginx.pid already exists but has the wrong</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">SELinux context. This might happen when running `nginx -t` from the cmdline.</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">https://bugzilla.redhat.com/show_bug.cgi?<span class="hljs-built_in">id</span>=1268621</span><br>ExecStartPre=/usr/bin/rm -f /run/nginx.pid<br>ExecStartPre=/usr/sbin/nginx -t<br>ExecStart=/usr/sbin/nginx<br>ExecReload=/usr/sbin/nginx -s reload<br>KillSignal=SIGQUIT<br>TimeoutStopSec=5<br>KillMode=process<br>PrivateTmp=true<br><br>[Install]<br>WantedBy=multi-user.target<br></code></pre></td></tr></table></figure>
+
+<p>Unit 是 Systemd 管理系统资源的基本单位。使用一个 Unit File 作为 Unit 的单元文件, Systemd 通过单元文件控制 Unit 的启动。</p>
+<h2 id="二-常用命令"><a href="#二-常用命令" class="headerlink" title="二 : 常用命令"></a>二 : 常用命令</h2><p>systemctl 可以管理服务, 也就是说可以启动服务, 查看服务状态, 停止服务, 重启服务等等</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">显示状态单元</span><br>systemctl status xxx.service  <br><span class="hljs-meta prompt_"># </span><span class="language-bash">启动服务单元</span><br>systemctl start xxx.service<br><span class="hljs-meta prompt_"># </span><span class="language-bash">停止服务单元</span><br>systemctl stop xxx.service<br><span class="hljs-meta prompt_"># </span><span class="language-bash">重启服务单元</span><br>systemctl restart xxx.service<br><span class="hljs-meta prompt_"># </span><span class="language-bash">设置开机自启</span><br>systemctl enable xxx.service<br><span class="hljs-meta prompt_"># </span><span class="language-bash">取消开机自启</span><br>systemctl disable xxx.service<br><span class="hljs-meta prompt_"># </span><span class="language-bash">Reload systemd manager configuration(重新载入systemd),扫描新的或有变动的单元</span><br>systemctl daemon-reload<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="三-service文件"><a href="#三-service文件" class="headerlink" title="三 : service文件"></a>三 : service文件</h2><p>有时我们将自定义程序注册为systemd service(服务进程管理), 交由系统管理, 可以方便启动停止, 也可以实现服务异常退出重启, 开机自启动, 减少自定义程序服务管理的时间消耗。</p>
+<p>服务分为系统服务和用户服务, 系统服务开机不登陆就能运行, 常用于开机自启。</p>
+<ul>
+<li><strong>系统服务目录 :</strong> <code>/usr/lib/systemd/system/</code></li>
+<li><strong>用户服务目录 :</strong> <code>/usr/lib/systemd/user/</code></li>
+</ul>
+<p>每一个服务以 .service 结尾, 一般会分为3部分: [Unit]、[Service] 和 [Install]</p>
+<h3 id="一-Unit"><a href="#一-Unit" class="headerlink" title="(一) Unit"></a>(一) Unit</h3><p>所有 Unit 文件通用, 该部分主要是对这个服务的说明, 以及配置与其他服务的关系</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Description</strong></td>
+<td>一段描述这个Unit文件的文字, 通常只是简短的一句话</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>指定服务单元的文档, 可以是一个或多个文档的URL路径</td>
+</tr>
+<tr>
+<td>Requires</td>
+<td>依赖的Unit列表,  该Unit会在目标服务单元启动的同时被启动, 如果有任意一个启动失败, 目标单元也会被终止</td>
+</tr>
+<tr>
+<td><strong>After</strong></td>
+<td>当列出的所有单元启动完成后, 才会启动目标服务单元</td>
+</tr>
+<tr>
+<td>Before</td>
+<td>在启动指定的每个单元之前, 都会首先确保目标服务单元已经运行, 与After相反</td>
+</tr>
+<tr>
+<td>Wants</td>
+<td>目标Unit启动的同时, 启动列出的每个Unit, 不会关注启动是否成功</td>
+</tr>
+<tr>
+<td>Conflicts</td>
+<td>与目标单元有冲突的单元, 如果列出单元中有已经在运行的, 那么目标单元就不能启动</td>
+</tr>
+<tr>
+<td>OnFailure</td>
+<td>当目标单元启动失败时, 就自动启动列出的每个单元</td>
+</tr>
+<tr>
+<td>PartOf</td>
+<td>该参数仅作用于单元的停止或重启; 当停止或重启这里列出的某个单元时,  也会同时停止或重启目标单元</td>
+</tr>
+<tr>
+<td>@</td>
+<td>动态启动方式配置, @之后加载具体配置文件的名字</td>
+</tr>
+</tbody></table>
+<p>重要说明 : </p>
+<ol>
+<li><code>Before=</code>, <code>After=</code> 是配置服务间的启动顺序, 比如一个 a.service 包含了一行 <code>Before=b.service</code>, 那么当他们同时启动时, b.service 会等待 a.service 启动完成后才启动; 注意这个设置和 <code>Requires=</code> 的相互独立的, 同时包含 <code>After=</code> 和 <code>Requires=</code> 也是常见的; 此选项可以指定多次, 然后按顺序全部启动。</li>
+<li><code>PartOf=</code>, 这个依赖是单向的,  该单元自身的停止或重启并不影响这里列出的单元; 如果 a.service 中包含了 <code>PartOf=b.service</code> , 那么这个依赖关系将在 b.service 的属性列表中显示为 <code>ConsistsOf=a.service</code>; 也就是说, 不能直接设置 <code>ConsistsOf=</code> 依赖。</li>
+<li><code>@</code>, 这个参数不是写在配置文件内容中的, 而是写在配置文件名字上的, 例如我们启动openvpn服务会编写 <code>openvpn@.service</code> 文件, 客户端的配置文件为 <code>/etc/openvpn/client.conf</code>, 服务端配置文件为 <code>/etc/openvpn/server.conf</code>, 对应启动时则应该使用 <code>openvpn@client.service</code> 和 <code>openvpn@server.service</code>, 同时在内容中使用 <code>%i</code> 对 <code>@</code> 之后的内容进行接收。</li>
+</ol>
+<h3 id="二-Service"><a href="#二-Service" class="headerlink" title="(二) Service"></a>(二) Service</h3><p>Service 段是服务(Service)类型的 Unit 文件(后缀为 .service)特有的, 用于定义服务的具体管理和执行动作</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Type</strong></td>
+<td>设置进程的启动类型, 必须设为 simple, exec, forking, oneshot, dbus, notify, idle 之一, 默认的 simple 类型可以适应于绝大多数的场景, 因此一般可以忽略这个参数的配置; 而如果服务程序启动后会通过 fork 系统调用创建子进程, 然后关闭应用程序本身进程的情况, 则应该将 Type 的值设置为 forking, 否则 systemd 将不会跟踪子进程的行为, 而认为服务已经退出</td>
+</tr>
+<tr>
+<td>Environment</td>
+<td>为服务添加环境变量</td>
+</tr>
+<tr>
+<td>EnvironmentFile</td>
+<td>指定加载一个包含服务所需的环境参数的文件, 文件中的每一行都是一个环境变量的定义</td>
+</tr>
+<tr>
+<td><strong>ExecStart</strong></td>
+<td>这个参数是几乎每个 .service 文件都会有的, 指定服务启动的主要命令, 在每个配置文件中只能使用一次; <strong>需要使用绝对路径</strong></td>
+</tr>
+<tr>
+<td>ExecStartPre</td>
+<td>指定在启动执行 ExecStart 的命令前的准备工作, 可以有多个, 所有命令会按照文件中书写的顺序依次被执行</td>
+</tr>
+<tr>
+<td>ExecStartPost</td>
+<td>指定在启动执行 ExecStart 的命令后的收尾工作, 也可以有多个</td>
+</tr>
+<tr>
+<td><strong>ExecStop</strong></td>
+<td>停止服务所需要执行的主要命令; <strong>需要使用绝对路径</strong></td>
+</tr>
+<tr>
+<td>ExecStopPost</td>
+<td>指定在 ExecStop 命令执行后的收尾工作, 也可以有多个</td>
+</tr>
+<tr>
+<td><strong>ExecReload</strong></td>
+<td>重新加载服务文件所需执行的主要命令; <strong>需要使用绝对路径</strong></td>
+</tr>
+<tr>
+<td><strong>Restart</strong></td>
+<td>指定在什么情况下需要重启服务进程</td>
+</tr>
+<tr>
+<td>RestartSec</td>
+<td>如果服务需要被重启, 这个参数的值为服务被重启前的等待秒数。注意, 该重启等待时间只针对上面Restart的参数值起作用时的重启才有效, 比如说: 因Unit段配置的关系或者人为使用 <code>systemctl restart</code> 命令导致该服务重启时, 该参数无效, 会马上重启</td>
+</tr>
+<tr>
+<td>Nice</td>
+<td>服务的进程优先级, 值越小优先级越高, 默认为0; -20为最高优先级, 19为最低优先级。</td>
+</tr>
+<tr>
+<td>WorkingDirectory</td>
+<td>指定服务的工作目录。</td>
+</tr>
+<tr>
+<td>RootDirectory</td>
+<td>指定服务进程的根目录( &#x2F; 目录), 如果配置了这个参数后, 服务将无法访问指定目录以外的任何文件。</td>
+</tr>
+<tr>
+<td><strong>User</strong></td>
+<td>指定运行服务的用户, 会影响服务对本地文件系统的访问权限。可使用root</td>
+</tr>
+<tr>
+<td>Group</td>
+<td>指定运行服务的用户组, 会影响服务对本地文件系统的访问权限。</td>
+</tr>
+<tr>
+<td>PrivateTmp</td>
+<td>是否给服务分配独立的临时空间(true&#x2F;false)</td>
+</tr>
+</tbody></table>
+<p><strong>Restart</strong> 的取值分别表示了在哪些情况下, 服务会被重新启动</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>no</td>
+<td><strong>默认值</strong>, 退出后不会重启</td>
+</tr>
+<tr>
+<td><strong>always</strong></td>
+<td>除了用 systemctl stop 或等价的服务停止操作命令, 其他情况都可以重启</td>
+</tr>
+<tr>
+<td>on-success</td>
+<td>只有正常退出时(退出状态码为0), 才会重启</td>
+</tr>
+<tr>
+<td>on-failure</td>
+<td>非正常退出时(退出状态码非0), 包括被信号终止和超时, 才会重启(守护进程, 推荐值)</td>
+</tr>
+<tr>
+<td>on-abnormal</td>
+<td>只有被信号终止和超时, 才会重启(对于允许发生错误退出的服务, 推荐值)</td>
+</tr>
+<tr>
+<td>on-abort</td>
+<td>只有在收到没有捕捉到的信号终止时, 才会重启</td>
+</tr>
+<tr>
+<td>on-watchdog</td>
+<td>超时退出, 才会重启</td>
+</tr>
+</tbody></table>
+<p>具体情况如下</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>正常退出</th>
+<th>退出码不为0</th>
+<th>进程被强制杀死</th>
+<th>systemd 操作</th>
+<th>看门狗超时</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>no</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>always</td>
+<td>重启</td>
+<td>重启</td>
+<td>重启</td>
+<td>重启</td>
+<td>重启</td>
+</tr>
+<tr>
+<td>on-success</td>
+<td>重启</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>on-failure</td>
+<td></td>
+<td>重启</td>
+<td>重启</td>
+<td>重启</td>
+<td>重启</td>
+</tr>
+<tr>
+<td>on-abnormal</td>
+<td></td>
+<td></td>
+<td>重启</td>
+<td>重启</td>
+<td>重启</td>
+</tr>
+<tr>
+<td>on-abort</td>
+<td></td>
+<td></td>
+<td>重启</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>on-watchdog</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>重启</td>
+</tr>
+</tbody></table>
+<h3 id="三-Install"><a href="#三-Install" class="headerlink" title="(三) Install"></a>(三) Install</h3><p>Install段是服务的安装信息, 它不在 systemd 的运行期间使用, 只在使用 <code>systemctl enable</code> 和 <code>systemctl disable</code> 命令启用&#x2F;禁用服务时有用, 所有 Unit 文件通用, 用来定义如何启动以及是否开机启动</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>WantedBy</strong></td>
+<td>它的值是一个或多个target, 执行enable命令时, 符号链接会放入 <code>/etc/systemd/system</code> 目录下以 <code>target 名 + .wants</code> 后缀构成的子目录中。<code>WantedBy=multi-user.target</code> 表明当系统以多用户方式（默认的运行级别）启动时, 这个服务需要被自动运行。当然还需要 <strong>systemctl enable</strong> 激活这个服务以后自动运行才会生效</td>
+</tr>
+<tr>
+<td>RequiredBy</td>
+<td>依赖当前服务的模块。它的值是一个或多个 target, 执行enable命令时, 符号链接会放入&#x2F;etc&#x2F;systemd&#x2F;system目录下以 target 名 + .required后缀构成的子目录中</td>
+</tr>
+<tr>
+<td>Alias</td>
+<td>当前 Unit 可用于启动的别名</td>
+</tr>
+<tr>
+<td>Also</td>
+<td>当前 Unit 被 enable&#x2F;disable 时, 会被同时操作的其他 Unit</td>
+</tr>
+</tbody></table>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="category-chain-item">服务器</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/shell/">#shell</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>systemctl的应用</div>
+      <div>https://info4z.github.io/2023/02/24/systemctl的应用/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>清月明风</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年2月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/10/JumpServer%E5%85%A5%E9%97%A8/" title="JumpServer入门">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JumpServer入门</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/02/10/Let&#39;s%20Encrypt/" title="Let&#39;s Encrypt">
+                        <span class="hidden-mobile">Let&#39;s Encrypt</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
