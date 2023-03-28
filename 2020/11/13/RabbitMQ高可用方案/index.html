@@ -1,0 +1,893 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="清月明风">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="RabbitMQ除了使用常见的集群方案之外,还提供了一些可以实现高可用的插件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ高可用方案">
+<meta property="og:url" content="https://info4z.github.io/2020/11/13/RabbitMQ%E9%AB%98%E5%8F%AF%E7%94%A8%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:site_name" content="冰清阁">
+<meta property="og:description" content="RabbitMQ除了使用常见的集群方案之外,还提供了一些可以实现高可用的插件">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-03-28T08:41:39.368Z">
+<meta property="article:author" content="清月明风">
+<meta property="article:tag" content="分布式消息中间">
+<meta property="article:tag" content="RabbitMQ">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>RabbitMQ高可用方案 - 冰清阁</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"info4z.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>冰清阁</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="RabbitMQ高可用方案"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-11-13 00:00" pubdate>
+          2020年11月13日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          39 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">RabbitMQ高可用方案</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一-Cluster-实现"><a href="#一-Cluster-实现" class="headerlink" title="一 : Cluster 实现"></a>一 : Cluster 实现</h2><ul>
+<li>RabbitMQ 的 Cluster 模式分为<strong>普通模式</strong>和<strong>镜像模式</strong>两种</li>
+</ul>
+<h3 id="一-普通模式"><a href="#一-普通模式" class="headerlink" title="(一) 普通模式"></a>(一) 普通模式</h3><pre><code class=" mermaid">flowchart LR
+A[Producer] --message--&gt; B1 --&gt; B2 --&gt; C[Consumer]
+
+subgraph B[RabbitMQ普通模式集群]
+    subgraph B1[Broker1]
+		B11[&quot;元数据&lt;br&gt;-----------&lt;br&gt;队列内容&quot;] 
+    end
+    subgraph B2[Broker2]
+    	B21[元数据]
+    end
+end
+</code></pre>
+
+<p>元数据包含以下内容:</p>
+<table>
+<thead>
+<tr>
+<th>元素</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>队列元数据</td>
+<td>队列的名称及属性</td>
+</tr>
+<tr>
+<td>交换器</td>
+<td>交换器的名称及属性</td>
+</tr>
+<tr>
+<td>绑定关系元数据</td>
+<td>交换器与队列或者交换器与交换器</td>
+</tr>
+<tr>
+<td>vhost元数据</td>
+<td>为vhost内的队列、交换器和绑定提供命名空间及安全属性之间的绑定关系</td>
+</tr>
+</tbody></table>
+<h3 id="二-普通模式-多机多节点"><a href="#二-普通模式-多机多节点" class="headerlink" title="(二) 普通模式-多机多节点"></a>(二) 普通模式-多机多节点</h3><p>架构图</p>
+<pre><code class=" mermaid">flowchart LR
+A --- B --- C --- A
+
+subgraph A[10.0.0.1]
+	A1((Broker1))
+end
+
+subgraph B[10.0.0.2]
+	B1((Broker2))
+end
+
+subgraph C[10.0.0.3]
+	C1((Broker3))
+end
+</code></pre>
+
+<p>修改三台机器的 <code>/etc/hosts</code> 文件，添加IP地址与节点名的映射信息</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">10.10.1.41 nodel<br>10.10.1.42 node2<br>10.10.1.43 node3<br></code></pre></td></tr></table></figure>
+
+<p>编辑 RabbitMQ 的 <code>/var/lib/rabbitmq/.erlang.cookie</code> 文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 确保各个节点的 cookie 文件使用的是同一个值, 可以从一个节点复制到其它节点</span><br>scp /var/lib/rabbitmq/.erlang.cookie root@node2:/var/lib/rabbitmq/<br>scp /var/lib/rabbitmq/.erlang.cookie root@node3:/var/lib/rabbitmq/<br></code></pre></td></tr></table></figure>
+
+<p>将三个节点的端口添加到防火墙</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sh">firewall-cmd --zone=public --add-port=5672/tcp --permanent<br>firewall-cmd --zone=public --add-port=15672/tcp --permanent<br>firewall-cmd --zone=public --add-port=25672/tcp --permanent<br>firewall-cmd --reload<br></code></pre></td></tr></table></figure>
+
+<p>启动三个节点的RabbitMQ服务</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@node1 ~]<span class="hljs-comment"># rabbitmq-server -detached</span><br>[root@node2 ~]<span class="hljs-comment"># rabbitmq-server -detached</span><br>[root@node3 ~]<span class="hljs-comment"># rabbitmq-server -detached</span><br></code></pre></td></tr></table></figure>
+
+<p>以node1为基准，将node2和node3加入nodel节点的集群中。在node2和node3分别执行以下命令:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">rabbitmqctl stop_app<br>rabbitmqctl reset<br>rabbitmqctl join_cluster rabbit@node1 --ram<br>rabbitmqctl start_app<br></code></pre></td></tr></table></figure>
+
+<h3 id="三-普通模式-单机多节点"><a href="#三-普通模式-单机多节点" class="headerlink" title="(三) 普通模式-单机多节点"></a>(三) 普通模式-单机多节点</h3><p>由于某些因素的限制，有时候不得不在单台物理机器上去创建一个多RabbitMQ服务节点的集群。或者只想要实验性地验证集群的某些特性，也不需要浪费过多的物理机器去实现。</p>
+<pre><code class=" mermaid">flowchart TB
+    subgraph A[10.0.0.1]
+        A1((Broker1)) --- A2((Broker2)) ---  A3((Broker3)) --- A1
+    end
+</code></pre>
+
+<p>为方便后续命令操作，在<code>/etc/rabbitmq/rabbitmq-env.conf</code> 修改默认的节点名称为rabbit1</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs properties"><span class="hljs-attr">NODENAME</span>=<span class="hljs-string">rabbit1</span><br></code></pre></td></tr></table></figure>
+
+<p>为每个 RabbitMQ 服务节点设置不同的端口号和节点名称来启动相应的服务</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 前面设置了默认节点名，而且也有默认端口5672，所以rabbit1可以直接启动，而rabbit2和rabbit3要指定名称和端口</span><br>rabbitmq-server -detached<br>RABBITMQ_NODE_PORT=5673 RABBITMQ_NODENAME=rabbit2 rabbitmq-server-detached<br>RABBITMQ_NODE_PORT=5674 RABBITMQ_NODENAME=rabbit3 rabbitmq-server-detached<br></code></pre></td></tr></table></figure>
+
+<p>如果启用的插件有端口(比如rabbitmq_management)，则需要增加启动参数，修改插件的端口号，否则会启动失败。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># rabbit2的Web管理端口改为15673</span><br>RABBITMQ_NODE_PORT=5673 RABBITMQ_SERVER_START_ARGS=<span class="hljs-string">&quot;-rabbitmq_management listenerport,15673&#125;]&quot;</span> RABBITMQ_NODENAME=rabbit2 rabbitmq-server -detached<br><br><span class="hljs-comment"># rabbit3的Web管理端口改为15674</span><br>RABBITMQ_NODE_PORT=5674 RABBITMQ_SERVER_START_ARGS=<span class="hljs-string">&quot;-rabbitmq_management listener&#123;port,15674]]&quot;</span> RABBITMQ_NODENAME=rabbit3 rabbitmq-server -detached<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="四-镜像模式"><a href="#四-镜像模式" class="headerlink" title="(四) 镜像模式"></a>(四) 镜像模式</h3><p>架构图</p>
+<pre><code class=" mermaid">flowchart LR
+	A[生产者] --消息--&gt; B1
+	B1 --&gt; B2 
+	B1 --&gt; B3
+	B2 --&gt; C1[消费者]
+	B3 --&gt; C2[消费者]
+	subgraph B[镜像模式集群]
+		subgraph B1[Rabbit01节点]
+			B11[主拷贝&lt;br&gt;Queue&lt;br&gt;镜像]
+		end
+		subgraph B2[Rabbit03节点]
+			B21[从拷贝&lt;br&gt;Queue&lt;br&gt;镜像]
+		end
+		subgraph B3[Rabbit03节点]
+			B31[从拷贝&lt;br&gt;Queue&lt;br&gt;镜像]
+		end
+	end
+</code></pre>
+
+<ul>
+<li><p>镜像模式的集群是在普通模式的基础上，通过policy来实现，使用镜像模式可以实现RabbitMQ的高可用方案。可以在控制台直接配置</p>
+<ul>
+<li>Name : policy 的名称</li>
+<li>Pattern : 匹配表达式</li>
+<li>Apply to : 规则应用到哪个目标</li>
+<li>Priority : 优先级</li>
+<li>Definition : 规则的定义，对于镜像队列的配置来说, 只需要包含3个部分: ha-mode、ha-params 和 ha-sync-mode。</li>
+</ul>
+</li>
+<li><p><strong>ha-mode</strong> : 指明镜像队列的模式，有效值为all、exactly 、nodes，默认为all</p>
+<table>
+<thead>
+<tr>
+<th>ha-mode</th>
+<th>ha-params</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>all</td>
+<td>(empty)</td>
+<td>队列镜像到集群类所有节点</td>
+</tr>
+<tr>
+<td>exactly</td>
+<td>count</td>
+<td>队列镜像到集群内指定数量的节点。如果集群内节点数少于此值，队列将会镜像到所有节点。如果大于此值，而且一个包含镜像的节点停止，则新的镜像不会在其它节点创建。</td>
+</tr>
+<tr>
+<td>nodes</td>
+<td>nodename</td>
+<td>队列镜像到指定节点，指定的节点不在集群中不会报错。当队列申明时，如果指定的节点不在线，则队列会被创建在客户端所连接的节点上。</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><strong>ha-sync-mode</strong> : 队列中消息的同步方式，有效值为automatic和manual，默认是automatic o</p>
+</li>
+</ul>
+<h2 id="二-插件实现"><a href="#二-插件实现" class="headerlink" title="二 : 插件实现"></a>二 : 插件实现</h2><h3 id="一-Federation"><a href="#一-Federation" class="headerlink" title="(一) Federation"></a>(一) Federation</h3><p>Federation 插件的设计目标是使 RabbitMQ 在不同的 Broker 节点之间进行消息传递而无须建立集群, 该功能在以下场景下非常有用</p>
+<ul>
+<li>各个节点运行在不同版本的Erlang和RabbitMQ上。</li>
+<li>网络环境不稳定，比如广域网当中。</li>
+</ul>
+<p>架构图</p>
+<pre><code class=" mermaid">flowchart LR
+	A --federation link--- B 
+	A --federation link--- C
+	subgraph A[broker1]
+		A1[&quot;exchangeA&lt;br&gt;(federation exchange)&quot;]
+	end
+	subgraph B[broker2]
+		B1[&quot;exchangeB&lt;br&gt;(upstream exchange)&quot;]
+	end
+	subgraph C[broker3]
+		C1[&quot;exchangeC&lt;br&gt;(upstream exchange)&quot;]
+	end
+	subgraph D[upstream set]
+		B
+		C
+	end
+</code></pre>
+
+<h3 id="二-Shovel"><a href="#二-Shovel" class="headerlink" title="(二) Shovel"></a>(二) Shovel</h3><p>Shovel 与 Federation 具备的数据转发功能类似, Shovel 能够可靠、持续地从一个 Broker 中的队列(作为源端，即source)拉取数据并转发至另一个Broker中的交换器(作为目的端，即destination)。</p>
+<p>Shovel可以翻译为“铲子”，是一种比较形象的比喻。这个”铲子”可以将消息从一方”挖到”另一方</p>
+<p>Shovel的主要优势:</p>
+<ul>
+<li><strong>松耦合</strong>，Shovel 可以移动位于不同管理域中的 Broker 或者集群上的消息，这些 Broker 或者集群可以包含不同的用户和 vhost，也可以使用不同的 RabbitMQ 和 Erlang 版本。</li>
+<li><strong>支持广域网</strong>，Shovel 插件同样基于 AMQP 协议在 Broker 之间进行通信，被设计成可以容忍时断时续的连通情形，并且能够保证消息的可靠性。</li>
+<li><strong>高度定制</strong>，当Shovel 成功连接后，可以对其进行配置以执行相关的 AMQP 命令。</li>
+</ul>
+<p>Shovel 的作用</p>
+<pre><code class=" mermaid">graph LR
+A[Client] --data--&gt; B1((exchange1)) -.rk1&lt;br&gt;data.-&gt; B2[queue1] --data--&gt; C&#123;Shovel&#125; --data--&gt; D1((exchange2)) -.rk2&lt;br&gt;data.-&gt; D2[queue2]
+subgraph B[broker1]
+B1
+B2
+end
+subgraph D[broker2]
+D1
+D2
+end
+</code></pre>
+
+<h2 id="三-Federation-x2F-Shovel与Cluster的比较"><a href="#三-Federation-x2F-Shovel与Cluster的比较" class="headerlink" title="三 : Federation&#x2F;Shovel与Cluster的比较"></a>三 : Federation&#x2F;Shovel与Cluster的比较</h2><table>
+<thead>
+<tr>
+<th>Federation&#x2F;Shovel</th>
+<th>cluster</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>各个Broker节点之间逻缉分离</td>
+<td>逻辑上是个Broker节点</td>
+</tr>
+<tr>
+<td>各个Broker节点之间可以运行不同版本的Erlang和RabbitMQ</td>
+<td>各个Broker节点之间必须运行相同版本的Erlang和RabbitMQ</td>
+</tr>
+<tr>
+<td>各个Broker节点之间可以在广域网中相连，当然必须要授予适当的用户和权限</td>
+<td>各个Broker节点之间必须在可信赖的局域网中相连,通过Erlang内部节点传递消息，但节点问需要有相同的Erlang cookie</td>
+</tr>
+<tr>
+<td>各个Broker节点之间能以任何拓扑逻辑部署，连接可以是单向的或者是双向的</td>
+<td>所有Broker节点都双向连续所有其他节点</td>
+</tr>
+<tr>
+<td>从CAP理论中选择可用性和分区耐受性，即AP</td>
+<td>从CAP理论中选择一致性和可用性,即CA</td>
+</tr>
+<tr>
+<td>一个Broker中的交换器可以是Federation生成的或者是本地的</td>
+<td>集群中所有Broker节点中的交换器都是一样的,要么全有要么全无</td>
+</tr>
+<tr>
+<td>客户端所能看到它所连接的Broker节点上的队列</td>
+<td>客户端连接到集群中的任何Broker节点都可以看到所有的队列</td>
+</tr>
+</tbody></table>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="category-chain-item">中间件</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4/">#分布式消息中间</a>
+      
+        <a href="/tags/RabbitMQ/">#RabbitMQ</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>RabbitMQ高可用方案</div>
+      <div>https://info4z.github.io/2020/11/13/RabbitMQ高可用方案/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>清月明风</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年11月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/11/20/RabbitMQ%E6%8C%81%E4%B9%85%E5%8C%96/" title="RabbitMQ持久化机制和内存磁盘控制">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">RabbitMQ持久化机制和内存磁盘控制</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/11/06/RabbitMQ%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%9E%8B/" title="RabbitMQ架构模型">
+                        <span class="hidden-mobile">RabbitMQ架构模型</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
