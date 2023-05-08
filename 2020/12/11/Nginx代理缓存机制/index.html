@@ -24,7 +24,7 @@
 <meta property="og:description" content="通过Nginx的缓存机制思考如果自己来,应该怎么做...">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-12-10T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-03-28T13:40:02.277Z">
+<meta property="article:modified_time" content="2023-04-04T03:39:21.832Z">
 <meta property="article:author" content="清月明风">
 <meta property="article:tag" content="负载均衡中间件">
 <meta property="article:tag" content="Nginx">
@@ -221,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.9k 字
+          4.2k 字
         
       </span>
     
@@ -232,7 +232,7 @@
         
         
         
-          33 分钟
+          36 分钟
         
       </span>
     
@@ -277,7 +277,7 @@
                 
                 <h2 id="一-Ngnix缓存简介"><a href="#一-Ngnix缓存简介" class="headerlink" title="一 : Ngnix缓存简介"></a>一 : Ngnix缓存简介</h2><p>nginx 的 http_proxy 模块, 可以实现类似于 Squid 的缓存功能。</p>
 <p>Nginx对客户已经访问过的内容在 Nginx 服务器本地建立副本, 这样在一段时间内再次访问该数据, 就不需要通过 Nginx 服务器再次向后端服务器发出请求, 所以能够减少 Nginx 服务器与后端服务器之间的网络流量, 减轻网络拥塞, 同时还能减小数据传输延迟, 提高用户访问速度。</p>
-<p>同时, 当后端服务器宕机时, Nginx 服务器上的副本资源还能够回应相关的用户请求, 这样能够提高后端服务器的鲁棒性。</p>
+<p>同时, 当后端服务器宕机时, Nginx 服务器上的副本资源还能够回应相关的用户请求, 这样能够提高后端服务器的鲁棒性(健壮性)。</p>
 <pre><code class=" mermaid">graph LR
 A1[User] --get--&gt; B[Internet]
 A2[User] --get--&gt; B
@@ -302,18 +302,15 @@ C --&gt; D4[Web4]
 <tr>
 <th>参数</th>
 <th>作用</th>
-<th>示例</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>proxy_cache_path</td>
 <td>Nginx使用该参数指定缓存位置</td>
-<td><code>proxy_cache_path /data/nginx/cache keys_zone=one:10m;</code></td>
 </tr>
 <tr>
 <td>proxy_cache</td>
 <td>该参数为之前指定的缓存名称</td>
-<td><code>proxy_cache one;</code></td>
 </tr>
 </tbody></table>
 <p>proxy_cache_path 有两个必填参数</p>
@@ -322,7 +319,7 @@ C --&gt; D4[Web4]
 <li>第二个参数 <code>keys_zone</code> 指定缓存名称和占用内存空间的大小。</li>
 </ul>
 <p>配置示例</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> nginx;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">error_log</span> /var/log/nginx/<span class="hljs-literal">error</span>.log;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><br><span class="hljs-section">http</span> &#123;<br>	<span class="hljs-attribute">proxy_cache_path</span> /data/nginx/cache keys_zone=one:<span class="hljs-number">10m</span> max_size=<span class="hljs-number">10g</span>;<br>    <br>    <span class="hljs-section">upstream</span> info4z.tk &#123;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8881</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8882</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8883</span>;<br>    &#125;<br>    <br>    <span class="hljs-section">server</span> &#123;<br>        <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>        <span class="hljs-attribute">proxy_cache</span> one;<br>        <span class="hljs-attribute">server_name</span> <span class="hljs-literal">info</span>4z.tk;<br>        <br>        <span class="hljs-section">location</span> / &#123; <br>            <span class="hljs-attribute">proxy_pass</span> http://info4z.tk;<br>            <span class="hljs-attribute">proxy_set_header</span> Host	<span class="hljs-variable">$host</span>;<br>            <span class="hljs-attribute">proxy_set_header</span> X-Real-IP	<span class="hljs-variable">$remote_addr</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> nginx;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">error_log</span> /var/log/nginx/<span class="hljs-literal">error</span>.log;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><br><span class="hljs-section">http</span> &#123;<br>    <span class="hljs-comment"># 定义缓存位置,缓存名称和源数据大小</span><br>	<span class="hljs-attribute">proxy_cache_path</span> /tmp/nginx/cache keys_zone=one:<span class="hljs-number">10m</span> max_size=<span class="hljs-number">10g</span>;	<span class="hljs-comment"># max_size为总量大小</span><br>    <br>    <span class="hljs-section">upstream</span> info4z.tk &#123;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8881</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8882</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8883</span>;<br>    &#125;<br>    <br>    <span class="hljs-section">server</span> &#123;<br>        <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>        <span class="hljs-attribute">proxy_cache</span> one;<br>        <span class="hljs-attribute">server_name</span> <span class="hljs-literal">info</span>4z.tk;<br>        <br>        <span class="hljs-section">location</span> / &#123; <br>            <span class="hljs-attribute">proxy_pass</span> http://info4z.tk;<br>            <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$host</span>;<br>            <span class="hljs-attribute">proxy_set_header</span> X-Real-IP <span class="hljs-variable">$remote_addr</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <ul>
 <li>示例中的10m是对内存中缓存内容元数据信息大小的限制, 如果想限制缓存总量大小, 需要用 max_size 参数。</li>
@@ -334,27 +331,23 @@ C --&gt; D4[Web4]
 <tr>
 <th>参数</th>
 <th>作用</th>
-<th>示例</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>proxy_cache_key</td>
 <td>自定义 key</td>
-<td><code>proxy_cache_key $host$request_uri$cookie_user</code></td>
 </tr>
 <tr>
 <td>proxy_cache_min_uses</td>
 <td>指定请求至少被发送了多少次以上时才缓存, 可以防止低频请求被缓存</td>
-<td><code>proxy_cache_min_uses 5</code></td>
 </tr>
 <tr>
 <td>proxy_cache_methods</td>
 <td>指定哪些方法的请求被缓存</td>
-<td><code>proxy_cache_methods GET HEAD POST</code></td>
 </tr>
 </tbody></table>
 <p>配置示例</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> nginx;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">error_log</span> /var/log/nginx/<span class="hljs-literal">error</span>.log;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><br><span class="hljs-section">http</span> &#123;<br>	<span class="hljs-attribute">proxy_cache_path</span> /data/nginx/cache keys_zone=one:<span class="hljs-number">10m</span>;<br>    <br>    <span class="hljs-section">upstream</span> info4z.tk &#123;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8881</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8882</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8883</span>;<br>    &#125;<br>    <br>    <span class="hljs-section">server</span> &#123;<br>        <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>        <span class="hljs-attribute">proxy_cache</span> one;<br>        <span class="hljs-attribute">server_name</span> <span class="hljs-literal">info</span>4z.tk;<br>        <br>        <span class="hljs-section">location</span> / &#123; <br>            <span class="hljs-attribute">proxy_pass</span> http://info4z.tk;<br>            <span class="hljs-attribute">proxy_set_header</span> Host	<span class="hljs-variable">$host</span>;<br>            <span class="hljs-attribute">proxy_set_header</span> X-Real-IP	<span class="hljs-variable">$remote_addr</span>;<br>            <span class="hljs-attribute">proxy_cache_key</span> <span class="hljs-variable">$host</span><span class="hljs-variable">$request_uri</span><span class="hljs-variable">$cookie_user</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> nginx;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">error_log</span> /var/log/nginx/<span class="hljs-literal">error</span>.log;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><br><span class="hljs-section">http</span> &#123;<br>	<span class="hljs-attribute">proxy_cache_path</span> /data/nginx/cache keys_zone=one:<span class="hljs-number">10m</span>;<br>    <br>    <span class="hljs-section">upstream</span> info4z.tk &#123;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8881</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8882</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8883</span>;<br>    &#125;<br>    <br>    <span class="hljs-section">server</span> &#123;<br>        <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>        <span class="hljs-attribute">proxy_cache</span> one;<br>        <span class="hljs-attribute">server_name</span> <span class="hljs-literal">info</span>4z.tk;<br>        <br>        <span class="hljs-section">location</span> / &#123; <br>            <span class="hljs-attribute">proxy_pass</span> http://info4z.tk;<br>            <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$host</span>;<br>            <span class="hljs-attribute">proxy_set_header</span> X-Real-IP <span class="hljs-variable">$remote_addr</span>;<br>            <span class="hljs-comment"># 指定key</span><br>            <span class="hljs-attribute">proxy_cache_key</span>	<span class="hljs-variable">$host</span><span class="hljs-variable">$request_uri</span><span class="hljs-variable">$cookie_user</span>;<br>            <span class="hljs-comment"># 至少5次才会被缓存</span><br>            <span class="hljs-attribute">proxy_cache_min_uses</span> <span class="hljs-number">5</span>;<br>            <span class="hljs-comment"># 缓存的请求方式</span><br>            <span class="hljs-attribute">proxy_cache_methods</span> GET HEAD POST;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 
 
@@ -377,17 +370,30 @@ C --&gt; D4[Web4]
 </tr>
 </tbody></table>
 <p>配置示例</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> nginx;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">error_log</span> /var/log/nginx/<span class="hljs-literal">error</span>.log;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><br><span class="hljs-section">http</span> &#123;<br>	<span class="hljs-attribute">proxy_cache_path</span> /data/nginx/cache keys_zone=one:<span class="hljs-number">10m</span>;<br>    <br>    <span class="hljs-section">upstream</span> info4z.tk &#123;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8881</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8882</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8883</span>;<br>    &#125;<br>    <br>    <span class="hljs-section">server</span> &#123;<br>        <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>        <span class="hljs-attribute">proxy_cache</span> one;<br>        <span class="hljs-attribute">server_name</span> <span class="hljs-literal">info</span>4z.tk;<br>        <br>        <span class="hljs-section">location</span> / &#123; <br>            <span class="hljs-attribute">proxy_pass</span> http://info4z.tk;<br>            <span class="hljs-attribute">proxy_set_header</span> Host	<span class="hljs-variable">$host</span>;<br>            <span class="hljs-attribute">proxy_set_header</span> X-Real-IP	<span class="hljs-variable">$remote_addr</span>;<br>            <span class="hljs-attribute">proxy_cache_valid</span> <span class="hljs-number">200</span> <span class="hljs-number">302</span> <span class="hljs-number">10m</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> nginx;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">error_log</span> /var/log/nginx/<span class="hljs-literal">error</span>.log;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><br><span class="hljs-section">http</span> &#123;<br>	<span class="hljs-attribute">proxy_cache_path</span> /data/nginx/cache keys_zone=one:<span class="hljs-number">10m</span>;<br>    <br>    <span class="hljs-section">upstream</span> info4z.tk &#123;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8881</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8882</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8883</span>;<br>    &#125;<br>    <br>    <span class="hljs-section">server</span> &#123;<br>        <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>        <span class="hljs-attribute">proxy_cache</span> one;<br>        <span class="hljs-attribute">server_name</span> <span class="hljs-literal">info</span>4z.tk;<br>        <br>        <span class="hljs-section">location</span> / &#123; <br>            <span class="hljs-attribute">proxy_pass</span> http://info4z.tk;<br>            <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$host</span>;<br>            <span class="hljs-attribute">proxy_set_header</span> X-Real-IP <span class="hljs-variable">$remote_addr</span>;<br>            <span class="hljs-attribute">proxy_cache_valid</span> <span class="hljs-number">200</span> <span class="hljs-number">302</span> <span class="hljs-number">10m</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 
 
-<h3 id="四-对于某些请求-是否可以不走缓存"><a href="#四-对于某些请求-是否可以不走缓存" class="headerlink" title="(四) 对于某些请求, 是否可以不走缓存?"></a>(四) 对于某些请求, 是否可以不走缓存?</h3><p>proxy_cache_bypass : 该指令响应来自原始服务器而不是缓存。</p>
-<p>例如 : proxy_cache_bypass $cookie_nocache $arg_nocache$arg_comment;</p>
-<p>如果任何一个参数值不为空, 或者不等于0, nginx 就不会查找缓存, 直接进行代理转发。</p>
+<h3 id="四-对于某些请求-是否可以不走缓存"><a href="#四-对于某些请求-是否可以不走缓存" class="headerlink" title="(四) 对于某些请求, 是否可以不走缓存?"></a>(四) 对于某些请求, 是否可以不走缓存?</h3><p>配置参数</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>proxy_cache_bypass</td>
+<td>该指令响应来自原始服务器而不是缓存</td>
+</tr>
+</tbody></table>
+<p>例如</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">proxy_cache_bypass</span> <span class="hljs-variable">$cookie_nocache</span> <span class="hljs-variable">$arg_nocache</span><span class="hljs-variable">$arg_comment</span>;<br><span class="hljs-comment"># 如果任何一个参数值,不为空或者不等于0,nginx就不会查找缓存,直接进行代理转发</span><br></code></pre></td></tr></table></figure>
+
 <p>配置示例</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> nginx;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">error_log</span> /var/log/nginx/<span class="hljs-literal">error</span>.log;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><br><span class="hljs-section">http</span> &#123;<br>	<span class="hljs-attribute">proxy_cache_path</span> /data/nginx/cache keys_zone=one:<span class="hljs-number">10m</span>;<br>    <br>    <span class="hljs-section">upstream</span> info4z.tk &#123;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8881</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8882</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8883</span>;<br>    &#125;<br>    <br>    <span class="hljs-section">server</span> &#123;<br>        <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>        <span class="hljs-attribute">proxy_cache</span> one;<br>        <span class="hljs-attribute">server_name</span> <span class="hljs-literal">info</span>4z.tk;<br>        <br>        <span class="hljs-section">location</span> / &#123; <br>            <span class="hljs-attribute">proxy_pass</span> http://info4z.tk;<br>            <span class="hljs-attribute">proxy_set_header</span> Host	<span class="hljs-variable">$host</span>;<br>            <span class="hljs-attribute">proxy_set_header</span> X-Real-IP	<span class="hljs-variable">$remote_addr</span>;<br>            <span class="hljs-attribute">proxy_cache_bypass</span> <span class="hljs-variable">$cookie_nocache</span> <span class="hljs-variable">$arg_nocache</span><span class="hljs-variable">$arg_comment</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> nginx;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">error_log</span> /var/log/nginx/<span class="hljs-literal">error</span>.log;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><br><span class="hljs-section">http</span> &#123;<br>	<span class="hljs-attribute">proxy_cache_path</span> /data/nginx/cache keys_zone=one:<span class="hljs-number">10m</span>;<br>    <br>    <span class="hljs-section">upstream</span> info4z.tk &#123;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8881</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8882</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8883</span>;<br>    &#125;<br>    <br>    <span class="hljs-section">server</span> &#123;<br>        <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>        <span class="hljs-attribute">proxy_cache</span> one;<br>        <span class="hljs-attribute">server_name</span> <span class="hljs-literal">info</span>4z.tk;<br>        <br>        <span class="hljs-section">location</span> / &#123; <br>            <span class="hljs-attribute">proxy_pass</span> http://info4z.tk;<br>            <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$host</span>;<br>            <span class="hljs-attribute">proxy_set_header</span> X-Real-IP <span class="hljs-variable">$remote_addr</span>;<br>            <span class="hljs-attribute">proxy_cache_bypass</span> <span class="hljs-variable">$cookie_nocache</span> <span class="hljs-variable">$arg_nocache</span><span class="hljs-variable">$arg_comment</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h2 id="四-关于网页的缓存"><a href="#四-关于网页的缓存" class="headerlink" title="四 : 关于网页的缓存"></a>四 : 关于网页的缓存</h2><p>网页的缓存是由HTTP消息头中的“Cache-control”来控制的, 常见的取值有private、no-cache、max-age、 must-revalidate等, 默<br>认为private。其作用根据不同的重新浏览方式分为以下几种情况。</p>
+<h2 id="四-关于网页的缓存"><a href="#四-关于网页的缓存" class="headerlink" title="四 : 关于网页的缓存"></a>四 : 关于网页的缓存</h2><p>网页的缓存是由 HTTP 消息头中的 “Cache-control” 来控制的, 常见的取值有 private, no-cache, max-age, must-revalidate 等, 默认为 private。其作用根据不同的重新浏览方式分为以下几种情况 : </p>
 <table>
 <thead>
 <tr>
@@ -401,7 +407,7 @@ C --&gt; D4[Web4]
 </tr>
 <tr>
 <td>private</td>
-<td>内容只缓存到私有缓存中(仅客户端可以缓存, 代理服务器不可缓存)</td>
+<td><strong>默认值</strong>, 内容只缓存到私有缓存中(仅客户端可以缓存, 代理服务器不可缓存)</td>
 </tr>
 <tr>
 <td>no-cache</td>
@@ -416,10 +422,27 @@ C --&gt; D4[Web4]
 <td>如果缓存的内容失效, 请求必须发送到服务器&#x2F;代理以进行重新验</td>
 </tr>
 <tr>
-<td>max-age&#x3D;xxx(xxxis numeric)</td>
+<td>max-age&#x3D;xxx</td>
 <td>缓存的内容将在xxx秒后失效这个选项只在HTTP1.1可用, 并如果和Last-Modified一起使用时, 优先级较高</td>
 </tr>
 </tbody></table>
+<p>实验测试 : 查看 Cache-Control 不同的取值对请求结果的影响</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-section">location</span> /h5 &#123;<br>    <span class="hljs-comment"># html不缓存</span><br>    <span class="hljs-attribute">if</span> (<span class="hljs-variable">$request_filename</span> <span class="hljs-regexp">~* .*\.(?:html|htm)$)</span> &#123;<br>        <span class="hljs-attribute">add_header</span> Cache-Control <span class="hljs-string">&quot;private, no-store, no-cache, must-revalidate, proxy-revalidate&quot;</span>;<br>    &#125;<br>    <span class="hljs-comment"># 图片缓存30天</span><br>    <span class="hljs-attribute">if</span> (<span class="hljs-variable">$request_filename</span> <span class="hljs-regexp">~* .*\.(?:gif|jpg|jpeg|png|bmp|swf)$)</span> &#123;<br>        <span class="hljs-attribute">expires</span> <span class="hljs-number">30d</span>;<br>    &#125;<br>    <span class="hljs-comment"># js和css缓存12h</span><br>    <span class="hljs-attribute">if</span> (<span class="hljs-variable">$request_filename</span> <span class="hljs-regexp">~* .*\.(?:js|css)$)</span> &#123;<br>        <span class="hljs-attribute">expires</span> <span class="hljs-number">12h</span>;<br>    &#125;<br>    <span class="hljs-attribute">alias</span> /opt/web/h5/dist;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 
               </div>
