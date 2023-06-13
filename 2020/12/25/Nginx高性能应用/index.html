@@ -24,7 +24,7 @@
 <meta property="og:description" content="nginx提供了一些高性能的配置参数,通过调整这些参数对其进行一定的优化">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-12-24T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-04-15T16:44:38.173Z">
+<meta property="article:modified_time" content="2023-05-12T12:00:40.430Z">
 <meta property="article:author" content="清月明风">
 <meta property="article:tag" content="负载均衡中间件">
 <meta property="article:tag" content="Nginx">
@@ -221,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.1k 字
+          4.6k 字
         
       </span>
     
@@ -232,7 +232,7 @@
         
         
         
-          35 分钟
+          39 分钟
         
       </span>
     
@@ -394,6 +394,11 @@
 <td>通用匹配, 任何未匹配到其它location的请求都会匹配到, 相当于switch中的default</td>
 </tr>
 </tbody></table>
+<p>配置示例</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-comment"># 前端页面</span><br><span class="hljs-section">location</span> / &#123;<br>    <span class="hljs-attribute">root</span> /opt/web;<br>&#125;<br><span class="hljs-comment"># 后端接口</span><br><span class="hljs-section">location</span> /api &#123;<br>    <span class="hljs-attribute">proxy_pass</span> http://127.0.0.1:5000;<br>    <span class="hljs-attribute">proxy_http_version</span> <span class="hljs-number">1</span>.<span class="hljs-number">1</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Upgrade <span class="hljs-variable">$http_upgrade</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Connection <span class="hljs-string">&quot;upgrade&quot;</span>;<br>&#125;<br><span class="hljs-comment"># socket接口</span><br><span class="hljs-section">location</span> /socket.io/ &#123;<br>    <span class="hljs-attribute">proxy_pass</span> http://127.0.0.1:5000;<br>    <span class="hljs-attribute">proxy_set_header</span> Upgrade <span class="hljs-variable">$http_upgrade</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Connection <span class="hljs-string">&quot;upgrade&quot;</span>;<br>    <span class="hljs-attribute">proxy_http_version</span> <span class="hljs-number">1</span>.<span class="hljs-number">1</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> X-Forwarded-For <span class="hljs-variable">$proxy_add_x_forwarded_for</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$host</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
 <h2 id="四-Nginx常规配置"><a href="#四-Nginx常规配置" class="headerlink" title="四 : Nginx常规配置"></a>四 : Nginx常规配置</h2><table>
 <thead>
 <tr>

@@ -24,7 +24,7 @@
 <meta property="og:description" content="使用 Let&#39;s Encrypt + nginx 将网站升级到 HTTPS">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-02-09T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-03-22T13:04:30.566Z">
+<meta property="article:modified_time" content="2023-06-11T10:54:55.260Z">
 <meta property="article:author" content="清月明风">
 <meta property="article:tag" content="ssl">
 <meta name="twitter:card" content="summary_large_image">
@@ -220,7 +220,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.5k 字
+          1.9k 字
         
       </span>
     
@@ -231,7 +231,7 @@
         
         
         
-          13 分钟
+          16 分钟
         
       </span>
     
@@ -277,7 +277,7 @@
                 <h2 id="一-概述"><a href="#一-概述" class="headerlink" title="一 : 概述"></a>一 : 概述</h2><p><code>certbot</code> 是Let’s Encrypt官方推荐的获取证书的客户端，可以帮我们获取免费的Let’s Encrypt 证书。</p>
 <p><code>certbot</code> 支持所有  Unix 内核的操作系统。</p>
 <h2 id="二-安装使用"><a href="#二-安装使用" class="headerlink" title="二 : 安装使用"></a>二 : 安装使用</h2><p>使用 yum 安装即可</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">[root@localhost]# </span><span class="language-bash">yum list installed certbot</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">[root@localhost]# </span><span class="language-bash">yum install -y certbot</span><br></code></pre></td></tr></table></figure>
 
 <h2 id="三-申请证书"><a href="#三-申请证书" class="headerlink" title="三 : 申请证书"></a>三 : 申请证书</h2><p>申请证书之前要确保 443 端口没有被占用, 记得关掉 nginx</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">[root@localhost]# </span><span class="language-bash">certbot certonly</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">1.standalone按1回车,webroot按2回车</span><br>Select the appropriate number [1-2] then [enter] (press &#x27;c&#x27; to cancel): 1<br><span class="hljs-meta prompt_"># </span><span class="language-bash">2.输入联系邮箱</span><br>Enter email address (used for urgent renewal and security notices)<br> (Enter &#x27;c&#x27; to cancel): xxx@xxx.com<br><span class="hljs-meta prompt_"># </span><span class="language-bash">3.读一下声明,是否同意</span><br>(Y)es/(N)o: Y<br><span class="hljs-meta prompt_"># </span><span class="language-bash">4.是否分享</span><br>(Y)es/(N)o: Y<br><span class="hljs-meta prompt_"># </span><span class="language-bash">5.输入域名</span><br>Please enter the domain name(s) you would like on your certificate (comma and/or<br>space separated) (Enter &#x27;c&#x27; to cancel): www.info4z.com<br></code></pre></td></tr></table></figure>
@@ -288,7 +288,11 @@
 <h2 id="四-编辑nignx配置文件"><a href="#四-编辑nignx配置文件" class="headerlink" title="四 : 编辑nignx配置文件"></a>四 : 编辑nignx配置文件</h2><p>编辑对应的 nginx 配置文件</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">[root@localhost]# </span><span class="language-bash">vim /etc/nginx/conf.d/www.info4z.com.conf</span><br></code></pre></td></tr></table></figure>
 
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-comment"># 替换新的证书</span><br><span class="hljs-attribute">ssl_certificate</span>      /etc/letsencrypt/live/www.<span class="hljs-literal">info</span>4z.com/fullchain.pem;<br><span class="hljs-attribute">ssl_certificate_key</span>  /etc/letsencrypt/live/www.<span class="hljs-literal">info</span>4z.com/privkey.pem;<br></code></pre></td></tr></table></figure>
+<p>替换新的证书</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-section">server</span> &#123;<br>    <span class="hljs-attribute">listen</span> <span class="hljs-number">443</span> ssl;<br>    <span class="hljs-attribute">server_name</span> www.<span class="hljs-literal">info</span>4z.com;<br><br>    <span class="hljs-attribute">ssl_certificate</span>      /etc/letsencrypt/live/www.<span class="hljs-literal">info</span>4z.com/fullchain.pem;<br>    <span class="hljs-attribute">ssl_certificate_key</span>  /etc/letsencrypt/live/www.<span class="hljs-literal">info</span>4z.com/privkey.pem;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>设置http转换https</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-section">server</span> &#123;<br>	<span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>	<span class="hljs-attribute">server_name</span>	www.<span class="hljs-literal">info</span>4z.com;<br>	<span class="hljs-attribute">return</span> <span class="hljs-number">301</span> https://<span class="hljs-variable">$server_name</span><span class="hljs-variable">$request_uri</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>修改完毕后重启 nginx 即可</p>
 <h2 id="五-证书续签"><a href="#五-证书续签" class="headerlink" title="五 : 证书续签"></a>五 : 证书续签</h2><p>Let’s Encrypt 提供的证书只有90天的有效期，我们必须在证书到期之前，重新获取这些证书</p>
@@ -297,13 +301,14 @@
 
 <p>值得注意的是, 我们生成证书的时候使用的是 <code>standalone</code> 模式, 验证域名的时候, 需要启用443端口, 否则会报端口占用的错误</p>
 <p>证书是90天才过期, 在过期之前执行更新操作就可以了; 这件事情可以交给定时任务完成, linux 系统上有 cron 可以来搞定这件事情</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">新建 certbot-auto-renew-cron</span><br>vim certbot-auto-renew-cron<br><span class="hljs-meta prompt_"># </span><span class="language-bash">--pre-hook: 表示执行更新操作之前要做的事情</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">--post-hook: 表示执行更新操作完成后要做的事情</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">cron表达式(分 时 日 月 周几): 从1月开始每个2个月的1日2点15分执行一次</span><br>15 2 1 1/2 ? certbot renew --pre-hook &quot;systemctl stop nginx&quot; --post-hook &quot;systemctl start nginx&quot;<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">新建 certbot-auto-renew-cron</span><br><span class="hljs-meta prompt_">[root@localhost]# </span><span class="language-bash">vim certbot-auto-renew-cron</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">--pre-hook: 表示执行更新操作之前要做的事情</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">--post-hook: 表示执行更新操作完成后要做的事情</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">cron表达式(分 时 日 月 周几): 每隔2个月的1日2点15分执行一次</span><br>15 2 1 */2 * certbot renew --pre-hook &quot;systemctl stop nginx&quot; --post-hook &quot;systemctl start nginx&quot;<br></code></pre></td></tr></table></figure>
 
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">启动定时任务</span><br>crontab certbot-auto-renew-cron<br></code></pre></td></tr></table></figure>
-
-
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">启动定时任务</span><br><span class="hljs-meta prompt_">[root@localhost]# </span><span class="language-bash">crontab certbot-auto-renew-cron</span><br></code></pre></td></tr></table></figure>
 
 
+
+<h2 id="六-撤回证书"><a href="#六-撤回证书" class="headerlink" title="六 : 撤回证书"></a>六 : 撤回证书</h2><p>主要就是撤回证书, 然后删掉域名即可, 基本不用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">撤回证书</span><br><span class="hljs-meta prompt_">[root@localhost]# </span><span class="language-bash">certbot revoke --cert-path /etc/letsencrypt/live/www.info4z.com/cert.pem</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">移除域名</span><br><span class="hljs-meta prompt_">[root@localhost]# </span><span class="language-bash">certbot delete --cert-name www.info4z.com</span><br></code></pre></td></tr></table></figure>
 
 
                 
