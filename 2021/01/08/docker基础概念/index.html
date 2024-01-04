@@ -16,21 +16,22 @@
   <meta name="author" content="倗诚">
   <meta name="keywords" content="">
   
-    <meta name="description" content="title：docker基础概念excerpt：通过基础概念加深对其架构的理解date：2021-01-08categories：容器化技术tags：[docker，docker入门]一：docker 是什么官网地址：https:&#x2F;&#x2F;www.docker.com&#x2F; 官方文档：https:&#x2F;&#x2F;docs.docker.com、https:&#x2F;&#x2F;dockerdocs.cn&#x2F; docker 最初是 dot">
+    <meta name="description" content="通过基础概念加深对其架构的理解">
 <meta property="og:type" content="article">
-<meta property="og:title" content="云深不知处">
-<meta property="og:url" content="https://info4z.github.io/2022/12/27/docker%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:title" content="docker基础概念">
+<meta property="og:url" content="https://info4z.github.io/2021/01/08/docker%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/index.html">
 <meta property="og:site_name" content="云深不知处">
-<meta property="og:description" content="title：docker基础概念excerpt：通过基础概念加深对其架构的理解date：2021-01-08categories：容器化技术tags：[docker，docker入门]一：docker 是什么官网地址：https:&#x2F;&#x2F;www.docker.com&#x2F; 官方文档：https:&#x2F;&#x2F;docs.docker.com、https:&#x2F;&#x2F;dockerdocs.cn&#x2F; docker 最初是 dot">
+<meta property="og:description" content="通过基础概念加深对其架构的理解">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-12-26T22:50:56.052Z">
-<meta property="article:modified_time" content="2024-01-04T02:28:28.514Z">
+<meta property="article:published_time" content="2021-01-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-01-04T03:30:47.949Z">
 <meta property="article:author" content="倗诚">
+<meta property="article:tag" content="docker，docker入门">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>云深不知处</title>
+  <title>docker基础概念 - 云深不知处</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -196,7 +197,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text=""></span>
+            <span id="subtitle" data-typed-text="docker基础概念"></span>
           
         </div>
 
@@ -207,8 +208,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-12-27 06:50" pubdate>
-          2022年12月27日 早上
+        <time datetime="2021-01-08 00:00" pubdate>
+          2021年1月8日 凌晨
         </time>
       </span>
     
@@ -230,7 +231,7 @@
         
         
         
-          29 分钟
+          28 分钟
         
       </span>
     
@@ -268,13 +269,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none"></h1>
+            <h1 style="display: none">docker基础概念</h1>
             
             
               <div class="markdown-body">
                 
-                <hr>
-<h2 id="title：docker基础概念excerpt：通过基础概念加深对其架构的理解date：2021-01-08categories：容器化技术tags：-docker，docker入门"><a href="#title：docker基础概念excerpt：通过基础概念加深对其架构的理解date：2021-01-08categories：容器化技术tags：-docker，docker入门" class="headerlink" title="title：docker基础概念excerpt：通过基础概念加深对其架构的理解date：2021-01-08categories：容器化技术tags：[docker，docker入门]"></a>title：docker基础概念<br>excerpt：通过基础概念加深对其架构的理解<br>date：2021-01-08<br>categories：容器化技术<br>tags：[docker，docker入门]</h2><h2 id="一：docker-是什么"><a href="#一：docker-是什么" class="headerlink" title="一：docker 是什么"></a>一：docker 是什么</h2><p>官网地址：<a target="_blank" rel="noopener" href="https://www.docker.com/">https://www.docker.com/</a></p>
+                <h2 id="一-docker-是什么"><a href="#一-docker-是什么" class="headerlink" title="一 : docker 是什么"></a>一 : docker 是什么</h2><p>官网地址：<a target="_blank" rel="noopener" href="https://www.docker.com/">https://www.docker.com</a></p>
 <p>官方文档：<a target="_blank" rel="noopener" href="https://docs.docker.com、https//dockerdocs.cn/">https://docs.docker.com、https://dockerdocs.cn/</a></p>
 <p>docker 最初是 dotCloud 公司创始人 Solomon Hykes 在法国期间发起的一个公司内部项目，它是基于 dotCloud 公司多年云服务技术的一次革新，并于 2013 年 3 月以 Apache 2.0 授权协议开源，主要项目代码在 GitHub 上进行维护。</p>
 <p>docker 项目后来还加入了 Linux 基金会，并成立推动 <strong>OCI</strong> (开放容器联盟)。</p>
@@ -293,7 +293,7 @@
 <td>容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟；因此容器要比虚拟机更为轻便</td>
 </tr>
 </tbody></table>
-<h2 id="二：为什么要使用-docker"><a href="#二：为什么要使用-docker" class="headerlink" title="二：为什么要使用 docker"></a>二：为什么要使用 docker</h2><p>docker 的优势有：更高效的利用系统资源，更快速的启动时间，一致的运行环境，持续交付的部署，更轻松的迁移，更轻松的维护和扩展。</p>
+<h2 id="二-为什么要使用-docker"><a href="#二-为什么要使用-docker" class="headerlink" title="二 : 为什么要使用 docker"></a>二 : 为什么要使用 docker</h2><p>docker 的优势有：更高效的利用系统资源，更快速的启动时间，一致的运行环境，持续交付的部署，更轻松的迁移，更轻松的维护和扩展。</p>
 <p>对比传统虚拟机</p>
 <table>
 <thead>
@@ -324,7 +324,7 @@
 <td>一般几十个</td>
 </tr>
 </tbody></table>
-<h2 id="三：docker-架构"><a href="#三：docker-架构" class="headerlink" title="三：docker 架构"></a>三：docker 架构</h2><p>docker 使用客户端-服务器(C&#x2F;S)架构模式，使用远程API来管理和创建 docker 容器。</p>
+<h2 id="三-docker-架构"><a href="#三-docker-架构" class="headerlink" title="三 : docker 架构"></a>三 : docker 架构</h2><p>docker 使用客户端-服务器(C&#x2F;S)架构模式，使用远程API来管理和创建 docker 容器。</p>
 <pre><code class=" mermaid">graph TB
 subgraph A[Client]
 	A1[docker run]
@@ -349,7 +349,7 @@ C1 --&gt; B2
 
 
 
-<h2 id="四：docker-基本概念"><a href="#四：docker-基本概念" class="headerlink" title="四：docker 基本概念"></a>四：docker 基本概念</h2><p>docker 包括三个基本概念：镜像(image)、容器(container)、仓库(repository)；理解了这三个概念，就理解了 docker 的整个生命周期。</p>
+<h2 id="四-docker-基本概念"><a href="#四-docker-基本概念" class="headerlink" title="四 : docker 基本概念"></a>四 : docker 基本概念</h2><p>docker 包括三个基本概念：镜像(image)、容器(container)、仓库(repository)；理解了这三个概念，就理解了 docker 的整个生命周期。</p>
 <h3 id="一-docker-镜像"><a href="#一-docker-镜像" class="headerlink" title="(一) docker 镜像"></a>(一) docker 镜像</h3><p>我们都知道，操作系统分为内核和用户空间，对于 linux 而言，内核启动后，会挂载 root 文件系统为其提供用户空间支持；而 docker 镜像(image)，就相当于是一个 root 文件系统，比如官方镜像 centos:7.6 就包含了完整的一套 centos 7.6 最小系统的 root 文件系统。</p>
 <p>docker image 是一个<strong>特殊的文件系统</strong>，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数(如匿名卷、环境变量、用户等)；镜像不包含任何动态数据，其内容在构建之后也不会被改变。</p>
 <p>因为 image 包含操作系统完整的 root 文件系统，其体积往往是庞大的，因此 docker 设计时将其设计为<strong>分层存储的架构</strong>；image 只是一个虚拟的概念，其实际体现并非由一个文件组成，而是由一组文件系统组成，或者说<strong>由多重文件系统联合组成</strong>。</p>
@@ -377,6 +377,34 @@ C1 --&gt; B2
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AE%B9%E5%99%A8%E5%8C%96%E6%8A%80%E6%9C%AF/" class="category-chain-item">容器化技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/docker%EF%BC%8Cdocker%E5%85%A5%E9%97%A8/">#docker，docker入门</a>
+      
+    </div>
   
 </div>
 
@@ -386,8 +414,8 @@ C1 --&gt; B2
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div></div>
-      <div>https://info4z.github.io/2022/12/27/docker基础概念/</div>
+      <div>docker基础概念</div>
+      <div>https://info4z.github.io/2021/01/08/docker基础概念/</div>
     </div>
     <div class="license-meta">
       
@@ -399,7 +427,7 @@ C1 --&gt; B2
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年12月27日</div>
+          <div>2021年1月8日</div>
         </div>
       
       
@@ -431,9 +459,9 @@ C1 --&gt; B2
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/06/mysql%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/" title="mysql数据统计">
+                      <a href="/2021/01/15/docker%E5%AE%89%E8%A3%85/" title="docker安装">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">mysql数据统计</span>
+                        <span class="hidden-mobile">docker安装</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -441,8 +469,8 @@ C1 --&gt; B2
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/04/30/3_kafka/" title="Kafka">
-                        <span class="hidden-mobile">Kafka</span>
+                      <a href="/2020/12/25/Nginx%E9%AB%98%E6%80%A7%E8%83%BD%E5%BA%94%E7%94%A8/" title="Nginx高性能应用">
+                        <span class="hidden-mobile">Nginx高性能应用</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
