@@ -13,25 +13,25 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="清月明风">
+  <meta name="author" content="倗诚">
   <meta name="keywords" content="">
   
     <meta name="description" content="与5.7相比有些许不同,这里简单记录一下过程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="mysql8.0修改密码">
 <meta property="og:url" content="https://info4z.github.io/2023/03/03/mysql8.0%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81/index.html">
-<meta property="og:site_name" content="冰清阁">
+<meta property="og:site_name" content="云深不知处">
 <meta property="og:description" content="与5.7相比有些许不同,这里简单记录一下过程">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-03-02T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-07-17T16:41:26.664Z">
-<meta property="article:author" content="清月明风">
+<meta property="article:modified_time" content="2023-08-25T07:59:20.972Z">
+<meta property="article:author" content="倗诚">
 <meta property="article:tag" content="mysql">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>mysql8.0修改密码 - 冰清阁</title>
+  <title>mysql8.0修改密码 - 云深不知处</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -95,7 +95,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>冰清阁</strong>
+      <strong>云深不知处</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -220,7 +220,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1k 字
+          1.9k 字
         
       </span>
     
@@ -231,7 +231,7 @@
         
         
         
-          9 分钟
+          16 分钟
         
       </span>
     
@@ -274,7 +274,21 @@
             
               <div class="markdown-body">
                 
-                <h2 id="一-置空密码"><a href="#一-置空密码" class="headerlink" title="一 : 置空密码"></a>一 : 置空密码</h2><p>编辑 <code>/etc/my.cnf</code></p>
+                <h2 id="一-使用命令-推荐"><a href="#一-使用命令-推荐" class="headerlink" title="一 : 使用命令(推荐)"></a>一 : 使用命令(推荐)</h2><p>执行命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">mysql_secure_installation<br><span class="hljs-meta prompt_"># </span><span class="language-bash">设置密码</span><br>Enter current password for root:					# 有密码输入密码,没密码直接回车<br></code></pre></td></tr></table></figure>
+
+<p>如果是新装的mysql，默认密码是过期的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">1.默认密码过期,设置个新的</span><br>The existing password for the user account root has expired. Please set a new password.<br>New password: 										# 新密码<br>Re-enter new password:								# 二次验证<br>The &#x27;validate_password&#x27; component is installed on the server.<br>The subsequent steps will run with the existing configuration<br>of the component.									# 密码校验组件已装好,会在后续步骤中使用<br>Using existing password for root.					# 使用现有密码<br>Estimated strength of the password: 100 			# 预估强度<br>Change the password for root ? ((Press y|Y for Yes, any other key for No) :	# n,不改<br></code></pre></td></tr></table></figure>
+
+<p>如果密码是空的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">2.如果密码为空,设置密码</span><br>Set root password? [Y/n] 							# Y<br>New password:										# Qwer@123<br>Re-enter new password: 								# Qwer@123<br></code></pre></td></tr></table></figure>
+
+<p>安全设置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">3.删除匿名账户</span><br>Remove anonymous users? [Y/n] 						# Y<br><span class="hljs-meta prompt_"># </span><span class="language-bash">4.禁止root远程登录</span><br>Disallow root login remotely? [Y/n]					# Y<br><span class="hljs-meta prompt_"># </span><span class="language-bash">5.删除<span class="hljs-built_in">test</span>测试数据库</span><br>Remove test database and access to it? [Y/n]		# Y<br><span class="hljs-meta prompt_"># </span><span class="language-bash">6.重载权限表</span><br>Reload privilege tables now? [Y/n]					# Y<br><span class="hljs-meta prompt_"># </span><span class="language-bash">7.然后就thx了</span><br>Thanks for using MySQL!<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="二-暴力手段"><a href="#二-暴力手段" class="headerlink" title="二 : 暴力手段"></a>二 : 暴力手段</h2><p>跳过密码校验，编辑 <code>/etc/my.cnf</code></p>
 <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs properties"><span class="hljs-comment"># 插入一行, 跳过授权表</span><br><span class="hljs-attr">skip-grant-tables</span><br></code></pre></td></tr></table></figure>
 
 <p>重启后登录</p>
@@ -283,9 +297,7 @@
 <p>置空密码</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> mysql.user <span class="hljs-keyword">set</span> authentication_string<span class="hljs-operator">=</span><span class="hljs-string">&#x27;&#x27;</span> <span class="hljs-keyword">where</span> <span class="hljs-keyword">user</span><span class="hljs-operator">=</span><span class="hljs-string">&#x27;root&#x27;</span>;<br></code></pre></td></tr></table></figure>
 
-
-
-<h2 id="二-设置密码"><a href="#二-设置密码" class="headerlink" title="二 : 设置密码"></a>二 : 设置密码</h2><p>取消跳过授权</p>
+<p>取消跳过授权</p>
 <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs properties"><span class="hljs-comment"># 其实也没啥必要删,注释掉即可</span><br><span class="hljs-comment"># skip-grant-tables</span><br></code></pre></td></tr></table></figure>
 
 <p>重启后登录</p>
@@ -351,7 +363,7 @@
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>清月明风</div>
+          <div>倗诚</div>
         </div>
       
       
