@@ -24,9 +24,10 @@
 <meta property="og:description" content="熟练掌握shell的语法, 写出优雅的脚本">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-02-02T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-03-20T07:43:48.526Z">
+<meta property="article:modified_time" content="2024-01-11T18:40:31.360Z">
 <meta property="article:author" content="倗诚">
 <meta property="article:tag" content="shell">
+<meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -293,9 +294,9 @@
 <td>当命令1正确执行($?&#x3D;0), 则命令2才会执行; 当命令1执行不正确($? ≠ 0), 则命令2不会执行</td>
 </tr>
 <tr>
-<td>&#96;</td>
-<td></td>
-<td>&#96;</td>
+<td><code>||</code></td>
+<td>命令1<code>||</code>命令2</td>
+<td>当命令1执行不正确($?≠0), 则命令2才会执行; 当命令1正确执行($?&#x3D;0), 则命令2不会执行</td>
 </tr>
 </tbody></table>
 <p>示例</p>
@@ -487,29 +488,29 @@
 <thead>
 <tr>
 <th>测试选项</th>
-<th>英文</th>
 <th>作用</th>
+<th>备注</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>-z</code> 字符串</td>
-<td>length zero</td>
+<td><code>-z</code> $var</td>
 <td>判断字符串是否为空(空为真)</td>
+<td>length zero</td>
 </tr>
 <tr>
-<td><code>-n</code> 字符串</td>
-<td>nonzero</td>
+<td><code>-n</code> $var</td>
 <td>判断字符串是否为非空(非空为真)</td>
+<td>nonzero</td>
 </tr>
 <tr>
-<td>字串1 <code>==</code> 字串2</td>
-<td></td>
+<td>$var1 &#x3D;&#x3D; $var2</td>
 <td>判断字符串1是否和字符串2相等(相等为真)</td>
+<td></td>
 </tr>
 <tr>
-<td>字串1 <code>!=</code> 字串2</td>
-<td></td>
+<td>$var1 !&#x3D; $var2</td>
 <td>判断字符串1是否和字符串2不相等(不等为真)</td>
+<td></td>
 </tr>
 </tbody></table>
 <p>代码示例</p>
@@ -818,6 +819,8 @@
       <i class="iconfont icon-tags"></i>
       
         <a href="/tags/shell/">#shell</a>
+      
+        <a href="/tags/linux/">#linux</a>
       
     </div>
   
