@@ -16,23 +16,22 @@
   <meta name="author" content="倗诚">
   <meta name="keywords" content="">
   
-    <meta name="description" content="记录一下安装步骤...">
+    <meta name="description" content="只适用InnoDB引擎，Myisam直接复制数据文件即可">
 <meta property="og:type" content="article">
-<meta property="og:title" content="elasticsearch入门">
-<meta property="og:url" content="https://info4z.github.io/2023/03/24/elasticsearch/index.html">
+<meta property="og:title" content="mysql数据恢复">
+<meta property="og:url" content="https://info4z.github.io/2023/03/31/mysql%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D/index.html">
 <meta property="og:site_name" content="云深不知处">
-<meta property="og:description" content="记录一下安装步骤...">
+<meta property="og:description" content="只适用InnoDB引擎，Myisam直接复制数据文件即可">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-03-23T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-12-25T06:57:36.126Z">
+<meta property="article:published_time" content="2023-03-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-01-31T15:57:05.678Z">
 <meta property="article:author" content="倗诚">
-<meta property="article:tag" content="全文检索">
-<meta property="article:tag" content="elasticsearch">
+<meta property="article:tag" content="mysql">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>elasticsearch入门 - 云深不知处</title>
+  <title>mysql数据恢复 - 云深不知处</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +197,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="elasticsearch入门"></span>
+            <span id="subtitle" data-typed-text="mysql数据恢复"></span>
           
         </div>
 
@@ -209,8 +208,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-24 00:00" pubdate>
-          2023年3月24日 凌晨
+        <time datetime="2023-03-31 00:00" pubdate>
+          2023年3月31日 凌晨
         </time>
       </span>
     
@@ -221,7 +220,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.7k 字
+          2.6k 字
         
       </span>
     
@@ -232,7 +231,7 @@
         
         
         
-          23 分钟
+          22 分钟
         
       </span>
     
@@ -270,102 +269,62 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">elasticsearch入门</h1>
+            <h1 style="display: none">mysql数据恢复</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><p>官网：<a target="_blank" rel="noopener" href="https://www.elastic.co/cn/elasticsearch/">https://www.elastic.co/cn/elasticsearch/</a></p>
-<p>The Elastic Stack, 包括 Elasticsearch、Kibana、Beats 和 Logstash（也称为 ELK Stack）。能够安全可靠地获取任何来源、任何格式的数据，然后实时地对数据进行搜索、分析和可视化。</p>
-<p>Elaticsearch，简称为 ES，ES 是一个开源的高扩展的分布式全文搜索引擎，是整个 Elastic Stack 技术栈的核心。它可以近乎实时的存储、检索数据；本身扩展性很好，可以扩展到上百台服务器，处理 PB 级别的数据。</p>
-<p>目前市面上流行的搜索引擎软件，主流的就两款：Elasticsearch 和 Solr。这两款都是基于 Lucene 搭建的，可以独立部署启动的搜索引擎服务软件。由于内核相同，所以两者除了服务器安装、部署、管理、集群以外，对于数据的操作 修改、添加、保存、查询等等都十分类似。</p>
-<p>选择 ES 的原因：</p>
-<ol>
-<li>易于使用：一个下载和一个命令就可以启动一切</li>
-<li>分析查询：如果除了搜索文本之外还需要它来处理分析查询，ES 是更好的选择</li>
-<li>分布式：如果需要分布式索引，则需要选择 ES 。对于需要良好可伸缩性和以及性能分布式环境，ES 是更好的选择</li>
-<li>日志：ES 在开源日志管理用例中占据主导地位，许多组织在 ES 中索引它们的日志以使其可搜索</li>
-<li>监控和指标：相对于 Solr，ES 暴露了更多的关键指标</li>
-</ol>
-<h2 id="二、安装"><a href="#二、安装" class="headerlink" title="二、安装"></a>二、安装</h2><p>下载</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.10-x86_64.rpm<br>wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.10-x86_64.rpm.sha512<br>shasum -a 512 -c elasticsearch-7.17.12-x86_64.rpm.sha512 <br></code></pre></td></tr></table></figure>
-
-<p>安装</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">rpm --install elasticsearch-7.17.12-x86_64.rpm<br></code></pre></td></tr></table></figure>
-
-<p>启动</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">systemctl daemon-reload<br>systemctl enable elasticsearch<br>systemctl start elasticsearch<br></code></pre></td></tr></table></figure>
-
-<p>监听所有IP</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">vim /etc/elasticsearch/elasticsearch.yml<br><span class="hljs-meta prompt_"># </span><span class="language-bash">监听地址</span><br>network.host: 0.0.0.0<br><span class="hljs-meta prompt_"># </span><span class="language-bash">单机需要加上这个</span><br>discovery.type: single-node<br></code></pre></td></tr></table></figure>
-
-<p>重启</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">systemctl restart elasticsearch<br></code></pre></td></tr></table></figure>
-
-<h2 id="三、设置密码"><a href="#三、设置密码" class="headerlink" title="三、设置密码"></a>三、设置密码</h2><p>编辑配置文件</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo vim /etc/elasticsearch/elasticsearch.yml</span><br>xpack.security.enabled: true	# 开启安全配置<br>discovery.type: single-node		# 单机需要加上这个<br></code></pre></td></tr></table></figure>
-
-<p>设置密码</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">rpm -ql elasticsearch-7.17.10-1.x86_64 | grep elasticsearch-setup-passwords<br>/usr/share/elasticsearch/bin/elasticsearch-setup-passwords interactive<br></code></pre></td></tr></table></figure>
-
-<p>说明</p>
+                <h2 id="一-背景"><a href="#一-背景" class="headerlink" title="一 : 背景"></a>一 : 背景</h2><p>数据库被玩坏了，底层文件被误删，数据库启动失败，好在数据库中的 <code>.ibd</code> 和 <code>.frm</code> 文件都在，这个如果没了，也就真的该跑路了…</p>
+<p>这里说一下这两种文件的作用</p>
 <table>
 <thead>
 <tr>
-<th>用户</th>
-<th>描述</th>
+<th>.ibd</th>
+<th>.frm</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>elastic</td>
-<td>内置超级用户，权限最大</td>
+<td><strong>存储表数据</strong>：InnoDB存储引擎用来存储表数据和索引的文件。</td>
+<td><strong>存储表结构定义</strong>：存储了关于MySQL数据库中表的元数据，例如列名称、数据类型等。</td>
 </tr>
 <tr>
-<td>kibana_system</td>
-<td>kibana连接ES,仅在kibana.yml中使用</td>
+<td><strong>空间管理</strong>：采用空间管理技术，可以自动扩展和收缩以适应数据的变化。</td>
+<td><strong>表结构的描述</strong>：创建一个新表或修改现有表时，相应的<code>.frm</code>文件会被更新。</td>
 </tr>
 <tr>
-<td>apm_system</td>
-<td>APM Server在ES中存储监控信息时使用apm_system，具有向集群中写入APM数据所需的最小权限</td>
-</tr>
-<tr>
-<td>logstash_system</td>
-<td>logstash在es中存储监控信息使用,仅在logstash配置文件中使用</td>
-</tr>
-<tr>
-<td>beats_system</td>
-<td>用户Beats在Elasticsearch中存储监控信息时使用</td>
-</tr>
-<tr>
-<td>remote_monitoring_user</td>
-<td>远程监控</td>
+<td><strong>独立性</strong>：每个表都是独立的，这有助于提高数据库的恢复速度和数据安全性。</td>
+<td><strong>与InnoDB引擎无关</strong>：不只是用于InnoDB引擎，也用于MyISAM等其他存储引擎。</td>
 </tr>
 </tbody></table>
-<p>修改密码(这里用的是kibana中的开发工具窗口)</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">POST _security/user/elastic/_password<br>&#123;&quot;password&quot;:&quot;222222&quot;&#125;<br></code></pre></td></tr></table></figure>
+<p>注意：mysql8.0之后，移除了 <code>.frm</code> 文件，引入了一个新的存储引擎框架，该框架支持多种存储引擎，包括 InnoDB 和 MyISAM 等。</p>
+<h2 id="二-环境准备"><a href="#二-环境准备" class="headerlink" title="二 : 环境准备"></a>二 : 环境准备</h2><p>数据库准备</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">运行容器</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">docker run -d -p 3306:3306 --privileged \</span><br><span class="language-bash">-v /opt/mysql/data:/var/lib/mysql</span><br>-e MYSQL_ROOT_PASSWORD=root \<br>--name mysql mysql<br><span class="hljs-meta prompt_"># </span><span class="language-bash">登录数据库</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">docker <span class="hljs-built_in">exec</span> -it mysql mysql -uroot -proot</span><br></code></pre></td></tr></table></figure>
 
-<h2 id="四、ik分词器"><a href="#四、ik分词器" class="headerlink" title="四、ik分词器"></a>四、ik分词器</h2><p>下载</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">wget https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.17.7/elasticsearch-analysis-ik-7.17.7.zip<br></code></pre></td></tr></table></figure>
+<p>模拟数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs mysql">create database z_test;<br>use z_test;<br>create table boy (<br>    id int primary key auto_increment, <br>    name varchar(32) not null default &#x27;&#x27;<br>);<br>create index idx_boy_name on boy(name);<br>insert into boy values (null,&#x27;jim&#x27;),(null,&#x27;tom&#x27;);<br>select * from boy;<br>show index from boy;<br></code></pre></td></tr></table></figure>
 
-<p>解压</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">unzip elasticsearch-analysis-ik-7.17.7.zip -d ik<br></code></pre></td></tr></table></figure>
-
-<p>修改配置文件</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">vi ik/plugin-descriptor.properties<br><span class="hljs-meta prompt_"># </span><span class="language-bash">与安装的版本保持一致，不然无法启动</span><br>elasticsearch.version=7.17.10<br></code></pre></td></tr></table></figure>
-
-<p>移动</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">mv ik /usr/share/elasticsearch/plugins/<br></code></pre></td></tr></table></figure>
-
-<h2 id="五、kibana"><a href="#五、kibana" class="headerlink" title="五、kibana"></a>五、kibana</h2><p>安装</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">wget https://artifacts.elastic.co/downloads/kibana/kibana-7.17.12-x86_64.rpm<br>wget https://artifacts.elastic.co/downloads/kibana/kibana-7.17.12-x86_64.rpm.sha512<br>shasum -a 512 -c kibana-7.17.12-x86_64.rpm.sha512 <br>sudo rpm --install kibana-7.17.12-x86_64.rpm<br></code></pre></td></tr></table></figure>
-
-<p>编辑配置文件</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs shell">vim /etc/kibana/kibana.yml<br><span class="hljs-meta prompt_"># </span><span class="language-bash">默认端口</span><br>server.port: 5601<br><span class="hljs-meta prompt_"># </span><span class="language-bash">ES 服务器的地址</span><br>elasticsearch.hosts: [&quot;http://localhost:9200&quot;]<br><span class="hljs-meta prompt_"># </span><span class="language-bash">索引名</span><br>kibana.index: &quot;.kibana&quot;<br><span class="hljs-meta prompt_"># </span><span class="language-bash">支持中文</span><br>i18n.locale: &quot;zh-CN&quot;<br><span class="hljs-meta prompt_"># </span><span class="language-bash">账号/密码</span><br>elasticsearch.username: &quot;kibana_system&quot;<br>elasticsearch.password: &quot;Zhang@123&quot;<br></code></pre></td></tr></table></figure>
-
-<p>明文密码不安全，可以采用 keystore 形式</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">也可以用keystore形式存储密码</span><br>bash kibana-keystore create<br>bash kibana-keystore add elasticsearch.password<br>systemctl restart kibana<br></code></pre></td></tr></table></figure>
+<p>可以看到我们挂载的数据卷里面出现几个文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">ls</span> z_test</span><br>boy.frm		# 储了关于MySQL数据库中表的元数据，例如列名称、数据类型等。8.0版本以后再无.frm<br>boy.ibd		# InnoDB存储引擎用来存储表数据和索引的文件<br>db.opt		# 记录该库的默认字符集编码和字符集排序规则<br></code></pre></td></tr></table></figure>
 
 
+
+<h2 id="三-恢复数据"><a href="#三-恢复数据" class="headerlink" title="三 : 恢复数据"></a>三 : 恢复数据</h2><p>创建要恢复的数据表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs mysql">create table boy (<br>    id int primary key auto_increment, <br>    name varchar(32) not null default &#x27;&#x27;<br>);<br></code></pre></td></tr></table></figure>
+
+<p>解除绑定关系</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">alter table boy discard tablespace;<br></code></pre></td></tr></table></figure>
+
+<p>将要恢复的 <code>.ibd</code> 文件拷贝到目标位置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo <span class="hljs-built_in">cp</span> -a boy.ibd /opt/mysql/data/z_test/</span><br></code></pre></td></tr></table></figure>
+
+<p>绑定表空间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">alter table boy import tablespace;<br></code></pre></td></tr></table></figure>
+
+<p>查看表数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">select * from boy;<br># 可以看到数据已经恢复了<br></code></pre></td></tr></table></figure>
+
+<h2 id="四-恢复结构"><a href="#四-恢复结构" class="headerlink" title="四 : 恢复结构"></a>四 : 恢复结构</h2><p>如果连建表语句也没有了，那就有点悲惨了，不过也能解决，可以借助 mysql 官方提供的一个工具 <a target="_blank" rel="noopener" href="https://downloads.mysql.com/archives/utilities/">mysql-utilities</a> 来通过 <code>.frm</code> 文件生成建表语句，然后再恢复数据就好了。注意：mysql8.0之后，移除了 <code>.frm</code> 文件，引入了一个新的存储引擎框架，该框架支持多种存储引擎，包括InnoDB和MyISAM等。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">下载centos7通用软件包</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo wget https://downloads.mysql.com/archives/get/p/30/file/mysql-utilities-1.6.5.tar.gz</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">安装</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo python setup.py install</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看版本</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">mysqlfrm --version</span><br>MySQL Utilities mysqlfrm version 1.6.5 <br>License type: GPLv2<br><span class="hljs-meta prompt_"># </span><span class="language-bash">语法: mysqlfrm --server=&lt;username&gt;:&lt;password&gt;@&lt;server_ip&gt;:&lt;server_port&gt; &lt;table_name&gt;.frm &gt;&gt; &lt;filename&gt;.sql --diagnostic --port=3307</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">mysqlfrm --server=root:root@127.0.0.1:3306 boy.frm &gt; boy.sql --diagnostic --port=3307</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看生成结果</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">cat</span> boy.sql</span><br>WARNING: Using a password on the command line interface can be insecure.<br><span class="hljs-meta prompt_"># </span><span class="language-bash">WARNING The --port option is not used <span class="hljs-keyword">in</span> the --diagnostic mode.</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">Source on 127.0.0.1: ... connected.</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">CAUTION: The diagnostic mode is a best-effort parse of the .frm file. As such, it may not identify all of the components of the table correctly. This is especially <span class="hljs-literal">true</span> <span class="hljs-keyword">for</span> damaged files. It will also not <span class="hljs-built_in">read</span> the default values <span class="hljs-keyword">for</span> the columns and the resulting statement may not be syntactically correct.</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">Reading .frm file <span class="hljs-keyword">for</span> boy.frm:</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">The .frm file is a TABLE.</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">CREATE TABLE Statement:</span><br><br>CREATE TABLE `boy` (<br>  `id` int(11) NOT NULL AUTO_INCREMENT, <br>  `name` varchar(32) COLLATE `latin1_swedish_ci` NOT NULL, <br>PRIMARY KEY `PRIMARY` (`id`),<br>KEY `idx_boy_name` (`name`)<br>) ENGINE=InnoDB DEFAULT CHARSET=latin1;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">...<span class="hljs-keyword">done</span>.</span><br></code></pre></td></tr></table></figure>
 
 
                 
@@ -385,7 +344,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="category-chain-item">中间件</a>
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">数据库</a>
   
   
 
@@ -400,9 +359,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/">#全文检索</a>
-      
-        <a href="/tags/elasticsearch/">#elasticsearch</a>
+        <a href="/tags/mysql/">#mysql</a>
       
     </div>
   
@@ -414,8 +371,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>elasticsearch入门</div>
-      <div>https://info4z.github.io/2023/03/24/elasticsearch/</div>
+      <div>mysql数据恢复</div>
+      <div>https://info4z.github.io/2023/03/31/mysql数据恢复/</div>
     </div>
     <div class="license-meta">
       
@@ -427,7 +384,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年3月24日</div>
+          <div>2023年3月31日</div>
         </div>
       
       
@@ -459,9 +416,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/31/mysql%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D/" title="mysql数据恢复">
+                      <a href="/2023/03/31/0_centos7%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="centos7环境搭建">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">mysql数据恢复</span>
+                        <span class="hidden-mobile">centos7环境搭建</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -469,8 +426,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/17/mysql8.0%E6%97%A5%E5%BF%97/" title="mysql8.0日志">
-                        <span class="hidden-mobile">mysql8.0日志</span>
+                      <a href="/2023/03/24/elasticsearch/" title="elasticsearch入门">
+                        <span class="hidden-mobile">elasticsearch入门</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

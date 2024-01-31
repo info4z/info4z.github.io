@@ -1,0 +1,973 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="倗诚">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="CI&#x2F;CD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jenkins安装与使用">
+<meta property="og:url" content="https://info4z.github.io/2023/04/21/0_jenkins/index.html">
+<meta property="og:site_name" content="云深不知处">
+<meta property="og:description" content="CI&#x2F;CD">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:\Users\achelous\Desktop\images\image-20220726223917263.png">
+<meta property="og:image" content="c:\Users\achelous\Desktop\images\image-20220726223937722.png">
+<meta property="og:image" content="c:\Users\achelous\Desktop\images\image-20220727165700419.png">
+<meta property="article:published_time" content="2023-04-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-01-25T15:20:59.564Z">
+<meta property="article:author" content="倗诚">
+<meta property="article:tag" content="CI&#x2F;CD">
+<meta property="article:tag" content="Jenkins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="c:\Users\achelous\Desktop\images\image-20220726223917263.png">
+  
+  
+  
+  <title>Jenkins安装与使用 - 云深不知处</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"info4z.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>云深不知处</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Jenkins安装与使用"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-21 00:00" pubdate>
+          2023年4月21日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          89 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Jenkins安装与使用</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一-概述"><a href="#一-概述" class="headerlink" title="一 : 概述"></a>一 : 概述</h2><p>Jenkins，原名Hudson，2011年改为现在的名字。它是一个开源的实现持续集成的软件工具。</p>
+<p>官方网站：<a target="_blank" rel="noopener" href="https://www.jenkins.io/">https://www.jenkins.io/</a></p>
+<p>中文官网：<a target="_blank" rel="noopener" href="https://www.jenkins.io/zh/">https://www.jenkins.io/zh/</a></p>
+<h2 id="二-软件安装"><a href="#二-软件安装" class="headerlink" title="二 : 软件安装"></a>二 : 软件安装</h2><h3 id="一-jenkins"><a href="#一-jenkins" class="headerlink" title="(一) jenkins"></a>(一) jenkins</h3><p>安装文档：<a target="_blank" rel="noopener" href="https://www.jenkins.io/doc/book/installing/linux/">https://www.jenkins.io/doc/book/installing/linux/</a></p>
+<p>环境要求：256MB内存(建议大于512MB)，10GB的硬盘空间(用于Jenkins和Docker镜像)，新版本(2.426.1)要求java环境jdk11+，对应要求可<a target="_blank" rel="noopener" href="https://www.jenkins.io/doc/book/platform-information/support-policy-java/">查看</a>。</p>
+<p>安装命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">安装yum源</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo yum upgrade</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">安装jenkins</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo yum install fontconfig java-17-openjdk</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo yum install jenkins</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo systemctl daemon-reload</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">启动</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo systemctl start jenkins</span><br></code></pre></td></tr></table></figure>
+
+<p>获取初始化密码，使用后会自动删除</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">cat /var/lib/jenkins/secrets/initialAdminPassword<br></code></pre></td></tr></table></figure>
+
+<p>web管理端初始化</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>插件安装</td>
+<td>选择安装推荐的插件即可</td>
+</tr>
+<tr>
+<td>创建管理员</td>
+<td>随便填写即可，不会验证的</td>
+</tr>
+</tbody></table>
+<h2 id="GitLab"><a href="#GitLab" class="headerlink" title="GitLab"></a>GitLab</h2><p>官方网站：<a target="_blank" rel="noopener" href="https://about.gitlab.com/">https://about.gitlab.com/</a></p>
+<p>安装文档：<a target="_blank" rel="noopener" href="https://gitlab.cn/install/?version=ce">https://gitlab.cn/install/?version=ce</a></p>
+<p>安装要求：<a target="_blank" rel="noopener" href="https://docs.gitlab.cn/jh/install/requirements.html">https://docs.gitlab.cn/jh/install/requirements.html</a></p>
+<table>
+<thead>
+<tr>
+<th>硬件</th>
+<th>要求</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CPU</td>
+<td>4核是推荐的最小核数，支持多达500名用户</td>
+</tr>
+<tr>
+<td>内存</td>
+<td>4GB是必需的最小内存，支持多达500名用户</td>
+</tr>
+<tr>
+<td>磁盘</td>
+<td>运行PostgreSQL的服务器应至少具有5-10GB的存储空间，具体需求根据用户数量决定</td>
+</tr>
+</tbody></table>
+<h3 id="一-常规安装"><a href="#一-常规安装" class="headerlink" title="(一) 常规安装"></a>(一) 常规安装</h3><p>安装依赖</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo yum install -y curl policycoreutils-python openssh-server perl<br>sudo systemctl enable sshd<br>sudo systemctl start sshd<br></code></pre></td></tr></table></figure>
+
+<p>配置镜像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">curl -fsSL https://packages.gitlab.cn/repository/raw/scripts/setup.sh | /bin/bash<br></code></pre></td></tr></table></figure>
+
+<p>开始安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo EXTERNAL_URL=&quot;http://10.0.0.12&quot; yum install -y gitlab-jh<br></code></pre></td></tr></table></figure>
+
+<p>初始密码(用户名为root)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">如果安装过程中没有自定义密码,则系统会随机生成</span><br>cat /etc/gitlab/initial_root_password<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>出于安全原因，24 小时后，此文件会被第一次 <code>gitlab-ctl reconfigure</code> 自动删除</li>
+</ul>
+<p>常用命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">gitlab-ctl start			# 启动服务<br>gitlab-ctl stop				# 停止服务<br>gitlab-ctl restart			# 重启服务<br>gitlab-ctl status			# 查看服务状态<br>gitlab-ctl reconfigure		# 重新配置服务<br>gitlab-ctl tail				# 查看日志<br>vi /etc/gitlab/gitlab.rb	# 修改默认的配置文件<br></code></pre></td></tr></table></figure>
+
+<h3 id="二-docker安装"><a href="#二-docker安装" class="headerlink" title="(二) docker安装"></a>(二) docker安装</h3><p>安装文档：<a target="_blank" rel="noopener" href="https://docs.gitlab.cn/jh/install/docker.html">https://docs.gitlab.cn/jh/install/docker.html</a></p>
+<p>安装所需最小配置</p>
+<ul>
+<li>内存至少4G</li>
+<li>系统内核至少在3.10以上 <code>uname -r</code> 命令可查看系统内核版本</li>
+</ul>
+<p>安装docker</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">1.安装依赖</span><br>sudo yum install -y yum-utils device-mapper-persistent-data lvm2<br><span class="hljs-meta prompt_"># </span><span class="language-bash">2.添加镜像</span><br>sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo<br>sudo yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo<br><span class="hljs-meta prompt_"># </span><span class="language-bash">3.查看源中可使用版本</span><br>sudo yum list docker-ce --showduplicates | sort -r<br><span class="hljs-meta prompt_"># </span><span class="language-bash">4.安装指定版本</span><br>sudo yum install docker<br><span class="hljs-meta prompt_"># </span><span class="language-bash">5.配置开机启动项</span><br>sudo systemctl start docker<br>sudo systemctl enable docker<br><span class="hljs-meta prompt_"># </span><span class="language-bash">6.查看版本</span><br>docker version<br></code></pre></td></tr></table></figure>
+
+<p>使用容器安装gitlab</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">1.添加容器</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">docker run --detach \</span><br><span class="language-bash">			 --hostname 10.0.0.10 \</span><br><span class="language-bash">			 --publish 443:443 --publish 80:80 \</span><br><span class="language-bash">			 --name gitlab \</span><br><span class="language-bash">			 --restart always \</span><br><span class="language-bash">			 --volume <span class="hljs-variable">$GITLAB_HOME</span>/config:/etc/gitlab:Z \</span><br><span class="language-bash">			 --volume <span class="hljs-variable">$GITLAB_HOME</span>/logs:/var/log/gitlab:Z \</span><br><span class="language-bash">			 --volume <span class="hljs-variable">$GITLAB_HOME</span>/data:/var/opt/gitlab:Z \</span><br><span class="language-bash">			 --shm-size 256m \</span><br><span class="language-bash">			 registry.gitlab.cn/omnibus/gitlab-jh:latest</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">2.启动容器</span><br>docker start gitlab<br><span class="hljs-meta prompt_"># </span><span class="language-bash">3.查看已存在的容器</span><br>docker ps -a<br><span class="hljs-meta prompt_"># </span><span class="language-bash">4.进入容器</span><br>docker exec -it gitlab /bin/bash<br></code></pre></td></tr></table></figure>
+
+<h3 id="三-web端使用"><a href="#三-web端使用" class="headerlink" title="(三) web端使用"></a>(三) web端使用</h3><p>访问地址：<a target="_blank" rel="noopener" href="http://192.168.44.101/">http://192.168.44.101</a></p>
+<p>当首次运行出现502错误的时候排查两个原因</p>
+<ol>
+<li>虚拟机内存至少需要4g</li>
+<li>稍微再等等刷新一下可能就好了</li>
+</ol>
+<p>管理员账号登录</p>
+<ul>
+<li><p>用户名：root</p>
+</li>
+<li><p>密码位于 <code>/etc/gitlab/initial_root_password</code> 中，登录后需要改密码，否则24小时之后会失效</p>
+</li>
+</ul>
+<h2 id="三-Jenkins"><a href="#三-Jenkins" class="headerlink" title="三 : Jenkins"></a>三 : Jenkins</h2><h3 id=""><a href="#" class="headerlink" title=""></a></h3><h3 id="二-基于maven的自动化部署"><a href="#二-基于maven的自动化部署" class="headerlink" title="(二) 基于maven的自动化部署"></a>(二) 基于maven的自动化部署</h3><p>安装git</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo yum install -y git<br></code></pre></td></tr></table></figure>
+
+<p>安装maven</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">wget https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz<br>mkdir -p /usr/local/maven<br>tar -xf apache-maven-3.9.6-bin.tar.gz -C /usr/local/maven<br>ln -s /usr/local/maven/apache-maven-3.9.6/bin/mvn /usr/bin/mvn<br></code></pre></td></tr></table></figure>
+
+<p>Global Tool Configuration : 新增maven &#x3D;&gt; &#x2F;usr&#x2F;local&#x2F;maven&#x2F;</p>
+<p>在jenkins管理页面安装maven插件</p>
+<pre><code class=" mermaid">graph LR
+系统管理 --&gt; 插件管理 --&gt; C[Available plugins] --搜索maven--&gt; D[Maven Integration] --&gt; 安装
+</code></pre>
+
+<p>创建任务</p>
+<pre><code class=" mermaid">graph LR
+新建任务 --输入任务名称--&gt; B[first] --&gt; 构建一个maven项目 --&gt; 确定
+源码管理 --&gt; Git --Repository URL--&gt; http://xxx.git --Branches to build--&gt; */master
+构建触发器 --&gt; C[Build whenever a SNAPSHOT dependency is built]
+Build --Root POM--&gt; demo/pom.xml 
+</code></pre>
+
+<h3 id="三-publish-over-ssh-配置"><a href="#三-publish-over-ssh-配置" class="headerlink" title="(三) publish over ssh 配置"></a>(三) publish over ssh 配置</h3><ol>
+<li><p>安装插件：在Configure System菜单里 往下来</p>
+</li>
+<li><p>添加一台目标服务器</p>
+</li>
+</ol>
+<p><img src="C:\Users\achelous\Desktop\images\image-20220726223917263.png" srcset="/img/loading.gif" lazyload alt="image-20220726223917263"></p>
+<p><img src="C:\Users\achelous\Desktop\images\image-20220726223937722.png" srcset="/img/loading.gif" lazyload alt="image-20220726223937722"></p>
+<ol start="3">
+<li>修改配置</li>
+</ol>
+<p><img src="C:\Users\achelous\Desktop\images\image-20220727165700419.png" srcset="/img/loading.gif" lazyload alt="image-20220727165700419"></p>
+<h4 id="超时机制"><a href="#超时机制" class="headerlink" title="超时机制"></a>超时机制</h4><p>输出命令时一定要注意不要让窗口卡主，不然Jenkins会认为认为一直没完成</p>
+<h4 id="shell的日志输出"><a href="#shell的日志输出" class="headerlink" title="shell的日志输出"></a>shell的日志输出</h4><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c">nohup java -jar /root/xxoo/demo*.jar &gt;mylog.<span class="hljs-built_in">log</span> <span class="hljs-number">2</span>&gt;<span class="hljs-meta">&amp;1 &amp;</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="数据流重定向"><a href="#数据流重定向" class="headerlink" title="数据流重定向"></a>数据流重定向</h4><p>数据流重定向就是将某个命令执行后应该要出现在屏幕上的数据传输到其他地方</p>
+<p>标准输入（stdin）：代码为0，使用&lt;或&lt;&lt;;<br>标准输出（stdout）：代码为1，使用&gt;或&gt;&gt;;<br>标准错误输出（stderr）：代码为2，使用2&gt;或2&gt;&gt;</p>
+<p>&gt; 覆盖写<br>&gt;&gt; 追加写</p>
+<h4 id="运行前清理"><a href="#运行前清理" class="headerlink" title="运行前清理"></a>运行前清理</h4><p>配置杀死之前运行的进程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">删除历史数据</span><br>rm -rf xxoo<br><br>appname=$1<br><span class="hljs-meta prompt_">#</span><span class="language-bash">获取传入的参数</span><br>echo &quot;arg:$1&quot;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">获取正在运行的jar包pid</span><br>pid=`ps -ef | grep $1 | grep &#x27;java -jar&#x27; | awk &#x27;&#123;printf $2&#125;&#x27;`<br><br>echo $pid<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">如果pid为空，提示一下，否则，执行<span class="hljs-built_in">kill</span>命令</span><br>if [ -z $pid ];<br><span class="hljs-meta prompt_">#</span><span class="language-bash">使用-z 做空值判断</span><br>        then<br>                echo &quot;$appname not started&quot;<br><br>        else<br>               kill -9 $pid<br>                echo &quot;$appname stoping....&quot;<br><br>check=`ps -ef | grep -w $pid | grep java`<br>if [ -z $check ];<br><br>        then<br>                echo &quot;$appname pid:$pid is stop&quot;<br>        else<br>                echo &quot;$appname stop failed&quot;<br><br>fi<br><br><br>fi<br><br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="四-构建方式"><a href="#四-构建方式" class="headerlink" title="(四) 构建方式"></a>(四) 构建方式</h3><table>
+<thead>
+<tr>
+<th>构建方式</th>
+<th>解释</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Build whenever a SNAPSHOT dependency is built</td>
+<td>当依赖的快照被构建时执行本job</td>
+<td>快照依赖构建</td>
+</tr>
+<tr>
+<td>触发远程构建</td>
+<td>远程调用本job的restapi时执行本job</td>
+<td>例如,使用脚本</td>
+</tr>
+<tr>
+<td>Build after other projects are built</td>
+<td>当依赖的job被构建时执行本job</td>
+<td>job依赖构建</td>
+</tr>
+<tr>
+<td>Build periodically</td>
+<td>使用cron表达式定时构建本job</td>
+<td>定时构建</td>
+</tr>
+<tr>
+<td>GitHub hook trigger for GITScm polling</td>
+<td>Github-WebHook出发时构建本job</td>
+<td>提交代码时触发</td>
+</tr>
+<tr>
+<td>Poll SCM</td>
+<td>使用cron表达式定时检查代码变更，变更后构建本job</td>
+<td>定期检查代码变更</td>
+</tr>
+</tbody></table>
+<h4 id="触发远程构建-x2F-gitlab上改动自动构建"><a href="#触发远程构建-x2F-gitlab上改动自动构建" class="headerlink" title="触发远程构建&#x2F;gitlab上改动自动构建"></a>触发远程构建&#x2F;gitlab上改动自动构建</h4><p>工作原理：代码改动后，自动可以使用gitlab的webhook回调钩子调起Jenkins的启动任务接口</p>
+<p>jenkins操作</p>
+<ol>
+<li>在构建触发器中选择触”发远程构建”，配置”身份验证令牌”</li>
+<li>访问：JENKINS_URL&#x2F;job&#x2F;JOB_NAME&#x2F;build?token&#x3D;TOKEN_NAME 或者 &#x2F;buildWithParameters?token&#x3D;TOKEN_NAME</li>
+<li>安装插件：build authorization token root，可以免登录</li>
+<li>访问地址：buildByToken&#x2F;build?job&#x3D;Name&amp;token&#x3D;SECRET</li>
+</ol>
+<p>gitlab操作</p>
+<ol>
+<li>选择具体项目，选择”设置”&#x3D;&gt;”Webhooks”，配置网址为：buildByToken&#x2F;build?job&#x3D;Name&amp;token&#x3D;SECRET</li>
+<li>选择触发来源：推送事件，合并事件</li>
+<li>保存的时候报错：Url is blocked: Request to the local network are not allowed</li>
+<li>切换管理员身份：选择菜单&#x3D;&gt;管理员&#x3D;&gt;设置&#x3D;&gt;网络&#x3D;&gt;出站请求&#x3D;&gt;允许来自 web hooks 和服务对本地网络的请求&#x3D;&gt;保存更改</li>
+<li>再次执行1和2即可</li>
+</ol>
+<h4 id="定时构建"><a href="#定时构建" class="headerlink" title="定时构建"></a>定时构建</h4><h5 id="Jenkins-cron表达式"><a href="#Jenkins-cron表达式" class="headerlink" title="Jenkins cron表达式"></a>Jenkins cron表达式</h5><p>标准cron</p>
+<p><a target="_blank" rel="noopener" href="https://crontab.guru/">https://crontab.guru</a></p>
+<p>Jenkins cron不是标准的cron表达式</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs tap">第一个 * 表示每个小时的第几分钟，取值0~59<br><br>H * * * *<br>H：每小时执行一次<br><br>第二颗 * 表示小时，取值0~23<br><br>*<span class="hljs-number"> 15 </span>* * * 表示每天下午3点<br>*<span class="hljs-number"> 1 </span>* * *  表示每天凌晨1点<br><br>第三颗 * 表示一个月的第几天，取值1~31<br>*<span class="hljs-number"> 1 </span>5 * *  表示每月5日凌晨1点<br><br>第四颗 * 表示第几月，取值1~12<br>*<span class="hljs-number"> 15 </span>5<span class="hljs-number"> 1 </span>*  表示每年几月执行<br><br>第五颗 * 表示一周中的第几天，取值0~7，其中0和7代表的都是周日<br><br></code></pre></td></tr></table></figure>
+
+<p><strong>“&#x2F;”</strong></p>
+<p>表示每隔多长时间，比如 *&#x2F;10 * * * * 表示 每隔10分钟</p>
+<p><strong>“H”</strong></p>
+<p>hash散列值，以job名取值，获取到以job名为入参的唯一值，相同名称值也相同，这个偏移量会和实际时间相加，获得一个真实的运行时间</p>
+<p>意义在于：不同的项目在不同的时间运行，即使配置的值是一样的，比如 都是<code>15 * * * * </code> ，表示每个小时的第15分钟开始执行任务，那么会造成同一时间内在Jenkins中启动很多job，换成<code>H/15 * * * *</code>,那么在首次启动任务时，会有随机值参与进来，有的会在17分钟启动 有的会在19分钟启动，随后的启动时间也是这个值。这样就能错开相同cron值的任务执行了。</p>
+<p>H的值也可以设置范围</p>
+<p><code>H * * * *</code>表示一小时内的任意时间</p>
+<p><code>*/10 * * * *</code>每10分钟</p>
+<p><code>H/10 * * * *</code>每10分钟,可能是7,17,27，起始时间hash，步长不变</p>
+<p><code>45 3 * * 1-6 </code> 每个周一至周六，凌晨3点45 执行1次</p>
+<p><code>45 3-5 * * 1-6 </code> 每个周一至周六，凌晨3点45 ，凌晨4点45，凌晨5点45 各执行1次</p>
+<p><code>H(40-48) 3-5 * * 1-6 </code> 在40~48之间取值 其他同上</p>
+<p><code>45 3-5/2 * * 1-6 </code> 每个周一至周六，凌晨3点45 ，凌晨5点45 各执行1次</p>
+<p><code>45 0-6/2 * * 1-6 * * 1-6</code> 0点开始，每间隔2小时执行一次 0:45、2:45、4:45</p>
+<h4 id="源码变更构建"><a href="#源码变更构建" class="headerlink" title="源码变更构建"></a>源码变更构建</h4><p>使用Poll SCM 方式与Build periodically一样</p>
+<p>会主动定期检查代码托管服务器上是否有变化，一旦发生变化执行job构建</p>
+<h3 id="五-测试报告邮件通知"><a href="#五-测试报告邮件通知" class="headerlink" title="(五) 测试报告邮件通知"></a>(五) 测试报告邮件通知</h3><p>使用163免费邮箱发送邮件时注意密码填认证码，也就是发送手机短信后给的那个，不要用登录邮箱的密码</p>
+<p>类似下面。。</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">KDWJUWDQBWMOYGDC</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="-1"><a href="#-1" class="headerlink" title=""></a></h3><h3 id="六-自动化部署到docker容器中"><a href="#六-自动化部署到docker容器中" class="headerlink" title="(六) 自动化部署到docker容器中"></a>(六) 自动化部署到docker容器中</h3><h4 id="docker外挂目录"><a href="#docker外挂目录" class="headerlink" title="docker外挂目录"></a>docker外挂目录</h4><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">docker</span> run -d -p <span class="hljs-number">8080</span>:<span class="hljs-number">8080</span> --name demo-out -v /root/jarfile/demo-<span class="hljs-number">1</span>-<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>-SNAPSHOT.jar:/app.jar openjdk:<span class="hljs-number">11</span> java -jar app.jar<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="打包到容器内"><a href="#打包到容器内" class="headerlink" title="打包到容器内"></a>打包到容器内</h4><ol>
+<li>准备一台测试服务器 docker环境</li>
+<li>准备支持jdk的镜像</li>
+</ol>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile"><span class="hljs-keyword">FROM</span> openjdk:<span class="hljs-number">11</span><br><span class="hljs-keyword">COPY</span><span class="language-bash"> . /usr/src/myapp</span><br><span class="hljs-keyword">WORKDIR</span><span class="language-bash"> /usr/src/myapp</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> javac Main.java</span><br><span class="hljs-keyword">CMD</span><span class="language-bash"> [<span class="hljs-string">&quot;java&quot;</span>, <span class="hljs-string">&quot;Main&quot;</span>]</span><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<ol>
+<li>把jar包打包到容器内</li>
+</ol>
+<p>dockerfile</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile"><span class="hljs-keyword">FROM</span> openjdk:<span class="hljs-number">11</span><br><span class="hljs-keyword">EXPOSE</span> <span class="hljs-number">8080</span><br><br><span class="hljs-keyword">WORKDIR</span><span class="language-bash"> /root</span><br><br><span class="hljs-keyword">ADD</span><span class="language-bash"> jarfile/demo*.jar /root/app.jar</span><br><span class="hljs-keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="hljs-string">&quot;java&quot;</span>,<span class="hljs-string">&quot;-jar&quot;</span>,<span class="hljs-string">&quot;/root/app.jar&quot;</span>]</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>打包镜像</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs erlang">docker build -t demo .<br></code></pre></td></tr></table></figure>
+
+
+
+<p>配置国内镜像</p>
+<p>修改<code>/etc/docker/daemon.json</code>文件，没有的话创建一个</p>
+<p>写入</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs prolog">&#123;<br>    <span class="hljs-string">&quot;registry-mirrors&quot;</span>: [<br>        <span class="hljs-string">&quot;https://ustc-edu-cn.mirror.aliyuncs.com&quot;</span>,<br>        <span class="hljs-string">&quot;http://hub-mirror.c.163.com&quot;</span>,<br>        <span class="hljs-string">&quot;https://registry.aliyuncs.com&quot;</span><br>    ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>重启服务</p>
+<figure class="highlight nsis"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs nsis"><span class="hljs-params">system</span>ctl daemon-reload<br><span class="hljs-params">system</span>ctl restart docker<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="四、Jenkins集群-x2F-并发构建"><a href="#四、Jenkins集群-x2F-并发构建" class="headerlink" title="四、Jenkins集群&#x2F;并发构建"></a>四、Jenkins集群&#x2F;并发构建</h2><p>集群化构建可以有效提升构建效率，尤其是团队项目比较多或是子项目比较多的时候，可以并发在多台机器上执行构建。</p>
+<h2 id="五、流水线-pipeline"><a href="#五、流水线-pipeline" class="headerlink" title="五、流水线 pipeline"></a>五、流水线 pipeline</h2><p>流水线既能作为任务的本身，也能作为Jenkinsfile</p>
+<p>使用流水线可以让我们的任务从ui手动操作，转换为代码化，像docker的dockerfile一样，从shell命令到配置文件，更适合大型项目，可以让团队其他开发者同时参与进来，同时也可以编辑开发Jenkinswebui不能完成的更复杂的构建逻辑，作为开发者可读性也更好。</p>
+<h3 id="一-完整语法"><a href="#一-完整语法" class="headerlink" title="(一) 完整语法"></a>(一) 完整语法</h3><p>5个必备的组成部分</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sqf">pipeline：整条流水线<br><span class="hljs-built_in">agent</span>：指定执行器<br>stages：所有阶段<br>stage：某一阶段，可有多个<br>steps：阶段内的每一步，可执行命令<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="二-测试脚本"><a href="#二-测试脚本" class="headerlink" title="(二) 测试脚本"></a>(二) 测试脚本</h3><h4 id="基础框架"><a href="#基础框架" class="headerlink" title="基础框架"></a>基础框架</h4><figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs sqf">pipeline &#123;<br>    <span class="hljs-built_in">agent</span> any<br><br>    stages &#123;<br>        stage(<span class="hljs-string">&#x27;拉取代码&#x27;</span>) &#123;<br>            steps &#123;<br>            <br>                <span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;拉取代码完成&#x27;</span><br>               <br>            &#125;<br><br>        &#125;<br>        stage(<span class="hljs-string">&#x27;执行构建&#x27;</span>) &#123;<br>            steps &#123;<br>                <span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;执行构建完成&#x27;</span><br><br><br>            &#125;<br><br>        &#125;<br>    &#125;<br>    <br>    post &#123;<br>        <br>        always &#123;<br>            <br>            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;完成&quot;</span><br>            <br>        &#125;<br>        <br>        failure &#123;<br>            <br>            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;失败&quot;</span><br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="阶段视图-Stage-View"><a href="#阶段视图-Stage-View" class="headerlink" title="阶段视图 Stage View"></a>阶段视图 Stage View</h4><h4 id="blue-ocean可视化界面"><a href="#blue-ocean可视化界面" class="headerlink" title="blue ocean可视化界面"></a>blue ocean可视化界面</h4><p>全新的流水线控制ui，可重复执行某阶段代码</p>
+<p>插件中心搜索blue ocean安装即可</p>
+<h4 id="post"><a href="#post" class="headerlink" title="post"></a>post</h4><p>流水线完成后可执行的任务</p>
+<ul>
+<li>always 无论流水线或者阶段的完成状态。</li>
+<li>changed 只有当流水线或者阶段完成状态与之前不同时。</li>
+<li>failure 只有当流水线或者阶段状态为”failure”运行。</li>
+<li>success 只有当流水线或者阶段状态为”success”运行。</li>
+<li>unstable 只有当流水线或者阶段状态为”unstable”运行。例如：测试失败。</li>
+<li>aborted 只有当流水线或者阶段状态为”aborted “运行。例如：手动取消。</li>
+</ul>
+<h4 id="agent"><a href="#agent" class="headerlink" title="agent"></a>agent</h4><p>可以指定执行节点</p>
+<p>label 指定运行job的节点标签</p>
+<p>any 不指定，由Jenkins分配</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs awk">pipeline &#123;<br>    agent &#123;<br>        node &#123;<br>            label <span class="hljs-string">&quot;jenkins-02&quot;</span><br>        &#125;<br>        <br>    &#125;<br><br>    stages &#123;<br>        stage(<span class="hljs-string">&#x27;拉取代码&#x27;</span>) &#123;<br>            steps &#123;<br>          <br>                sh <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">                    sleep 10</span><br><span class="hljs-string">                            </span><br><span class="hljs-string">                   &quot;&quot;&quot;</span><br><br>                echo <span class="hljs-string">&#x27;拉取代码完成&#x27;</span><br>               <br>            &#125;<br><br>        &#125;<br>        stage(<span class="hljs-string">&#x27;执行构建&#x27;</span>) &#123;<br>            steps &#123;<br>                echo <span class="hljs-string">&#x27;执行构建完成&#x27;</span><br><br><br>            &#125;<br><br>        &#125;<br>    &#125;<br>    <br>    post &#123;<br>        <br>        always &#123;<br>            <br>            echo <span class="hljs-string">&quot;完成&quot;</span><br>            <br>        &#125;<br>        <br>        failure &#123;<br>            <br>            echo <span class="hljs-string">&quot;失败&quot;</span><br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="三-pipeline中执行自动化构建"><a href="#三-pipeline中执行自动化构建" class="headerlink" title="(三) pipeline中执行自动化构建"></a>(三) pipeline中执行自动化构建</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><code class="hljs php">pipeline &#123;<br>    agent any<br><br>    tools &#123;<br>        <br>        maven <span class="hljs-string">&quot;maven3&quot;</span><br>        <br>    &#125;<br>    stages &#123;<br>        <span class="hljs-title function_ invoke__">stage</span>(<span class="hljs-string">&quot;拉取代码&quot;</span>) &#123;<br>            steps &#123;<br>                <br>                <br>                git branch: <span class="hljs-string">&#x27;main&#x27;</span>, credentialsId: <span class="hljs-string">&#x27;gitlab&#x27;</span>, url: <span class="hljs-string">&#x27;http://192.168.44.103/root/java-project.git&#x27;</span><br>                <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;拉取成功&#x27;</span><br>            &#125;<br>        &#125;<br><br>        <span class="hljs-title function_ invoke__">stage</span>(<span class="hljs-string">&quot;执行构建&quot;</span>) &#123;<br>            steps &#123;<br>                <br>            <span class="hljs-comment">//    sh &quot;mvn --version&quot;</span><br>                sh <span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot; </span><br><span class="hljs-string">                cd demo-1</span><br><span class="hljs-string">                </span><br><span class="hljs-string">                mvn clean package</span><br><span class="hljs-string">                &quot;</span><span class="hljs-string">&quot;&quot;</span><br>                <br>                <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;构建完成&#x27;</span><br>            &#125;<br><br>        &#125;<br>        <br>        <br>        <span class="hljs-title function_ invoke__">stage</span>(<span class="hljs-string">&quot;clean test server&quot;</span>)&#123;<br>            <br>            steps&#123;<br>                <br><span class="hljs-title function_ invoke__">sshPublisher</span>(<span class="hljs-attr">publishers</span>: [<span class="hljs-title function_ invoke__">sshPublisherDesc</span>(<span class="hljs-attr">configName</span>: <span class="hljs-string">&#x27;testserver&#x27;</span>, <span class="hljs-attr">transfers</span>: [<span class="hljs-title function_ invoke__">sshTransfer</span>(<span class="hljs-attr">cleanRemote</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">excludes</span>: <span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-attr">execCommand</span>: <span class="hljs-string">&#x27;&#x27;</span><span class="hljs-string">&#x27;rm -rf *</span><br><span class="hljs-string"></span><br><span class="hljs-string">docker stop demo</span><br><span class="hljs-string">docker rm demo</span><br><span class="hljs-string">docker rmi demo</span><br><span class="hljs-string">&#x27;</span><span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-attr">execTimeout</span>: <span class="hljs-number">120000</span>, <span class="hljs-attr">flatten</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">makeEmptyDirs</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">noDefaultExcludes</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">patternSeparator</span>: <span class="hljs-string">&#x27;[, ]+&#x27;</span>, <span class="hljs-attr">remoteDirectory</span>: <span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-attr">remoteDirectorySDF</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">removePrefix</span>: <span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-attr">sourceFiles</span>: <span class="hljs-string">&#x27;/root&#x27;</span>)], <span class="hljs-attr">usePromotionTimestamp</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">useWorkspaceInPromotion</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">verbose</span>: <span class="hljs-literal">false</span>)])<br>            &#125;<br>        &#125;<br>        <br>        <br>        <br>        <br>        <br>        <span class="hljs-title function_ invoke__">stage</span>(<span class="hljs-string">&quot;发送jar包到测试服务器&quot;</span>) &#123;<br>            steps &#123;<br>                <br>                <span class="hljs-title function_ invoke__">sshPublisher</span>(<span class="hljs-attr">publishers</span>: [<span class="hljs-title function_ invoke__">sshPublisherDesc</span>(<span class="hljs-attr">configName</span>: <span class="hljs-string">&#x27;testserver&#x27;</span>, <span class="hljs-attr">transfers</span>: [<span class="hljs-title function_ invoke__">sshTransfer</span>(<span class="hljs-attr">cleanRemote</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">excludes</span>: <span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-attr">execCommand</span>: <span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-attr">execTimeout</span>: <span class="hljs-number">120000</span>, <span class="hljs-attr">flatten</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">makeEmptyDirs</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">noDefaultExcludes</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">patternSeparator</span>: <span class="hljs-string">&#x27;[, ]+&#x27;</span>, <span class="hljs-attr">remoteDirectory</span>: <span class="hljs-string">&#x27;/jarfile&#x27;</span>, <span class="hljs-attr">remoteDirectorySDF</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">removePrefix</span>: <span class="hljs-string">&#x27;demo-1/target&#x27;</span>, <span class="hljs-attr">sourceFiles</span>: <span class="hljs-string">&#x27;**/demo*.jar&#x27;</span>), <span class="hljs-title function_ invoke__">sshTransfer</span>(<span class="hljs-attr">cleanRemote</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">excludes</span>: <span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-attr">execCommand</span>: <span class="hljs-string">&#x27;&#x27;</span><span class="hljs-string">&#x27;docker build -t demo .</span><br><span class="hljs-string">docker run -d -p 8080:8080 --name demo demo&#x27;</span><span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-attr">execTimeout</span>: <span class="hljs-number">120000</span>, <span class="hljs-attr">flatten</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">makeEmptyDirs</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">noDefaultExcludes</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">patternSeparator</span>: <span class="hljs-string">&#x27;[, ]+&#x27;</span>, <span class="hljs-attr">remoteDirectory</span>: <span class="hljs-string">&#x27;/&#x27;</span>, <span class="hljs-attr">remoteDirectorySDF</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">removePrefix</span>: <span class="hljs-string">&#x27;demo-1/docker&#x27;</span>, <span class="hljs-attr">sourceFiles</span>: <span class="hljs-string">&#x27;demo-1/docker/dockerfile&#x27;</span>)], <span class="hljs-attr">usePromotionTimestamp</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">useWorkspaceInPromotion</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">verbose</span>: <span class="hljs-literal">false</span>)])<br>                <br>                <br>                <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;jar send over!&#x27;</span><br>            &#125;<br><br>        &#125;<br><br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="声明式流水线"><a href="#声明式流水线" class="headerlink" title="声明式流水线"></a>声明式流水线</h4><p>好处</p>
+<ul>
+<li>更像是在Jenkins web ui中的操作</li>
+<li>可读性比较高</li>
+<li>可以使用blue ocean自动生成</li>
+<li>支持语法检查</li>
+</ul>
+<p>坏处</p>
+<ul>
+<li>代码逻辑能力比脚本式弱，不能完成特别复杂的任务</li>
+</ul>
+<p>	</p>
+<h4 id="脚本式流水线"><a href="#脚本式流水线" class="headerlink" title="脚本式流水线"></a>脚本式流水线</h4><p>好处</p>
+<ul>
+<li>更少的代码和弱规范要求</li>
+<li>更灵活的自定义代码操作</li>
+<li>不受约束，可以构建特别复杂的工作流和流水线</li>
+</ul>
+<p>坏处</p>
+<ul>
+<li>读写对编程要求比较高</li>
+<li>比声明式流水线代码更复杂</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="category-chain-item">服务器</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CI-CD/">#CI/CD</a>
+      
+        <a href="/tags/Jenkins/">#Jenkins</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Jenkins安装与使用</div>
+      <div>https://info4z.github.io/2023/04/21/0_jenkins/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>倗诚</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/14/%E5%8F%8D%E5%BC%B9shell%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88/" title="反弹shell的几种实现方案">
+                        <span class="hidden-mobile">反弹shell的几种实现方案</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
