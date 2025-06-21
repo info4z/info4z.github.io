@@ -1,0 +1,810 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="倗诚">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="爬虫代码不难, 难的是与反爬虫之间的博弈">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python爬虫之urllib">
+<meta property="og:url" content="https://info4z.github.io/2025/06/18/python%E7%88%AC%E8%99%AB01_urllib/index.html">
+<meta property="og:site_name" content="云深不知处">
+<meta property="og:description" content="爬虫代码不难, 难的是与反爬虫之间的博弈">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-06-20T19:23:10.060Z">
+<meta property="article:author" content="倗诚">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="爬虫">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>python爬虫之urllib - 云深不知处</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"info4z.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>云深不知处</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="python爬虫之urllib"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-06-18 00:00" pubdate>
+          2025年6月18日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          14k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          117 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">python爬虫之urllib</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><h3 id="（一）什么是互联网爬虫？"><a href="#（一）什么是互联网爬虫？" class="headerlink" title="（一）什么是互联网爬虫？"></a>（一）什么是互联网爬虫？</h3><p>如果我们把互联网比作一张大的蜘蛛网，那一台计算机上的数据便是蜘蛛网上的一个猎物，而爬虫程序就是一只小蜘蛛，沿着蜘蛛网抓取自己想要的数据。例如：</p>
+<ul>
+<li>通过一个程序，根据url（<a target="_blank" rel="noopener" href="http://www.taobao.com)进行爬取网页,获取有用信息/">http://www.taobao.com）进行爬取网页，获取有用信息</a></li>
+<li>使用程序模拟浏览器，去向服务器发送请求，获取响应信息</li>
+</ul>
+<h3 id="（二）爬虫的核心是什么？"><a href="#（二）爬虫的核心是什么？" class="headerlink" title="（二）爬虫的核心是什么？"></a>（二）爬虫的核心是什么？</h3><p>爬虫的核心主要分为3个部分：</p>
+<ol>
+<li>爬取网页：爬取整个网页，包含了网页中的所有内容</li>
+<li>解析数据：将网页中得到的数据进行解析，提取有用的数据</li>
+<li>难点：爬虫和反爬虫之间的博弈</li>
+</ol>
+<h3 id="（三）爬虫的用途？"><a href="#（三）爬虫的用途？" class="headerlink" title="（三）爬虫的用途？"></a>（三）爬虫的用途？</h3><ul>
+<li>数据分析、人工数据集</li>
+<li>社交软件冷启动</li>
+<li>舆情监控</li>
+<li>竞争对手监控</li>
+</ul>
+<h3 id="（四）爬虫分类？"><a href="#（四）爬虫分类？" class="headerlink" title="（四）爬虫分类？"></a>（四）爬虫分类？</h3><p><strong>1：通用爬虫</strong></p>
+<ul>
+<li>示例：百度、360、google、sougou等搜索引擎</li>
+<li>功能：访问网页 &#x3D;&gt; 抓取数据 &#x3D;&gt; 数据存储 &#x3D;&gt; 数据处理 &#x3D;&gt; 提供检索服务</li>
+<li>robots协议：一个约定俗称的协议，添加<code>robots.txt</code>文件，来说明本网站哪些内容不可以被抓取，属于君子协议，起不到限制作用（自己写的爬虫无需遵守）</li>
+<li>网站排名（SEO）：<ol>
+<li>根据gagerank算法值进行排名，参考网站流量、点击率等指标</li>
+<li>百度竞价排名</li>
+</ol>
+</li>
+<li>缺点：<ol>
+<li>抓取的数据大多是无用的</li>
+<li>不能根据用户的需求来精准获取数据</li>
+</ol>
+</li>
+</ul>
+<p><strong>2：聚焦爬虫</strong></p>
+<ul>
+<li>功能：根据需求，编写爬虫程序，抓取需要的数据</li>
+<li>设计思路：<ol>
+<li>确定要爬取的url &#x3D;&gt; 如何获取url</li>
+<li>模拟浏览器通过http协议访问url，获取服务器返回的html代码 &#x3D;&gt; 如何访问</li>
+<li>解析html字符串（根据一定规则提取需要的数据）&#x3D;&gt; 如何解析</li>
+</ol>
+</li>
+</ul>
+<h3 id="（五）反爬手段？"><a href="#（五）反爬手段？" class="headerlink" title="（五）反爬手段？"></a>（五）反爬手段？</h3><p><strong>1：User-Agent</strong></p>
+<p>User Agent 中文名为用户代理，简称UA，是一个特殊字符串头，是的服务器能够识别客户使用的操作系统及版本、CPU类型、浏览器及版本、浏览器渲染引擎、浏览器语言、浏览器插件等。</p>
+<p><strong>2：代理IP</strong></p>
+<p>常用的有西次代理、快代理等。</p>
+<p>什么是高匿名、匿名和透明代理？它们有什么区别？</p>
+<ol>
+<li>使用透明代理，对方服务器可以知道你使用了代理，并且也知道你的真实IP。</li>
+<li>使用匿名代理，对方服务器可以知道你使用了代理，但不知道你的真实IP。</li>
+<li>使用高匿名代理，对方服务器不知道你使用了代理，更不知道你的真实IP。</li>
+</ol>
+<p><strong>3：验证码访问</strong></p>
+<ol>
+<li><p>将验证码下载到本地，通过人力识别进行输入验证</p>
+</li>
+<li><p>使用验证码识别服务，需要付费，如：打码平台、云打码平台、超级鹰</p>
+</li>
+</ol>
+<p><strong>4：动态加载网页</strong></p>
+<ul>
+<li>网站返回的js数据，并不是网页的真实数据</li>
+<li>selenium驱动真实的浏览器发送请求</li>
+</ul>
+<p><strong>5：数据加密</strong></p>
+<p>需要分析js代码</p>
+<h2 id="二、urllib库的使用"><a href="#二、urllib库的使用" class="headerlink" title="二、urllib库的使用"></a>二、urllib库的使用</h2><h3 id="（一）基本使用"><a href="#（一）基本使用" class="headerlink" title="（一）基本使用"></a>（一）基本使用</h3><p>发送请求</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 导入urllib,发送请求用request</span><br><span class="hljs-keyword">import</span> urllib.request<br><span class="hljs-comment"># 定义url</span><br>url = <span class="hljs-string">&quot;http://www.baidu.com&quot;</span><br><span class="hljs-comment"># 模拟浏览器向服务器发送请求</span><br>response = urllib.request.urlopen(url)<br><span class="hljs-comment"># 获取响应数据</span><br>html = response.read().decode(<span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-comment"># read()返回的是二进制数据,需要解码</span><br><span class="hljs-comment"># 打印内容</span><br><span class="hljs-built_in">print</span>(html)<br></code></pre></td></tr></table></figure>
+
+<p>1个类型和6个方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> urllib.request<br><br>url = <span class="hljs-string">&quot;https://www.baidu.com&quot;</span><br>response = urllib.request.urlopen(url)<br><br><span class="hljs-comment"># 类型: response是http.client.HTTPResponse类型</span><br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">type</span>(response))<br><br><span class="hljs-comment"># 1.read(): 字节形式读取二进制</span><br>content_bin = response.read()<br><span class="hljs-built_in">print</span>(content_bin)<br><br>content_5 = response.read(<span class="hljs-number">5</span>)  <span class="hljs-comment"># 返回5个字节</span><br><span class="hljs-built_in">print</span>(content_5)<br><br><span class="hljs-comment"># 2.readline(): 读取一行数据</span><br>content_line = response.readline()<br><span class="hljs-built_in">print</span>(content_line)<br><br><span class="hljs-comment"># 3.readlines(): 读取所有行数据,返回一个列表</span><br>content_lines = response.readlines()    <span class="hljs-comment"># 每个元素是一行数据</span><br><span class="hljs-built_in">print</span>(content_lines)<br><br><span class="hljs-comment"># 4.getcode(): 状态码</span><br><span class="hljs-built_in">print</span>(response.getcode())<br><br><span class="hljs-comment"># 5.geturl(): 返回url</span><br><span class="hljs-built_in">print</span>(response.geturl())<br><br><span class="hljs-comment"># 6.getheaders(): 获取响应头</span><br><span class="hljs-built_in">print</span>(response.getheaders())<br></code></pre></td></tr></table></figure>
+
+<p>下载</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> urllib.request<br><br><span class="hljs-comment"># 下载网页</span><br>url_page = <span class="hljs-string">&#x27;http://www.baidu.com&#x27;</span><br>urllib.request.urlretrieve(url_page,<span class="hljs-string">&#x27;baidu.html&#x27;</span>)<br><br><span class="hljs-comment"># 下载图片</span><br>url_img = <span class="hljs-string">&#x27;https://img2.baidu.com/it/u=3565409493,803491979&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=800&amp;h=1440&#x27;</span><br>urllib.request.urlretrieve(url_img, <span class="hljs-string">&#x27;girl.jpg&#x27;</span>)<br><br><span class="hljs-comment"># 下载视频</span><br>url_video = <span class="hljs-string">&#x27;https://vdept3.bdstatic.com/mda-rahqqzbrj4sfr5yr/360p/h264/1737221260044646172/mda-rahqqzbrj4sfr5yr.mp4?v_from_s=hkapp-haokan-hna&amp;auth_key=1750269281-0-0-9656f6cbe091cd57b65f0b6bafbfab0d&amp;bcevod_channel=searchbox_feed&amp;pd=1&amp;cr=0&amp;cd=0&amp;pt=3&amp;logid=3281903758&amp;vid=14453729713303325529&amp;klogid=3281903758&amp;abtest=&#x27;</span><br>urllib.request.urlretrieve(url_video, <span class="hljs-string">&#x27;my_all.mp4&#x27;</span>)<br></code></pre></td></tr></table></figure>
+
+<h3 id="（二）请求对象定制"><a href="#（二）请求对象定制" class="headerlink" title="（二）请求对象定制"></a>（二）请求对象定制</h3><p>百度搜索关键字【李白】</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> urllib.request<br><br>url = <span class="hljs-string">&#x27;https://www.baidu.com/s?&amp;wd=%E6%9D%8E%E7%99%BD&#x27;</span><br>response = urllib.request.urlopen(url)<br>content = response.read().decode(<span class="hljs-string">&#x27;utf8&#x27;</span>)<br><span class="hljs-built_in">print</span>(content)<br></code></pre></td></tr></table></figure>
+
+<p>打印响应信息为：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>	<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript">		location.<span class="hljs-title function_">replace</span>(location.<span class="hljs-property">href</span>.<span class="hljs-title function_">replace</span>(<span class="hljs-string">&quot;https://&quot;</span>,<span class="hljs-string">&quot;http://&quot;</span>));</span><br><span class="language-javascript">	</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>	<span class="hljs-tag">&lt;<span class="hljs-name">noscript</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">http-equiv</span>=<span class="hljs-string">&quot;refresh&quot;</span> <span class="hljs-attr">content</span>=<span class="hljs-string">&quot;0;url=http://www.baidu.com/&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">noscript</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>这里有个问题，当使用https协议时，得到的响应说，需要将https换成http。但使用浏览器访问明明没有问题，此时应该意识到，我们遇到了反爬手段。浏览器正常，程序有不行，很明显了，百度发现我们使用的不是浏览器，此时我们需要【定制请求对象】来伪装成浏览器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> urllib.request<br><br>url = <span class="hljs-string">&#x27;https://www.baidu.com/s?&amp;wd=%E6%9D%8E%E7%99%BD&#x27;</span><br>headers = &#123;<br>    <span class="hljs-string">&#x27;User-Agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span><br>&#125;<br><span class="hljs-comment"># response = urllib.request.urlopen(url)</span><br><span class="hljs-comment"># 使用request对象,可以定制请求头</span><br>request = urllib.request.Request(url=url, headers=headers)<br>response = urllib.request.urlopen(request, timeout=<span class="hljs-number">10</span>)<br>content = response.read().decode(<span class="hljs-string">&#x27;utf8&#x27;</span>)<br><span class="hljs-built_in">print</span>(content)<br></code></pre></td></tr></table></figure>
+
+<p>Unicode编码：之前我们看到【李白】在url中显示并不是汉字，这种形式就是Unicode编码，这个编码集支持多种语言，而且现代操作系统和大多数变成语言也支持Unicode。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> urllib.request<br><span class="hljs-keyword">import</span> urllib.parse<br><br>url = <span class="hljs-string">&#x27;http://www.baidu.com/s?&amp;wd=&#x27;</span><br>headers = &#123;<br>    <span class="hljs-string">&#x27;User-Agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span><br>&#125;<br><span class="hljs-comment"># 转为Unicode编码</span><br>name = urllib.parse.quote(<span class="hljs-string">&#x27;李白&#x27;</span>)<br>url = url + name<br><span class="hljs-comment"># 定制请求对象</span><br>request = urllib.request.Request(url=url, headers=headers)<br><span class="hljs-comment"># 发送请求</span><br>response = urllib.request.urlopen(request, timeout=<span class="hljs-number">10</span>)<br><span class="hljs-comment"># 接受响应</span><br>content = response.read().decode(<span class="hljs-string">&#x27;utf8&#x27;</span>)<br><span class="hljs-built_in">print</span>(content)<br></code></pre></td></tr></table></figure>
+
+<p><strong>小技巧</strong>：快速转换字典格式</p>
+<ol>
+<li>正则表达式</li>
+<li>查找目标：<code>(.*): (.*)</code></li>
+<li>替换为：<code>&#39;\1&#39;: &#39;\2&#39;,</code></li>
+<li>替换全部</li>
+</ol>
+<h3 id="（三）请求方式get-x2F-post"><a href="#（三）请求方式get-x2F-post" class="headerlink" title="（三）请求方式get&#x2F;post"></a>（三）请求方式get&#x2F;post</h3><p>get请求方式：<code>urllib.parse.urlencode()</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-string">发送get请求: 百度搜索李白,性别男</span><br><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-keyword">import</span> urllib.request<br><span class="hljs-keyword">import</span> urllib.parse<br><br>base_url = <span class="hljs-string">&quot;https://www.baidu.com/s?&quot;</span><br><br>headers = &#123;<br>    <span class="hljs-string">&#x27;User-Agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span><br>&#125;<br><br>data = &#123;<br>    <span class="hljs-string">&#x27;wd&#x27;</span>: <span class="hljs-string">&#x27;李白&#x27;</span>,<br>    <span class="hljs-string">&#x27;sex&#x27;</span>: <span class="hljs-string">&#x27;男&#x27;</span>,<br>&#125;<br><br>param = urllib.parse.urlencode(data)<br><br><span class="hljs-comment"># url拼接</span><br>url = base_url + param<br><span class="hljs-comment"># 发送请求</span><br>request = urllib.request.Request(url, headers=headers)<br>response = urllib.request.urlopen(request)<br>content = response.read().decode(<span class="hljs-string">&quot;utf8&quot;</span>)<br><span class="hljs-built_in">print</span>(content)<br></code></pre></td></tr></table></figure>
+
+<p>post请求方式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-string">百度翻译查询spider的中文解释</span><br><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-keyword">import</span> urllib.request<br><span class="hljs-keyword">import</span> urllib.parse<br><br>url = <span class="hljs-string">&#x27;https://fanyi.baidu.com/sug&#x27;</span><br><br>headers = &#123;<br>    <span class="hljs-string">&#x27;User-Agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span><br>&#125;<br><br>data = &#123;<br>    <span class="hljs-string">&#x27;kw&#x27;</span>: <span class="hljs-string">&#x27;spider&#x27;</span><br>&#125;<br><br><span class="hljs-comment"># post请求, 参数必须进行编码</span><br>data = urllib.parse.urlencode(data).encode(<span class="hljs-string">&quot;utf8&quot;</span>)<br><br><span class="hljs-comment"># post请求, 参数是在请求体中, 不拼接</span><br>request = urllib.request.Request(url, data, headers)<br>response = urllib.request.urlopen(request)<br>content = response.read().decode(<span class="hljs-string">&#x27;utf8&#x27;</span>)<br><span class="hljs-built_in">print</span>(content, <span class="hljs-built_in">type</span>(content))   <span class="hljs-comment"># str类型</span><br><br><span class="hljs-comment"># 转成json</span><br><span class="hljs-keyword">import</span> json<br>j = json.loads(content)<br><span class="hljs-built_in">print</span>(j)<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="（四）ajax请求"><a href="#（四）ajax请求" class="headerlink" title="（四）ajax请求"></a>（四）ajax请求</h3><p>特点：在请求头中，会包含一行<code>x-requested-with: XMLHttpRequest</code></p>
+<p>get请求</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-string">获取豆瓣电影排行榜动作片第一页的数据,并记录下来</span><br><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-keyword">import</span> urllib.request<br><br>url = <span class="hljs-string">&#x27;https://movie.douban.com/j/chart/top_list?type=5&amp;interval_id=100%3A90&amp;action=&amp;start=0&amp;limit=20&#x27;</span><br><br>headers = &#123;<br>    <span class="hljs-string">&#x27;User-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span>,<br>&#125;<br><br>request = urllib.request.Request(url, headers=headers)<br>response = urllib.request.urlopen(request)<br>content = response.read().decode(<span class="hljs-string">&#x27;utf8&#x27;</span>)<br><br><span class="hljs-comment"># 写入文件</span><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;douban.json&#x27;</span>, <span class="hljs-string">&#x27;w&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf8&#x27;</span>) <span class="hljs-keyword">as</span> fp:<br>    fp.write(<span class="hljs-built_in">str</span>(content))<br></code></pre></td></tr></table></figure>
+
+<p>post请求</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-string">获取KFC官网餐厅查询第一页内容</span><br><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><br><span class="hljs-keyword">import</span> urllib.request<br><span class="hljs-keyword">import</span> urllib.parse<br><br>url = <span class="hljs-string">&#x27;https://www.kfc.com.cn/kfccda/ashx/GetStoreList.ashx?op=cname&#x27;</span><br><br>headers = &#123;<br>    <span class="hljs-string">&#x27;User-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span>,<br>&#125;<br><br>data = &#123;<br>    <span class="hljs-string">&#x27;cname&#x27;</span>: <span class="hljs-string">&#x27;石家庄&#x27;</span>,<br>    <span class="hljs-string">&#x27;pid&#x27;</span>: <span class="hljs-string">&#x27;&#x27;</span>,<br>    <span class="hljs-string">&#x27;pageIndex&#x27;</span>: <span class="hljs-number">1</span>,<br>    <span class="hljs-string">&#x27;pageSize&#x27;</span>: <span class="hljs-number">10</span><br>&#125;<br><br>data = urllib.parse.urlencode(data).encode(<span class="hljs-string">&#x27;utf8&#x27;</span>)<br><br>request = urllib.request.Request(url, data, headers)<br>response = urllib.request.urlopen(request)<br>content = response.read().decode(<span class="hljs-string">&#x27;utf8&#x27;</span>)<br><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;kfc.json&#x27;</span>, <span class="hljs-string">&#x27;w&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf8&#x27;</span>) <span class="hljs-keyword">as</span> fp:<br>    fp.write(content)<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="（五）异常处理"><a href="#（五）异常处理" class="headerlink" title="（五）异常处理"></a>（五）异常处理</h3><p>引入<code>urllib.error</code>包，根据不同类型进行捕获处理即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> urllib.request<br><span class="hljs-keyword">import</span> urllib.error<br><br><span class="hljs-comment"># url = &#x27;https://blog.csdn.net/weixin_44617651/article/details/1297030151&#x27;</span><br>url = <span class="hljs-string">&#x27;https://www.badiu555.com&#x27;</span><br>headers = &#123;<br>    <span class="hljs-string">&#x27;User-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span>,<br>&#125;<br><br><span class="hljs-keyword">try</span>:<br>    request = urllib.request.Request(url, headers=headers)<br>    response = urllib.request.urlopen(request)<br>    content = response.read().decode()<br>    <span class="hljs-built_in">print</span>(content)<br><span class="hljs-keyword">except</span> urllib.error.HTTPError:<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;url写错了, 404...&quot;</span>)<br><span class="hljs-keyword">except</span> urllib.error.URLError:<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;域名写错了&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+<h3 id="（六）handler处理器"><a href="#（六）handler处理器" class="headerlink" title="（六）handler处理器"></a>（六）handler处理器</h3><p>随着业务逻辑的复杂，请求对象的定制已经满足不了我们的需求，如：动态cookie和代理就不能使用请求对象定制来实现。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-string">使用handler获取百度首页</span><br><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-keyword">import</span> urllib.request<br><br>url = <span class="hljs-string">&#x27;http://www.baidu.com&#x27;</span><br>headers = &#123;<br>    <span class="hljs-string">&#x27;User-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span>,<br>&#125;<br><br>request = urllib.request.Request(url, headers=headers)<br><br><span class="hljs-comment"># 1.获取handler对象</span><br>handler = urllib.request.HTTPSHandler()<br><span class="hljs-comment"># 2.获取opener对象</span><br>opener = urllib.request.build_opener(handler)<br><span class="hljs-comment"># 3.调用open(request)</span><br>response = opener.<span class="hljs-built_in">open</span>(request)<br><br>content = response.read().decode(<span class="hljs-string">&#x27;utf8&#x27;</span>)<br><span class="hljs-built_in">print</span>(content)<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="（七）代理和代理池"><a href="#（七）代理和代理池" class="headerlink" title="（七）代理和代理池"></a>（七）代理和代理池</h3><p>代理除了可以突破IP访问限制、穿透网络边界外，最重要的是可以隐藏自己的真实IP。网上有很多代理服务，不过都需要收费，例如：<a target="_blank" rel="noopener" href="https://www.kuaidaili.com/">快代理</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> urllib.request<br><br>url = <span class="hljs-string">&#x27;http://www.baidu.com/s?wd=ip&#x27;</span><br>headers = &#123;<br>    <span class="hljs-string">&#x27;User-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span>,<br>&#125;<br><br>request = urllib.request.Request(url, headers=headers)<br><span class="hljs-comment"># response = urllib.request.urlopen(request)</span><br><br>proxies = &#123;<br>    <span class="hljs-string">&#x27;http&#x27;</span>: <span class="hljs-string">&#x27;8.217.124.178:49440&#x27;</span><br>&#125;<br><br>handler = urllib.request.ProxyHandler(proxies=proxies)<br>opener = urllib.request.build_opener(handler)<br><br>response = opener.<span class="hljs-built_in">open</span>(request)<br><br>content = response.read().decode(<span class="hljs-string">&quot;utf8&quot;</span>)<br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;ip.html&quot;</span>, <span class="hljs-string">&#x27;w&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf8&#x27;</span>) <span class="hljs-keyword">as</span> fp:<br>    fp.write(content)<br></code></pre></td></tr></table></figure>
+
+<p>代理池：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> urllib.request<br><span class="hljs-comment"># 代理池</span><br>proxies_pool = [<br>    &#123;<span class="hljs-string">&#x27;http&#x27;</span>:<span class="hljs-string">&#x27;117.42.94.187:18301&#x27;</span>&#125;,<br>    &#123;<span class="hljs-string">&#x27;http&#x27;</span>:<span class="hljs-string">&#x27;117.42.94.232:15114&#x27;</span>&#125;,<br>]<br><br><span class="hljs-keyword">import</span> random<br><br><span class="hljs-comment"># 随机选取一个代理</span><br>proxies = random.choice(proxies_pool)<br><br>url = <span class="hljs-string">&#x27;http://www.baidu.com/s?wd=ip&#x27;</span><br><br>headers = &#123;<br>    <span class="hljs-string">&#x27;User-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span>,<br>&#125;<br><br>request = urllib.request.Request(url = url,headers=headers)<br><span class="hljs-comment"># handler(proxy) =&gt; build_opener(handler) =&gt; opener.open(request)</span><br>handler = urllib.request.ProxyHandler(proxies=proxies)<br>opener = urllib.request.build_opener(handler)<br>response = opener.<span class="hljs-built_in">open</span>(request)<br><br>content = response.read().decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)<br><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;daili.html&#x27;</span>,<span class="hljs-string">&#x27;w&#x27;</span>,encoding=<span class="hljs-string">&#x27;utf-8&#x27;</span>)<span class="hljs-keyword">as</span> fp:<br>    fp.write(content)<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="三、实战演习"><a href="#三、实战演习" class="headerlink" title="三、实战演习"></a>三、实战演习</h2><h3 id="（一）提取《微博》个人详细资料页面"><a href="#（一）提取《微博》个人详细资料页面" class="headerlink" title="（一）提取《微博》个人详细资料页面"></a>（一）提取《微博》个人详细资料页面</h3><p>当我们经过请求对象定制后伪装我们是浏览器后，还有一种情况：在数据采集的时候，可能需要绕过登录，才能进入到某个页面</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://weibo.cn/">https://weibo.cn</a></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> urllib.request<br><br>url = <span class="hljs-string">&#x27;https://weibo.cn/7370033756/info&#x27;</span><br><br>headers = &#123;<br>    <span class="hljs-comment"># &#x27;:authority&#x27;: &#x27;weibo.cn&#x27;,	# 冒号开头的可以忽略</span><br>    <span class="hljs-comment"># &#x27;:method&#x27;: &#x27;GET&#x27;,</span><br>    <span class="hljs-comment"># &#x27;:path&#x27;: &#x27;/7370033756/info&#x27;,</span><br>    <span class="hljs-comment"># &#x27;:scheme&#x27;: &#x27;https&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Accept&#x27;: &#x27;text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Accept-encoding&#x27;: &#x27;gzip, deflate, br, zstd&#x27;,	# 编码格式这个不要</span><br>    <span class="hljs-comment"># &#x27;Accept-language&#x27;: &#x27;zh-CN,zh;q=0.9&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Cache-control&#x27;: &#x27;no-cache&#x27;,</span><br>    <span class="hljs-comment"># cookie中携带着你的登陆信息, 携带着cookie可以越过登录</span><br>    <span class="hljs-string">&#x27;Cookie&#x27;</span>: <span class="hljs-string">&#x27;_T_WM=82660c9cda43bcd5e6e00fb4b87e1215; MLOGIN=1; SCF=AlyFHbC9pp_GzW1NlrgOKH41cnzd095Mu863iRGFCFx20lVZX_mfyhXYkOFOmy9oSKS_Tiw34e9TWqBgotrQ6mI.; SUB=_2A25FV4TcDeRhGeFN7FIR8y3LzjqIHXVmLJgUrDV6PUJbktANLVfQkW1NQ_MHcFSpPzcsBiVIluKNnLIl7C4odC6-; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WhNOuT4eeOfqTTsBIflogM15JpX5KzhUgL.FoM0S057e0eNSKq2dJLoIpjLxK-LB.eLBK5LxK-L1h5L1KMLxKnLB-qL1-2t; SSOLoginState=1750332556; ALF=1752924556; M_WEIBOCN_PARAMS=luicode%3D20000173&#x27;</span>,<br>    <span class="hljs-comment"># &#x27;referer&#x27;: &#x27;https://weibo.cn/&#x27;,	referer 判断当前路径是不是由上一个路径进来的, 一般情况下, 用于图片防盗链</span><br>    <span class="hljs-comment"># &#x27;pragma&#x27;: &#x27;no-cache&#x27;,</span><br>    <span class="hljs-comment"># &#x27;priority&#x27;: &#x27;u=0, i&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Sec-ch-ua&#x27;: &#x27;&quot;Google Chrome&quot;;v=&quot;137&quot;, &quot;Chromium&quot;;v=&quot;137&quot;, &quot;Not/A)Brand&quot;;v=&quot;24&quot;&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Sec-ch-ua-mobile&#x27;: &#x27;?0&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Sec-ch-ua-platform&#x27;: &#x27;&quot;Windows&quot;&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Sec-fetch-dest&#x27;: &#x27;document&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Sec-fetch-mode&#x27;: &#x27;navigate&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Sec-fetch-site&#x27;: &#x27;none&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Sec-fetch-user&#x27;: &#x27;?1&#x27;,</span><br>    <span class="hljs-comment"># &#x27;Upgrade-insecure-requests&#x27;: &#x27;1&#x27;,</span><br>    <span class="hljs-string">&#x27;User-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span>,<br>&#125;<br><br>request = urllib.request.Request(url, headers=headers)<br>response = urllib.request.urlopen(request)<br>content = response.read().decode(<span class="hljs-string">&quot;utf8&quot;</span>)<br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;weibo.html&#x27;</span>, <span class="hljs-string">&#x27;w&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf8&#x27;</span>) <span class="hljs-keyword">as</span> fp:<br>    fp.write(content)<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="（二）提取《豆瓣电影》排行榜动作片前10页数据"><a href="#（二）提取《豆瓣电影》排行榜动作片前10页数据" class="headerlink" title="（二）提取《豆瓣电影》排行榜动作片前10页数据"></a>（二）提取《豆瓣电影》排行榜动作片前10页数据</h3><p>抓取接口，分析url，发送请求，爬取数据，存入文件。注意get请求的url拼接。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://movie.douban.com/">https://movie.douban.com</a></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> urllib.request<br><span class="hljs-keyword">import</span> urllib.parse<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">create_request</span>(<span class="hljs-params">page</span>):<br>    base_url = <span class="hljs-string">&#x27;https://movie.douban.com/j/chart/top_list?type=5&amp;interval_id=100%3A90&amp;action=&amp;&#x27;</span><br><br>    headers = &#123;<br>        <span class="hljs-string">&#x27;User-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36&#x27;</span>,<br>    &#125;<br><br>    data = &#123;<br>        <span class="hljs-string">&#x27;start&#x27;</span>: (page - <span class="hljs-number">1</span>) * <span class="hljs-number">20</span>,<br>        <span class="hljs-string">&#x27;limit&#x27;</span>: <span class="hljs-number">20</span><br>    &#125;<br><br>    param = urllib.parse.urlencode(data)<br>    url = base_url + param<br>    request = urllib.request.Request(url, headers=headers)<br>    <span class="hljs-keyword">return</span> request<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">send_request</span>(<span class="hljs-params">request</span>):<br>    response = urllib.request.urlopen(request)<br>    content = response.read().decode(<span class="hljs-string">&#x27;utf8&#x27;</span>)<br>    <span class="hljs-keyword">return</span> content<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">data_download</span>(<span class="hljs-params">page, content</span>):<br>    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;douban_&#x27;</span> + <span class="hljs-built_in">str</span>(page) + <span class="hljs-string">&#x27;.json&#x27;</span>, <span class="hljs-string">&#x27;w&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf8&#x27;</span>) <span class="hljs-keyword">as</span> fp:<br>        fp.write(content)<br><br><br><span class="hljs-comment"># 程序入口</span><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    start_page = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">&#x27;请输入起始页码: &#x27;</span>))<br>    end_page = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">&#x27;请输入结束页码: &#x27;</span>))<br><br>    <span class="hljs-keyword">for</span> page <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(start_page, end_page + <span class="hljs-number">1</span>):<br>        <span class="hljs-comment"># 请求对象定制</span><br>        request = create_request(page)<br>        <span class="hljs-comment"># 发送请求,获取响应</span><br>        content = send_request(request)<br>        <span class="hljs-comment"># 存入文件</span><br>        data_download(page, content)<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="（三）提取《KFC官网》门店信息前10页的数据"><a href="#（三）提取《KFC官网》门店信息前10页的数据" class="headerlink" title="（三）提取《KFC官网》门店信息前10页的数据"></a>（三）提取《KFC官网》门店信息前10页的数据</h3><p>抓接口、分析url，发送请求，爬取数据，存入文件。注意post请求的参数编码。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.kfc.com.cn/kfccda/ashx/GetStoreList.ashx">https://www.kfc.com.cn/kfccda/ashx/GetStoreList.ashx</a></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-string"></span><br><span class="hljs-string">&#x27;&#x27;&#x27;</span><br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%88%AC%E8%99%AB/" class="category-chain-item">爬虫</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/python/">#python</a>
+      
+        <a href="/tags/%E7%88%AC%E8%99%AB/">#爬虫</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>python爬虫之urllib</div>
+      <div>https://info4z.github.io/2025/06/18/python爬虫01_urllib/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>倗诚</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年6月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/06/19/python%E7%88%AC%E8%99%AB02_%E8%A7%A3%E6%9E%90/" title="python爬虫之解析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">python爬虫之解析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/28/mysql%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D/" title="mysql数据恢复">
+                        <span class="hidden-mobile">mysql数据恢复</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

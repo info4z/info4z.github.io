@@ -24,7 +24,7 @@
 <meta property="og:description" content="记录一次 ubuntu 操作系统使用前的初始化过程">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-02-16T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-01-11T09:08:56.260Z">
+<meta property="article:modified_time" content="2024-07-12T07:42:35.793Z">
 <meta property="article:author" content="倗诚">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="ubuntu">
@@ -221,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.6k 字
+          2.1k 字
         
       </span>
     
@@ -232,7 +232,7 @@
         
         
         
-          14 分钟
+          18 分钟
         
       </span>
     
@@ -317,7 +317,7 @@
 <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs properties"><span class="hljs-comment">#ListenAddress 0.0.0.0</span><br><span class="hljs-attr">ListenAddress</span> <span class="hljs-string">192.168.88.100	</span><br><span class="hljs-comment"># 只能通过192.168.88.100连接这台服务器</span><br></code></pre></td></tr></table></figure>
 
 <p>重启 sshd 生效</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">systemctl restart sshd<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">systemctl restart ssh<br></code></pre></td></tr></table></figure>
 
 
 
@@ -348,17 +348,17 @@
 
 <h3 id="二-Redis"><a href="#二-Redis" class="headerlink" title="(二) Redis"></a>(二) Redis</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">安装redis</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo apt install -y redis-server</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">修改配置文件</span><br>vim /etc/redis/redis.conf<br>bind 127.0.0.1 				# 如果需要远程连接,注释掉这行<br>daemonize no				# 如果需要后台运行,改成yes<br>requirepass 123456 			# 如果需要密码认证,放开这行的注释,这里密码设为123456<br></code></pre></td></tr></table></figure>
 
-<h3 id="三-RabbitMQ"><a href="#三-RabbitMQ" class="headerlink" title="(三) RabbitMQ"></a>(三) RabbitMQ</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">安装rabbit</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo apt install -y rabbitmq-server</span><br></code></pre></td></tr></table></figure>
+<h3 id="三-RabbitMQ"><a href="#三-RabbitMQ" class="headerlink" title="(三) RabbitMQ"></a>(三) RabbitMQ</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">安装rabbit</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo apt install -y rabbitmq-server</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看版本</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo rabbitmqctl version</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">下载延时插件</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo wget https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/3.9.0/rabbitmq_delayed_message_exchange-3.9.0.ez</span><br></code></pre></td></tr></table></figure>
 
 
 
-<h2 id="四-数据库"><a href="#四-数据库" class="headerlink" title="四 : 数据库"></a>四 : 数据库</h2><h3 id="一-MySQL"><a href="#一-MySQL" class="headerlink" title="(一) MySQL"></a>(一) MySQL</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 安装</span><br>$ sudo apt install -y mysql-server<br><br><span class="hljs-comment"># 修改密码</span><br>mysql&gt; alter user <span class="hljs-string">&#x27;root&#x27;</span>@<span class="hljs-string">&#x27;localhost&#x27;</span> identified with caching_sha2_password by <span class="hljs-string">&#x27;root&#x27;</span>;<br><br><span class="hljs-comment"># 新建账号,如果需要远程连接要用mysql_native_password,不然navicat会报错</span><br>mysql&gt; create user <span class="hljs-string">&#x27;zhang&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span> identified with mysql_native_password by <span class="hljs-string">&#x27;Zhang@123&#x27;</span>;<br><br><span class="hljs-comment"># 授权</span><br>mysql&gt; grant all on *.* to <span class="hljs-string">&#x27;zhang&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span>;<br></code></pre></td></tr></table></figure>
+<h2 id="四-数据库"><a href="#四-数据库" class="headerlink" title="四 : 数据库"></a>四 : 数据库</h2><h3 id="一-MySQL"><a href="#一-MySQL" class="headerlink" title="(一) MySQL"></a>(一) MySQL</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 安装</span><br>$ sudo apt install -y mysql-server<br><br><span class="hljs-comment"># 修改密码</span><br>mysql&gt; alter user <span class="hljs-string">&#x27;root&#x27;</span>@<span class="hljs-string">&#x27;localhost&#x27;</span> identified with caching_sha2_password by <span class="hljs-string">&#x27;root&#x27;</span>;<br><br><span class="hljs-comment"># 新建账号,如果需要远程连接要用mysql_native_password,不然navicat会报错</span><br>mysql&gt; create user <span class="hljs-string">&#x27;zhang&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span> identified with mysql_native_password by <span class="hljs-string">&#x27;Zhang@123&#x27;</span>;<br><br><span class="hljs-comment"># 授权</span><br>mysql&gt; grant all on *.* to <span class="hljs-string">&#x27;zhang&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span>;<br><br><span class="hljs-comment"># 修改配置文件</span><br>$ vim /etc/mysql/mysql.conf.d/mysqld.cnf<br>sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION<br>max_connections=2000<br></code></pre></td></tr></table></figure>
 
 
 
 <h2 id="五-其他"><a href="#五-其他" class="headerlink" title="五 : 其他"></a>五 : 其他</h2><h3 id="一-phpmyadmin"><a href="#一-phpmyadmin" class="headerlink" title="(一) phpmyadmin"></a>(一) phpmyadmin</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">$ sudo apt install -y phpmyadmin<br></code></pre></td></tr></table></figure>
 
-<h3 id="二-certbot"><a href="#二-certbot" class="headerlink" title="(二) certbot"></a>(二) certbot</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 安装</span><br>$ sudo apt install -y certbot<br><span class="hljs-comment"># 申请证书</span><br>$ certbot certonly<br></code></pre></td></tr></table></figure>
+<h3 id="二-certbot"><a href="#二-certbot" class="headerlink" title="(二) certbot"></a>(二) certbot</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 安装</span><br>$ sudo apt install -y certbot<br><span class="hljs-comment"># 申请证书</span><br>$ sudo certbot certonly<br><span class="hljs-comment"># 可能会报urllib3的错，协助重装即可</span><br>$ sudo apt install python3-pip<br>$ pip uninstall urllib3<br>$ pip install urllib3<br></code></pre></td></tr></table></figure>
 
 
                 

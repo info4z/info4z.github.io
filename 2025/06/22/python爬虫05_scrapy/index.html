@@ -16,23 +16,25 @@
   <meta name="author" content="倗诚">
   <meta name="keywords" content="">
   
-    <meta name="description" content="先搞搞清楚Kafka到底是怎么回事，能干什么，不急着上手...">
+    <meta name="description" content="爬虫代码不难, 难的是与反爬虫之间的博弈">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kafka理论基础">
-<meta property="og:url" content="https://info4z.github.io/2021/04/09/kafka%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:title" content="python爬虫之scrapy">
+<meta property="og:url" content="https://info4z.github.io/2025/06/22/python%E7%88%AC%E8%99%AB05_scrapy/index.html">
 <meta property="og:site_name" content="云深不知处">
-<meta property="og:description" content="先搞搞清楚Kafka到底是怎么回事，能干什么，不急着上手...">
+<meta property="og:description" content="爬虫代码不难, 难的是与反爬虫之间的博弈">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-04-08T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-09-28T07:48:47.198Z">
+<meta property="og:image" content="https://info4z.github.io/python/scrapy_architecture.jpg">
+<meta property="article:published_time" content="2025-06-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-06-21T14:52:10.104Z">
 <meta property="article:author" content="倗诚">
-<meta property="article:tag" content="分布式消息中间">
-<meta property="article:tag" content="Kafka">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="爬虫">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://info4z.github.io/python/scrapy_architecture.jpg">
   
   
   
-  <title>Kafka理论基础 - 云深不知处</title>
+  <title>python爬虫之scrapy - 云深不知处</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +200,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Kafka理论基础"></span>
+            <span id="subtitle" data-typed-text="python爬虫之scrapy"></span>
           
         </div>
 
@@ -209,8 +211,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2021-04-09 00:00" pubdate>
-          2021年4月9日 凌晨
+        <time datetime="2025-06-22 00:00" pubdate>
+          2025年6月22日 凌晨
         </time>
       </span>
     
@@ -221,7 +223,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.8k 字
+          991 字
         
       </span>
     
@@ -232,7 +234,7 @@
         
         
         
-          41 分钟
+          9 分钟
         
       </span>
     
@@ -270,282 +272,55 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Kafka理论基础</h1>
+            <h1 style="display: none">python爬虫之scrapy</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="一-概述"><a href="#一-概述" class="headerlink" title="一 : 概述"></a>一 : 概述</h2><p>Kafka 是 Linkedin 使用 Scala 编写具有高水平扩展和高吞吐量的分布式消息系统。Scala 语言处理并发能力强。</p>
-<p>官网地址 : <a target="_blank" rel="noopener" href="https://kafka.apache.org/">https://kafka.apache.org/</a></p>
-<p>Kafka 对消息保存时根据 Topic 进行归类，发送消息者成为 Producer，消息接受者成为 Consumer，此外 Kafka 集群有多个 Kafka 实例组成，每个实例(server)称为 broker。</p>
-<p>无论是 Kafka 集群，还是 producer 和 consumer 都依赖于 zookeeper 来保证系统可用性，为集群保存一些 meta 信息。</p>
-<p><strong>主流 MQ 对比</strong></p>
+                <h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><p><strong>Scrapy是什么？</strong> scrapy是一个为了爬取网站数据，提取结构性数据而编写的应用框架。 可以应用在包括数据挖掘，信息处理或存储历史数据等一系列的程序中。</p>
+<p>Scrapy的核心组件</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th>AciveMQ</th>
-<th>RabbitMQ</th>
-<th>Kafka</th>
+<th>组件</th>
+<th>描述</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>所属社区&#x2F;公司</td>
-<td>Apache</td>
-<td>Mozilla Public License</td>
-<td>Apache&#x2F;Linkedin</td>
+<td>Spider</td>
+<td>爬虫类，用于定义如何从网页中提取数据以及如何跟踪网页的链接</td>
 </tr>
 <tr>
-<td>开发语言</td>
-<td>Java</td>
-<td>Erlang</td>
-<td>Scala</td>
+<td>Item</td>
+<td>用于定义和存储抓取的数据，相当于数据模型</td>
 </tr>
 <tr>
-<td>支持的协议</td>
-<td>OpenWire、STOMP、REST、XMPP、AMQP</td>
-<td>AMQP</td>
-<td>仿AMQP</td>
+<td>Pipeline</td>
+<td>用于处理抓到的数据，常用于清洗、存储数据等操作</td>
 </tr>
 <tr>
-<td>事务</td>
-<td>支持</td>
-<td>不支持</td>
-<td>不支持</td>
+<td>Middleware</td>
+<td>用来处理请求和响应，可以用于设置代理、处理cookie、用户代理等</td>
 </tr>
 <tr>
-<td>集群</td>
-<td>支持</td>
-<td>支持</td>
-<td>支持</td>
-</tr>
-<tr>
-<td>负载均衡</td>
-<td>支持</td>
-<td>支持</td>
-<td>支持</td>
-</tr>
-<tr>
-<td>动态扩容</td>
-<td>不支持</td>
-<td>不支持</td>
-<td>支持(zk)</td>
+<td>Settings</td>
+<td>用来处理Scrapy项目的各项设置，如请求延迟、并发请求数等</td>
 </tr>
 </tbody></table>
-<p><strong>主要功能</strong> : Apache Kafka是一个分布式流处理平台</p>
-<p>流处理平台特性</p>
-<ul>
-<li>可以让你发布和订阅流式的记录。这一方面与消息队列或者企业消息系统类似。</li>
-<li>可以储存流式的记录，并且有较好的容错性。</li>
-<li>可以在流式记录产生时就进行处理。</li>
-</ul>
-<p>Kafka 适合什么样的场景?</p>
-<ul>
-<li><p>构造实时流数据管道，它可以在系统或应用之间可靠地获取数据。(相当于消息队列)</p>
-</li>
-<li><p>构建实时流式应用程序，对这些流数据进行转换或者影响。</p>
-</li>
-</ul>
-<h2 id="二-设计思路"><a href="#二-设计思路" class="headerlink" title="二 : 设计思路"></a>二 : 设计思路</h2><p>重要概念</p>
-<ul>
-<li>Kafka 作为一个集群运行在一个或多个服务器上</li>
-<li>Kafka 通过 topic对存储的流数据进行分类</li>
-<li>每条记录中包含一个 key，一个 value 和一个 timestamp (时间戳)</li>
-</ul>
-<p>核心API</p>
-<ul>
-<li>Producer API : 允许一个应用程序发布一串流式的数据到一个或者多个 Kafka topic。</li>
-<li>Consumer API : 允许一个应用程序订阅一个或多个 topic，并且对发布给他们的流式数据进行处理。</li>
-<li>Streams API : 允许一个应用程序作为一个流处理器，消费一个或者多个 topic 产生的输入流，然后生产一个输出流到一个或多个 topic 中去，在输入输出流中进行有效的转换。</li>
-<li>Connector API : 允许构建并运行可重用的生产者或者消费者，将 Kafka topics 连接到已存在的应用程序或者数据系统。比如，连接到一个关系型数据库，捕捉表(table)的所有变更内容。</li>
-</ul>
-<p>在Kafka中，客户端和服务器之间的通信是通过简单，高性能，语言无关的 TCP 协议完成的。此协议已版本化并保持与旧版本的向后兼容性。Kafka提供多种语言客户端。</p>
-<pre><code class=" mermaid">flowchart TD
-D1[DB] --&gt; A --&gt; D2[DB]
-B1[App] &amp; B2[App] &amp; B3[App]--&gt; A[Kafka Cluster] --&gt; C1[App] &amp; C2[App] &amp; C3[App]
-E1[App] &lt;--&gt; A &lt;--&gt; E2[App]
-subgraph B[Producers]
-B1 &amp; B2 &amp; B3
-end
-subgraph C[Consumers]
-C1 &amp; C2 &amp; C3
-end
-subgraph D[Connectors]
-D1 &amp; D2
-end
-subgraph E[Stream Processors]
-E1 &amp; E2
-end
-</code></pre>
+<p>Scrapy的工作原理</p>
+<p><img src="/../python/scrapy_architecture.jpg" srcset="/img/loading.gif" lazyload alt="工作原理"></p>
+<p>工作流程：</p>
+<ol>
+<li>引擎向spider要url</li>
+</ol>
+<h2 id="二、安装使用"><a href="#二、安装使用" class="headerlink" title="二、安装使用"></a>二、安装使用</h2><p>安装Scrapy</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">pip install scrapy</span><br></code></pre></td></tr></table></figure>
 
-<h2 id="三-核心概念"><a href="#三-核心概念" class="headerlink" title="三 : 核心概念"></a>三 : 核心概念</h2><p><strong>AMQP 协议</strong></p>
-<ul>
-<li><p>消费者(Consumer) : 从消息队列中请求消息的客户端应用程序</p>
-</li>
-<li><p>生产者 (Producer) : 向 broker 发布消息的客户端应用程序</p>
-</li>
-<li><p>AMOP服务器端 (broker) : 用来接收生产者发送的消息并将这些消息路由给服务器中的队列</p>
-</li>
-</ul>
-<pre><code class=" mermaid">graph LR
-A[producer] --push---&gt; B[broker] --pull---&gt; C[consumer]
-</code></pre>
+<p>可能出现的问题及解决方案</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">pip install scrapy</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">问题1</span><br>building &#x27;twisted.test.raiser&#x27; extension<br>error: Microsoft Visual C++ 14.0 is required. Get it with &quot;Microsoft Visual C++<br>Build Tools&quot;: http://landinghub.visualstudio.com/visual‐cpp‐build‐tools<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">解决方案: http://www.lfd.uci.edu/~gohlke/pythonlibs/<span class="hljs-comment">#twisted, 下载twisted对应版本的whl文件（如我的Twisted‐17.5.0‐cp36‐cp36m‐win_amd64.whl），cp后面是python版本，amd64代表64位</span></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">pip install C:\Users\..\Twisted‐17.5.0‐cp36‐cp36m‐win_amd64.whl</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">pip install scrapy</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">问题2: 再报错</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">python -m pip install --upgrade pip</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">问题3: win32</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">解决方案</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">pip install pypiwin32</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">问题4: 使用anaconda, 运行anaconda.exe, 点击environment, 点击not installed, 输入scrapy, apply, 在pycharm中选择anaconda的环境</span><br></code></pre></td></tr></table></figure>
 
-<p><strong>Topics</strong> </p>
-<ul>
-<li>Topic就是数据主题，是数据记录发布的地方，可以用来区分业务系统。Kafka 中的 Topics 总是多订阅者模式，一个 topic 可以拥有一个或者多个消费者来订阅它的数据。</li>
-<li>对于每一个topic，Kafka集群都会维持一个分区(partition)日志，分区数据不一定是实时同步的。</li>
-</ul>
-<pre><code class=" mermaid">graph TB
-subgraph A[Partition 0]
-A1[1] &amp; A2[2] &amp; A3[3] &amp; A4[4] &amp; A5[5]
-end
-subgraph B[Partition 1]
-B1[1] &amp; B2[2] &amp; B3[3]
-end
-subgraph C[Partition 2]
-C1[1] &amp; C2[2] &amp; C3[3] &amp; C4[4] &amp; C5[5]
-end
-D[Writes] --&gt; A5
-D[Writes] --&gt; B3
-D[Writes] --&gt; C5
-</code></pre>
-
-<p><strong>Partition</strong></p>
-<pre><code class=" mermaid">graph TB
-subgraph A[Partition]
-0
-1
-2
-3
-4
-5
-end
-B[Producers] --writes--&gt; 5
-2 --reads--&gt; C[&quot;Consumer A&lt;br&gt;(offset=2)&quot;]
-4 --reads--&gt; D[&quot;Consumer B&lt;br&gt;(offset=4)&quot;]
-</code></pre>
-
-<p><strong>Distribution</strong></p>
-<ul>
-<li>Log 的分区被分布到集群中的多个服务器上，每个服务器处理它分到的分区，根据配置每个分区还可以复制到其它服务器作为备份容错。</li>
-<li>每个分区有一个 leader，零或多个 follower。Leader 处理此分区的所有的读写请求，而 follower 被动的复制数据。如果 leader 宕机，其它的一个 follower 会被推举为新的 leader。一台服务器可能同时是一个分区的 leader，另一个分区的 follower。 这样可以平衡负载，避免所有的请求都只让一台或者某几台服务器处理。</li>
-</ul>
-<p><strong>Producers</strong></p>
-<ul>
-<li>生产者往某个Topic上发布消息，生产者也负责选择发布到Topic上的哪一个分区。</li>
-<li>最简单的方式从分区列表中轮流选择，也可以根据某种算法依照权重选择分区。开发者负责如何选择分区的算法。</li>
-</ul>
-<p><strong>Consumers</strong></p>
-<ul>
-<li>消费者使用一个消费组名称来进行标识，发布到topic 中的每条记录被分配给订阅消费组中的一个消费者实例。消费者实例可以分布在多个进程中或者多个机器上。</li>
-<li>如果所有的消费者实例在同一消费组中，消息记录会负载平衡到每一个消费者实例。</li>
-<li>如果所有的消费者实例在不同的消费组中，每条消息记录会广播到所有的消费者进程</li>
-</ul>
-<pre><code class=" mermaid">flowchart TB
-subgraph A[Kafka Cluster]
-    subgraph A1[Server 1]
-    P0 &amp; P1
-    end
-    subgraph A2[Server 2]
-    P2 &amp; P3
-    end
-end
-
-subgraph C[Consumer Group B]
-C3 &amp; C4 &amp; C5 &amp; C6
-end
-subgraph B[Consumer Group A]
-C1 &amp; C2
-end
-
-P0 --&gt; C1 &amp; C3
-P1 --&gt; C1 &amp; C4
-P2 --&gt; C2 &amp; C5
-P3 --&gt; C2 &amp; C6
-</code></pre>
-
-<p><strong>Replication</strong> </p>
-<ul>
-<li>备份，为了保证分布式可靠性，kafka0.8开始对每个分区的数据进行备份 (不同Broker上) ，防止其中一个Broker宕机造成分区数据不可用</li>
-</ul>
-<pre><code class=" mermaid">flowchart LR
-subgraph A[Producer]
-A1[&quot;Front End(前端程序)&quot;]
-A2[&quot;Front End(前端程序)&quot;]
-A3[Service]
-end
-
-subgraph B[Kafka Cluster]
-	subgraph B1[Broker-0]
-		B11[Partition-0]
-		B12[&quot;Partition-2&lt;br&gt;(replication)&quot;]
-	end
-	subgraph B2[Broker-1]
-		B21[Partition-1]
-		B22[&quot;Partition-0&lt;br&gt;(replication)&quot;]
-	end
-	subgraph B3[Broker-2]
-		B31[Partition-2]
-		B32[&quot;Partition-1&lt;br&gt;(replication)&quot;]
-	end
-end
-
-subgraph C[Consumer]
-C1[Hadoop Cluster]
-C2[Real-time&lt;br&gt;Monitor]
-C3[Other Service]
-C4[Data&lt;br&gt;Warehouse]
-end
-
-A1 --push--&gt; B1 --pull--&gt; C1
-A2 --push--&gt; B2 --pull--&gt; C2
-B2 --pull--&gt; C3
-A3 --push--&gt; B3 --pull--&gt; C4
-
-subgraph D[Zookeeper Cluster]
-D1[Zookeeper-0]
-D2[Zookeeper-1]
-D3[Zookeeper-2]
-end
-
-B1 &amp; B2 &amp; B3 -.- D -.- C1 &amp; C2 &amp; C3 &amp; C4
-</code></pre>
-
-<h2 id="四-使用场景"><a href="#四-使用场景" class="headerlink" title="四 : 使用场景"></a>四 : 使用场景</h2><p><strong>消息</strong></p>
-<ul>
-<li>Kafka 更好的替换传统的消息系统，消息系统被用于各种场景 (如解耦数据生产者，缓存未处理的消息)，与大多数消息系统比较，Kafka 有更好的吞吐量、内置分区、副本和故障转移等功能，这有利于处理大规模的消息。</li>
-<li>根据官方的经验，通常消息传递使用较低的吞吐量，但可能要求较低的端到端延迟，Kafka 提供强大的持久性来满足这一要求。</li>
-<li>在这方面，Kafka可以与传统的消息传递系统 (ActiveMO和 RabbitMO) 相媲美。</li>
-</ul>
-<p><strong>跟踪网站活动</strong></p>
-<ul>
-<li>Kafka 的最初始作用就是是将用户活动跟踪管道重建为一组实时发布-订阅源。把网站活动(浏览网页、搜索或其他的用户操作)发布到中心topic，其中每个活动类型有一个 topic。这些订阅源提供一系列用例，包括实时处理、实时监视、对加载到Hadoop或离线数据仓库系统的数据进行离线处理和报告等。</li>
-<li>每个用户浏览网页时都生成了许多活动信息，因此活动跟踪的数据量通常非常大。(Kafka实际应用)</li>
-</ul>
-<p><strong>日志聚合</strong></p>
-<ul>
-<li>许多人使用 Kafka 来替代日志聚合解决方案。<u>日志聚合系统</u>通常从服务器收集物理日志文件，并将其置于一个中心系统(可能是文件服务器或HDFS) 进行处理。</li>
-<li>Kafka 从这些日志文件中提取信息，并将其抽象为一个更加清晰的消息流。这样可以实现更低的延迟处理且易于支持多个数据源及分布式数据的消耗</li>
-<li>与Scribe 或Flume 等以日志为中心的系统相比，<u>Kafka具备同样出色的性能、更强的耐用性(因为复制功能)和更低的端到端延迟</u>。</li>
-</ul>
-<p><strong>流处理</strong></p>
-<ul>
-<li>从0.10.0.0开始，Kafka 支持轻量，但功能强大的流处理。</li>
-<li>Kafka 消息处理包含多个阶段。其中原始输入数据是从 kafka 主题消费的，然后汇总，丰富，或者以其他的方式处理转化为新主题以供进一步消费或后续处理。例如，一个推荐新闻文章，文章内容可能从“articles”主题获取，然后进一步处理内容，得到一个处理后的新内容，最后推荐给用户。这种处理是基于单个主题的实时数据流。</li>
-<li>除了 Kafka Streams，还有 Apache Storm 和 Apache Samza 也是不错的流处理框架。</li>
-</ul>
-<p><strong>事件采集</strong></p>
-<ul>
-<li>Event sourcing 是一种应用程序设计风格，按时间来记录状态的更改。 </li>
-<li>Kafka 可以存储非常多的日志数据，为基于 event sourcing 的应用程序提供强有力的支持。</li>
-</ul>
-<p><strong>提交日志</strong></p>
-<ul>
-<li>Kafka 可以从外部为分布式系统提供日志提交功能。</li>
-<li>日志有助于记录节点和行为间的数据,采用重新同步机制可以从失败节点恢复数据。 </li>
-<li>Kafka 的日志压缩功能支持这一用法。这一点与 Apache BookKeeper 项目类似。</li>
-</ul>
+<p>创建项目及运行</p>
+<h2 id="三、数据存储"><a href="#三、数据存储" class="headerlink" title="三、数据存储"></a>三、数据存储</h2><p>四、</p>
 
                 
               </div>
@@ -564,7 +339,7 @@ B1 &amp; B2 &amp; B3 -.- D -.- C1 &amp; C2 &amp; C3 &amp; C4
     
       <span class="category-chain">
         
-  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="category-chain-item">中间件</a>
+  <a href="/categories/%E7%88%AC%E8%99%AB/" class="category-chain-item">爬虫</a>
   
   
 
@@ -579,9 +354,9 @@ B1 &amp; B2 &amp; B3 -.- D -.- C1 &amp; C2 &amp; C3 &amp; C4
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4/">#分布式消息中间</a>
+        <a href="/tags/python/">#python</a>
       
-        <a href="/tags/Kafka/">#Kafka</a>
+        <a href="/tags/%E7%88%AC%E8%99%AB/">#爬虫</a>
       
     </div>
   
@@ -593,8 +368,8 @@ B1 &amp; B2 &amp; B3 -.- D -.- C1 &amp; C2 &amp; C3 &amp; C4
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Kafka理论基础</div>
-      <div>https://info4z.github.io/2021/04/09/kafka理论基础/</div>
+      <div>python爬虫之scrapy</div>
+      <div>https://info4z.github.io/2025/06/22/python爬虫05_scrapy/</div>
     </div>
     <div class="license-meta">
       
@@ -606,7 +381,7 @@ B1 &amp; B2 &amp; B3 -.- D -.- C1 &amp; C2 &amp; C3 &amp; C4
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2021年4月9日</div>
+          <div>2025年6月22日</div>
         </div>
       
       
@@ -638,18 +413,12 @@ B1 &amp; B2 &amp; B3 -.- D -.- C1 &amp; C2 &amp; C3 &amp; C4
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/04/16/1_zookeeper/" title="zookeeper简单尝试">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">zookeeper简单尝试</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/04/02/java%E5%86%85%E5%AD%98%E7%BC%93%E5%AD%98/" title="java内存缓存">
-                        <span class="hidden-mobile">java内存缓存</span>
+                      <a href="/2025/06/21/python%E7%88%AC%E8%99%AB04_requests/" title="python爬虫之requests">
+                        <span class="hidden-mobile">python爬虫之requests</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

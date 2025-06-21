@@ -24,7 +24,7 @@
 <meta property="og:description" content="nginx提供了一些高性能的配置参数,通过调整这些参数对其进行一定的优化">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-12-24T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-10-19T09:50:22.714Z">
+<meta property="article:modified_time" content="2025-03-10T09:13:49.904Z">
 <meta property="article:author" content="倗诚">
 <meta property="article:tag" content="负载均衡中间件">
 <meta property="article:tag" content="Nginx">
@@ -221,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.6k 字
+          5.1k 字
         
       </span>
     
@@ -232,7 +232,7 @@
         
         
         
-          39 分钟
+          43 分钟
         
       </span>
     
@@ -398,7 +398,7 @@
 <li>匹配优先级从高到低 : <code>=</code>, <code>^~</code>, <code>~/~*</code>, <code>不带符号</code></li>
 </ul>
 <p>配置示例</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-comment"># 前端页面</span><br><span class="hljs-section">location</span> / &#123;<br>    <span class="hljs-attribute">root</span> /opt/web;<br>&#125;<br><span class="hljs-comment"># 后端接口</span><br><span class="hljs-section">location</span> /api &#123;<br>    <span class="hljs-attribute">proxy_pass</span> http://127.0.0.1:5000;<br>    <span class="hljs-attribute">proxy_http_version</span> <span class="hljs-number">1</span>.<span class="hljs-number">1</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Upgrade <span class="hljs-variable">$http_upgrade</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Connection <span class="hljs-string">&quot;upgrade&quot;</span>;<br>&#125;<br><span class="hljs-comment"># socket接口</span><br><span class="hljs-section">location</span> /socket.io/ &#123;<br>    <span class="hljs-attribute">proxy_pass</span> http://127.0.0.1:5000;<br>    <span class="hljs-attribute">proxy_set_header</span> Upgrade <span class="hljs-variable">$http_upgrade</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Connection <span class="hljs-string">&quot;upgrade&quot;</span>;<br>    <span class="hljs-attribute">proxy_http_version</span> <span class="hljs-number">1</span>.<span class="hljs-number">1</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> X-Forwarded-For <span class="hljs-variable">$proxy_add_x_forwarded_for</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$host</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-comment"># 前端页面</span><br><span class="hljs-section">location</span> / &#123;<br>    <span class="hljs-attribute">root</span> /opt/web;<br>&#125;<br><span class="hljs-comment"># 后端接口</span><br><span class="hljs-section">location</span> /api &#123;<br>    <span class="hljs-attribute">proxy_pass</span> http://127.0.0.1:5000;<br>    <span class="hljs-comment"># 确保将客户端请求的Host头传递给后端服务器</span><br>    <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$host</span>;<br>    <span class="hljs-comment"># 记录客户端的真实IP地址,这对日志记录和地理定位等非常有用</span><br>    <span class="hljs-attribute">proxy_set_header</span> X-Real-IP <span class="hljs-variable">$remote_addr</span>;<br>    <span class="hljs-comment"># 添加客户端IP地址到X-Forwarded-For头中(如果请求已经包含该头,则追加客户端IP),这对于追踪请求经过的代理链很有帮助</span><br>    <span class="hljs-attribute">proxy_set_header</span> X-Forwarded-For <span class="hljs-variable">$proxy_add_x_forwarded_for</span>;<br>    <span class="hljs-comment"># 记录请求使用的协议(http或https),这对于后端服务器正确生成URL或进行重定向很重要</span><br>    <span class="hljs-attribute">proxy_set_header</span> X-Forwarded-Proto <span class="hljs-variable">$scheme</span>;<br>    <span class="hljs-comment"># 记录请求使用的端口号</span><br>    <span class="hljs-attribute">proxy_set_header</span> X-Forwarded-Port <span class="hljs-variable">$server_port</span>;<br>    <span class="hljs-comment"># 这些设置对于支持 WebSocket 连接是必要的</span><br>    <span class="hljs-attribute">proxy_http_version</span> <span class="hljs-number">1</span>.<span class="hljs-number">1</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Upgrade <span class="hljs-variable">$http_upgrade</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Connection <span class="hljs-string">&quot;upgrade&quot;</span>;<br>&#125;<br><span class="hljs-comment"># socket接口</span><br><span class="hljs-section">location</span> /socket.io/ &#123;<br>    <span class="hljs-attribute">proxy_pass</span> http://127.0.0.1:5000;<br>    <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$host</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> X-Forwarded-For <span class="hljs-variable">$proxy_add_x_forwarded_for</span>;<br>    <span class="hljs-comment"># websocket必备</span><br>    <span class="hljs-attribute">proxy_set_header</span> Upgrade <span class="hljs-variable">$http_upgrade</span>;<br>    <span class="hljs-attribute">proxy_set_header</span> Connection <span class="hljs-string">&quot;upgrade&quot;</span>;<br>    <span class="hljs-attribute">proxy_http_version</span> <span class="hljs-number">1</span>.<span class="hljs-number">1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 
 

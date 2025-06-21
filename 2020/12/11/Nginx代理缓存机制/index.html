@@ -24,7 +24,7 @@
 <meta property="og:description" content="通过Nginx的缓存机制思考如果自己来,应该怎么做...">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-12-10T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-04-04T03:39:21.832Z">
+<meta property="article:modified_time" content="2025-03-18T10:31:51.714Z">
 <meta property="article:author" content="倗诚">
 <meta property="article:tag" content="负载均衡中间件">
 <meta property="article:tag" content="Nginx">
@@ -221,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.2k 字
+          5.2k 字
         
       </span>
     
@@ -232,7 +232,7 @@
         
         
         
-          36 分钟
+          44 分钟
         
       </span>
     
@@ -393,7 +393,7 @@ C --&gt; D4[Web4]
 <p>配置示例</p>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> nginx;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">error_log</span> /var/log/nginx/<span class="hljs-literal">error</span>.log;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><br><span class="hljs-section">http</span> &#123;<br>	<span class="hljs-attribute">proxy_cache_path</span> /data/nginx/cache keys_zone=one:<span class="hljs-number">10m</span>;<br>    <br>    <span class="hljs-section">upstream</span> info4z.tk &#123;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8881</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8882</span>;<br>        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8883</span>;<br>    &#125;<br>    <br>    <span class="hljs-section">server</span> &#123;<br>        <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>        <span class="hljs-attribute">proxy_cache</span> one;<br>        <span class="hljs-attribute">server_name</span> <span class="hljs-literal">info</span>4z.tk;<br>        <br>        <span class="hljs-section">location</span> / &#123; <br>            <span class="hljs-attribute">proxy_pass</span> http://info4z.tk;<br>            <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$host</span>;<br>            <span class="hljs-attribute">proxy_set_header</span> X-Real-IP <span class="hljs-variable">$remote_addr</span>;<br>            <span class="hljs-attribute">proxy_cache_bypass</span> <span class="hljs-variable">$cookie_nocache</span> <span class="hljs-variable">$arg_nocache</span><span class="hljs-variable">$arg_comment</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h2 id="四-关于网页的缓存"><a href="#四-关于网页的缓存" class="headerlink" title="四 : 关于网页的缓存"></a>四 : 关于网页的缓存</h2><p>网页的缓存是由 HTTP 消息头中的 “Cache-control” 来控制的, 常见的取值有 private, no-cache, max-age, must-revalidate 等, 默认为 private。其作用根据不同的重新浏览方式分为以下几种情况 : </p>
+<h2 id="四-关于网页的缓存"><a href="#四-关于网页的缓存" class="headerlink" title="四 : 关于网页的缓存"></a>四 : 关于网页的缓存</h2><p>网页的缓存是由 HTTP 消息头中的 <strong>【Cache-control】</strong> 来控制的, 常见的取值有 private, no-cache, max-age, must-revalidate 等, 默认为 private。其作用根据不同的重新浏览方式分为以下几种情况 : </p>
 <table>
 <thead>
 <tr>
@@ -410,11 +410,11 @@ C --&gt; D4[Web4]
 <td><strong>默认值</strong>, 内容只缓存到私有缓存中(仅客户端可以缓存, 代理服务器不可缓存)</td>
 </tr>
 <tr>
-<td>no-cache</td>
+<td><strong>no-cache</strong></td>
 <td>必须先与服务器确认返回的响应是否被更改, 然后才能使用该响应来满足后续对同一个网址的请求。因此, 如果存在合适的验证令牌(ETag), no-cache会发起往返通信来验证缓存的响应, 如果资源未被更改, 可以避免下载。</td>
 </tr>
 <tr>
-<td>no-store</td>
+<td><strong>no-store</strong></td>
 <td>所有内容都不会被缓存到缓存或 internet 临时文件中</td>
 </tr>
 <tr>
@@ -426,8 +426,18 @@ C --&gt; D4[Web4]
 <td>缓存的内容将在xxx秒后失效这个选项只在HTTP1.1可用, 并如果和Last-Modified一起使用时, 优先级较高</td>
 </tr>
 </tbody></table>
-<p>实验测试 : 查看 Cache-Control 不同的取值对请求结果的影响</p>
+<p>示例 : 查看 Cache-Control 不同的取值对请求结果的影响</p>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-section">location</span> /h5 &#123;<br>    <span class="hljs-comment"># html不缓存</span><br>    <span class="hljs-attribute">if</span> (<span class="hljs-variable">$request_filename</span> <span class="hljs-regexp">~* .*\.(?:html|htm)$)</span> &#123;<br>        <span class="hljs-attribute">add_header</span> Cache-Control <span class="hljs-string">&quot;private, no-store, no-cache, must-revalidate, proxy-revalidate&quot;</span>;<br>    &#125;<br>    <span class="hljs-comment"># 图片缓存30天</span><br>    <span class="hljs-attribute">if</span> (<span class="hljs-variable">$request_filename</span> <span class="hljs-regexp">~* .*\.(?:gif|jpg|jpeg|png|bmp|swf)$)</span> &#123;<br>        <span class="hljs-attribute">expires</span> <span class="hljs-number">30d</span>;<br>    &#125;<br>    <span class="hljs-comment"># js和css缓存12h</span><br>    <span class="hljs-attribute">if</span> (<span class="hljs-variable">$request_filename</span> <span class="hljs-regexp">~* .*\.(?:js|css)$)</span> &#123;<br>        <span class="hljs-attribute">expires</span> <span class="hljs-number">12h</span>;<br>    &#125;<br>    <span class="hljs-attribute">alias</span> /opt/web/h5/dist;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>回忆一下HTTP缓存机制：【304 Not  Modified】状态码通常出现在客户端发送的请求带有 If-Modified-Since 或 If-None-Match 头时，服务器检查资源未修改，所以返回304，让客户端使用本地缓存。如果希望每次都要从服务器获取新内容（即返回200），通常可以设置缓存相关的响应头，比如Cache-Control、Expires、ETag等参数进行实现。此外还可以处理客户端的缓存验证请求，比如禁止 If-Modified-Since 和 If-None-Match 头。</p>
+<ol>
+<li>设置Cache-Control头为no-cache或no-store。不过，Cache-Control:  no-cache会让客户端在每次请求时都要向服务器验证，但服务器可能仍然返回304。而Cache-Control:  no-store则完全禁止缓存，但可能不是用户想要的，因为用户可能希望客户端可以缓存，但每次必须重新验证，或者服务器直接返回200而不检查。</li>
+<li>Expires头设置为过去的时间，可以强制客户端每次请求都重新获取。例如，Expires: -1或者Expires: 0。</li>
+<li>考虑ETag。服务器生成ETag后，客户端会在后续请求中带上If-None-Match头。如果服务器发现资源未变，就会返回304。因此，禁用ETag可能有效。在Nginx中，可以通过etag off;指令来关闭ETag的生成。</li>
+<li>可能还需要处理Last-Modified头。如果客户端发送If-Modified-Since头，服务器会比较资源的最后修改时间。如果未修改，返回304。因此，可以移除Last-Modified头，或者设置它为当前时间，但这样可能不太实际。或者，在Nginx配置中不发送Last-Modified头，这样客户端就不会发送If-Modified-Since请求头。</li>
+</ol>
+<p>示例：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-section">location</span> /h5 &#123;<br>    <span class="hljs-attribute">alias</span> /opt/web/h5/dist;<br>    <br>    <span class="hljs-comment"># 禁用ETag</span><br>    <span class="hljs-attribute">etag</span> <span class="hljs-literal">off</span>;<br>    <span class="hljs-comment"># 强制不缓存</span><br>    <span class="hljs-attribute">add_header</span> Cache-Control <span class="hljs-string">&quot;no-store, no-cache, must-revalidate&quot;</span>;<br>    <span class="hljs-comment"># 有效期</span><br>    <span class="hljs-attribute">expires</span> -<span class="hljs-number">1</span>;<br>    <span class="hljs-comment"># 移除Last-Modified头</span><br>    <span class="hljs-attribute">add_header</span> Last-Modified <span class="hljs-string">&quot;&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 
 
