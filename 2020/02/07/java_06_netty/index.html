@@ -1,0 +1,1012 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="倗诚">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="了解netty的组成结构, 同时要结合源码学习它的设计模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty">
+<meta property="og:url" content="https://info4z.github.io/2020/02/07/java_06_netty/index.html">
+<meta property="og:site_name" content="云深不知处">
+<meta property="og:description" content="了解netty的组成结构, 同时要结合源码学习它的设计模式">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020071701.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020071702.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020071703.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020071704.png">
+<meta property="og:image" content="https://info4z.github.io/java/image-2020071705.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020072401.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020072402.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020072403.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020072404.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020072405.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020072406.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020073101.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020073102.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020073103.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020073104.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020073105.png">
+<meta property="og:image" content="https://info4z.github.io/images/image-2020073106.png">
+<meta property="article:published_time" content="2020-02-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-23T07:24:24.998Z">
+<meta property="article:author" content="倗诚">
+<meta property="article:tag" content="高性能编程">
+<meta property="article:tag" content="高并发网络编程">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://info4z.github.io/java/image-2020071701.png">
+  
+  
+  
+  <title>Netty - 云深不知处</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"info4z.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>云深不知处</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Netty"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-02-07 00:00" pubdate>
+          2020年2月7日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          16k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          130 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Netty</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一、Netty线程模型"><a href="#一、Netty线程模型" class="headerlink" title="一、Netty线程模型"></a>一、Netty线程模型</h2><h3 id="一-Netty-简介"><a href="#一-Netty-简介" class="headerlink" title="一 : Netty 简介"></a>一 : Netty 简介</h3><p>Netty 是一个高性能, 高可扩展性的异步事件驱动的<strong>网络应用程序框架</strong>, 它极大地简化了 TCP 和 UDP 客户端和服务器开发等网络编程</p>
+<p>官网 : <a target="_blank" rel="noopener" href="https://netty.io/">https://netty.io/</a></p>
+<p>Netty 重要的四个内容</p>
+<ol>
+<li>Reactor 线程模型 : 一种高性能的多线程程序设计思路</li>
+<li>Netty 中自己定义的 Channel 概念 : 增强版的通道概念</li>
+<li>ChannelPipeline 责任链设计模式 : 事件处理机制</li>
+<li>内存管理 : 增强的 ByteBuffer 缓冲区</li>
+</ol>
+<h3 id="二-Netty-整体结构"><a href="#二-Netty-整体结构" class="headerlink" title="二 : Netty 整体结构"></a>二 : Netty 整体结构</h3><p><img src="/../java/image-2020071701.png" srcset="/img/loading.gif" lazyload alt="image-2020071701"> </p>
+<p>可以看出包含三大块 </p>
+<ol>
+<li>支持 Socket 等多种传输方式</li>
+<li>提供了多种协议的编解码实现</li>
+<li>核心设计包含<strong>事件处理模型, API的使用, ByteBuffer 的增强</strong></li>
+</ol>
+<h3 id="三-Netty-线程模型"><a href="#三-Netty-线程模型" class="headerlink" title="三 : Netty 线程模型"></a>三 : Netty 线程模型</h3><p>为了让 NIO 处理更好的利用多线程特性, Netty 实现了 Reactor 线程模型</p>
+<p><img src="/../java/image-2020071702.png" srcset="/img/loading.gif" lazyload alt="image-2020071702"> </p>
+<p>Reactor 模型中有四个核心概念 : </p>
+<ol>
+<li>Resources 资源(请求&#x2F;任务)</li>
+<li>Synchronous Event Demutiplexer 同步事件复用器</li>
+<li>Dispatcher 分配器</li>
+<li>Request Handler 请求处理器</li>
+</ol>
+<h3 id="四-EventLoopGroup-初始化过程"><a href="#四-EventLoopGroup-初始化过程" class="headerlink" title="四 : EventLoopGroup 初始化过程"></a>四 : EventLoopGroup 初始化过程</h3><p>如图所示, 两组 EventLoopGroup (Main&amp;Sub) 处理不同通道的事件</p>
+<p><img src="/../java/image-2020071703.png" srcset="/img/loading.gif" lazyload alt="image-2020071703"> </p>
+<p>源码示例 : example</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EchoServer</span> &#123;<br><br>    <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">PORT</span> <span class="hljs-operator">=</span> Integer.parseInt(System.getProperty(<span class="hljs-string">&quot;port&quot;</span>, <span class="hljs-string">&quot;8007&quot;</span>));<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-comment">// Configure SSL.</span><br>        <span class="hljs-keyword">final</span> <span class="hljs-type">SslContext</span> <span class="hljs-variable">sslCtx</span> <span class="hljs-operator">=</span> ServerUtil.buildSslContext();<br><br>        <span class="hljs-comment">// Configure the server.</span><br>        <span class="hljs-comment">// 创建EventLoopGroup: accept线程组 NioEventLoop</span><br>        <span class="hljs-type">EventLoopGroup</span> <span class="hljs-variable">bossGroup</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NioEventLoopGroup</span>(<span class="hljs-number">1</span>);<span class="hljs-comment">// 指定线程数量,否则采用默认值</span><br>        <span class="hljs-comment">// 创建EventLoopGroup: I/O线程组</span><br>        <span class="hljs-type">EventLoopGroup</span> <span class="hljs-variable">workerGroup</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NioEventLoopGroup</span>();<br>        <span class="hljs-keyword">final</span> <span class="hljs-type">EchoServerHandler</span> <span class="hljs-variable">serverHandler</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">EchoServerHandler</span>();<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">// 服务端启动引导工具类</span><br>            <span class="hljs-type">ServerBootstrap</span> <span class="hljs-variable">b</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerBootstrap</span>();<br>            <span class="hljs-comment">// 配置服务端处理的reactor线程组以及服务端的其他配置</span><br>            b.group(bossGroup, workerGroup)<br>                .channel(NioServerSocketChannel.class)<br>                .option(ChannelOption.SO_BACKLOG, <span class="hljs-number">100</span>)<br>                .handler(<span class="hljs-keyword">new</span> <span class="hljs-title class_">LoggingHandler</span>(LogLevel.INFO))<br>                .childHandler(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInitializer</span>&lt;SocketChannel&gt;() &#123;<br>                    <span class="hljs-meta">@Override</span><br>                    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>                        <span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> ch.pipeline();<br>                        <span class="hljs-keyword">if</span> (sslCtx != <span class="hljs-literal">null</span>) &#123;<br>                            p.addLast(sslCtx.newHandler(ch.alloc()));<br>                        &#125;<br>                        <span class="hljs-comment">//p.addLast(new LoggingHandler(LogLevel.INFO));</span><br>                        p.addLast(serverHandler);<br>                    &#125;<br>                &#125;);<br><br>            <span class="hljs-comment">// Start the server. 通过bind启动服务</span><br>            <span class="hljs-type">ChannelFuture</span> <span class="hljs-variable">f</span> <span class="hljs-operator">=</span> b.bind(PORT).sync();<br><br>            <span class="hljs-comment">// Wait until the server socket is closed. 阻塞主线程,知道网络服务被关闭</span><br>            f.channel().closeFuture().sync();<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            <span class="hljs-comment">// Shut down all event loops to terminate all threads. 关闭线程组</span><br>            bossGroup.shutdownGracefully();<br>            workerGroup.shutdownGracefully();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="五-EventLoop-的启动"><a href="#五-EventLoop-的启动" class="headerlink" title="五 : EventLoop 的启动"></a>五 : EventLoop 的启动</h3><p>EventLoop 自身实现了 Executor 接口, 当调用 executor 方法提交任务时, 则判断是否启动, 未启动则调用内置的 executor 创建新线程来触发 run() 执行</p>
+<p><img src="/../java/image-2020071704.png" srcset="/img/loading.gif" lazyload alt="image-2020071704"> </p>
+<h3 id="六-Bind-绑定端口过程"><a href="#六-Bind-绑定端口过程" class="headerlink" title="六 : Bind 绑定端口过程"></a>六 : Bind 绑定端口过程</h3><p>如图所示</p>
+<p><img src="/../java/image-2020071705.png" srcset="/img/loading.gif" lazyload alt="image-2020071705">  </p>
+<h3 id="七-Channel-概念"><a href="#七-Channel-概念" class="headerlink" title="七 : Channel 概念"></a>七 : Channel 概念</h3><p>netty 中的 Channel 是一个抽象的概念, 可以理解为对 JDK NIO Channel 的增强和拓展; </p>
+<p>增强了很多属性和方法, 完整信息可以看源码, 下面罗列几个常见的属性和方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AbstractChannel</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">DefaultAttributeMap</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Channel</span> &#123;<br>    <span class="hljs-comment">// 通道内时间处理链路</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> DefaultChannelPipeline pipeline; <br>    <span class="hljs-comment">// 绑定的EventLoop,用于执行操作</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> AbstractChannel.PausableChannelEventLoop eventLoop;<br>    <span class="hljs-comment">// 提供IO相关操作的封装</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Unsafe unsafe;<br><br>    <span class="hljs-comment">// 父类方法,返回通道配置信息</span><br>    ChannelConfig <span class="hljs-title function_">config</span><span class="hljs-params">()</span>;<br>    <span class="hljs-comment">// 开始读数据,触发读取链路调用</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> Channel <span class="hljs-title function_">read</span><span class="hljs-params">()</span> &#123;<br>        pipeline.read();<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>;<br>    &#125;<br>    <span class="hljs-comment">// 写数据,触发链路调用</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> ChannelFuture <span class="hljs-title function_">write</span><span class="hljs-params">(Object msg)</span> &#123;<br>        <span class="hljs-keyword">return</span> pipeline.write(msg);<br>    &#125;<br>    <span class="hljs-comment">// 绑定</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> ChannelFuture <span class="hljs-title function_">bind</span><span class="hljs-params">(SocketAddress localAddress)</span> &#123;<br>        <span class="hljs-keyword">return</span> pipeline.bind(localAddress);<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="八-小结"><a href="#八-小结" class="headerlink" title="八 : 小结"></a>八 : 小结</h3><p>毕竟抽象的设计模式, 在学习过程中会有难懂的地方, 所以着重需要结合代码理解</p>
+<p>这里的目的有两个 : 领会 Reactor 的理念, 掌握代码示例中具体的写法</p>
+<p><strong>重点关注服务端开发,</strong> 因为服务端要应对海量连接, 难度大, 而客户端仅仅是一个连接</p>
+<p><strong>Reactor 多线程模式的设计, 是 Netty 高性能很重要的一个原因</strong></p>
+<h2 id="二、责任链设计模式"><a href="#二、责任链设计模式" class="headerlink" title="二、责任链设计模式"></a>二、责任链设计模式</h2><h3 id="一-设计模式-责任链模式"><a href="#一-设计模式-责任链模式" class="headerlink" title="一 : 设计模式 - 责任链模式"></a>一 : 设计模式 - 责任链模式</h3><p>责任链模式(Chain of Responsibility Pattern)为请求创建了一个处理对象的链。<br><strong>发起请求和具体处理请求的过程进行解耦</strong> : 职责链上的处理者负责处理请求，客户只需要将请求发送到职责链上即可, 无须关心请求的处理细节和请求的传递</p>
+<pre><code class=" mermaid">graph LR
+请求 --&gt; 责任链调用 --chains--&gt; handler1 --&gt; handler2 --&gt; handler3 --&gt; handler-n --&gt; ... 
+</code></pre>
+
+<h3 id="一-实现责任链模式"><a href="#一-实现责任链模式" class="headerlink" title="(一) : 实现责任链模式"></a>(一) : 实现责任链模式</h3><p>实现责任链模式4个要素 : </p>
+<ol>
+<li>处理器抽象类</li>
+<li>具体的处理器实现类</li>
+<li>保存处理器信息</li>
+<li>处理执行</li>
+</ol>
+<p>伪代码示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 集合形式存储: 类似tomcat中filters</span><br><span class="hljs-comment">// 1.处理器抽象类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">doHandler</span><span class="hljs-params">(Object arg0)</span>; <br>&#125;<br><br><span class="hljs-comment">// 2.处理器具体实现类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler1</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue; &#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler2</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue; &#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler3</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue; &#125;<br><br><span class="hljs-comment">// 3.创建集合并存储所有处理器实例信息</span><br><span class="hljs-type">List</span> <span class="hljs-variable">handlers</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">List</span>();<br>handlers.add(handler1, handler2, handler3);<br><br><span class="hljs-comment">// 4.处理请求，调用处理器()</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">Process</span><span class="hljs-params">(request)</span>&#123;<br>    <span class="hljs-keyword">for</span>( handler in handlers)&#123;<br>        handler.doHandler(request) ;<br>    &#125;<br>&#125;<br><span class="hljs-comment">// 发起请求调用，通过责任链处理请求</span><br>call.process(request);<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//链表形式调用: 参考netty的实现形式</span><br><span class="hljs-comment">// 1.处理器抽象类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">AbstractHandler</span> &#123;<br>    AbstractHandle next;<span class="hljs-comment">//下一个节点</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">doHandler</span> <span class="hljs-params">(Object argo)</span>; <span class="hljs-comment">// handler方法</span><br>&#125;<br><span class="hljs-comment">// 2.处理器具体实现类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler1</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue; &#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler2</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue; &#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler3</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandler</span> &#123; <span class="hljs-keyword">assert</span> coutinue;&#125;<br><br><span class="hljs-comment">// 3.将处理器串成链表存储</span><br><span class="hljs-comment">// pipeline=头[ handler1 -&gt; handler2 -&gt;handler3]尾</span><br><br><span class="hljs-comment">// 4.处理请求，调用处理器(从头到尾)</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">Process</span><span class="hljs-params">( request)</span>&#123;<br>    handler = pipeline.findOne;<br>    <span class="hljs-comment">//查找第一个</span><br>    <span class="hljs-keyword">while</span>(hand != <span class="hljs-literal">null</span>)&#123;<br>        handler.doHandler(request);<br>        handler = handler.next();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="二-Netty-中的-ChannelPipeline-责任链"><a href="#二-Netty-中的-ChannelPipeline-责任链" class="headerlink" title="(二) : Netty 中的 ChannelPipeline 责任链"></a>(二) : Netty 中的 ChannelPipeline 责任链</h3><p><strong>Pipeline管道</strong>保存了通道所有处理器信息。</p>
+<p>创建新channel时自动创建一个专有的pipeline。入站<strong>事件</strong>和出站<strong>操作</strong>会调用pipeline上的处理器</p>
+<p><img src="/images/image-2020072401.png" srcset="/img/loading.gif" lazyload> </p>
+<h3 id="二-事件"><a href="#二-事件" class="headerlink" title="二 : 事件"></a>二 : 事件</h3><h3 id="一-入站事件和出站事件"><a href="#一-入站事件和出站事件" class="headerlink" title="(一) 入站事件和出站事件"></a>(一) 入站事件和出站事件</h3><p><strong>入站事件 :</strong> 通常指I&#x2F;O线程生成了入站数据。(通俗理解:从socket底层自己往上冒上来的事件都是入站)</p>
+<p>比如EventLoop收到selector的OP_READ事件，入站处理器调用socketChannel.read(ByteBuffer)接收到数据后，这将导致通道的ChannelPipeline中包含的下一个中的channelRead方法被调用。</p>
+<p><strong>出站事件 :</strong> 经常是指I&#x2F;O线程执行实际的输出操作。(通俗理解:想主动往socket底层操作的事件的都是出站)</p>
+<p>比如bind方法用意是请求server socket绑定到给定的SocketAddress，这将导致通道的ChannelPipeline中包含的下一个出站处理器中的bind方法被调用。</p>
+<h3 id="二-Netty-中事件的定义"><a href="#二-Netty-中事件的定义" class="headerlink" title="(二) Netty 中事件的定义"></a>(二) Netty 中事件的定义</h3><p>入站事件(inbound)</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>fireChannelRegistered</td>
+<td>channel注册事件</td>
+</tr>
+<tr>
+<td>fireChannelUnregistered</td>
+<td>channel解除注册事件</td>
+</tr>
+<tr>
+<td>fireChannelActive</td>
+<td>channel活跃事件</td>
+</tr>
+<tr>
+<td>fireChannelInactive</td>
+<td>channel非活跃事件</td>
+</tr>
+<tr>
+<td>fireExceptionCaught</td>
+<td>异常事件</td>
+</tr>
+<tr>
+<td>fireUserEventTriggered</td>
+<td>用户自定义事件</td>
+</tr>
+<tr>
+<td>fireChannelRead</td>
+<td>channel读事件</td>
+</tr>
+<tr>
+<td>fireChannelReadComplete</td>
+<td>channel读完成事件</td>
+</tr>
+<tr>
+<td>fireChannelWritabilityChanged</td>
+<td>channel写状态变化事件</td>
+</tr>
+</tbody></table>
+<p>出站事件(outbound)</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bind</td>
+<td>端口绑定事件</td>
+</tr>
+<tr>
+<td>connect</td>
+<td>连接事件</td>
+</tr>
+<tr>
+<td>disconnect</td>
+<td>断开连接事件</td>
+</tr>
+<tr>
+<td>close</td>
+<td>关闭事件</td>
+</tr>
+<tr>
+<td>deregister</td>
+<td>解除注册事件</td>
+</tr>
+<tr>
+<td>flush</td>
+<td>刷新数据到网络事件</td>
+</tr>
+<tr>
+<td>read</td>
+<td>读事件，用于注册OP_READ到selector</td>
+</tr>
+<tr>
+<td>write</td>
+<td>写事件</td>
+</tr>
+<tr>
+<td>writeAndFlush</td>
+<td>写出数据事件</td>
+</tr>
+</tbody></table>
+<h3 id="三-处理器"><a href="#三-处理器" class="headerlink" title="三 : 处理器"></a>三 : 处理器</h3><h3 id="一-Pipeline-中的-handler-是什么"><a href="#一-Pipeline-中的-handler-是什么" class="headerlink" title="(一) Pipeline 中的 handler 是什么"></a>(一) Pipeline 中的 handler 是什么</h3><p><strong>ChannelHandler :</strong> 用于处理 I&#x2F;O 事件或拦截 I&#x2F;O 操作, 并转发到 ChannelPipeline 中的下一个处理器; 这个顶级接口定义功能很弱, 实际使用时会去实现以下两大子接口 : 处理入站 I&#x2F;O 事件的 ChannelInBoundHandler, 处理出站 I&#x2F;O 操作的 ChannelOutBoundHandler</p>
+<p><strong>适配器类 :</strong> 为了开发方便, 避免所有 handler 去实现一遍接口方法, Netty 提供了简单的实现类</p>
+<ul>
+<li>处理入站 I&#x2F;O 事件 : ChannelInboundHandlerAdapter</li>
+<li>处理出站 I&#x2F;O 事件 : ChannelOutboundHandlerAdapter</li>
+<li>同时处理入站和出站事件 : ChannelDuplexHandler</li>
+</ul>
+<p><strong>ChannelHandlerContext :</strong> 实际存储在 Pipeline 中的对象并非 ChannelHandler, 而是上下文对象; 将 handler 包裹在上下文对象中, 通过上下文对象与它所属的 ChannelPipeline 交互, 向上或向下传递事件或者修改 pipeline 都是通过上下文对象</p>
+<h3 id="二-维护-Pipeline-中的-handler"><a href="#二-维护-Pipeline-中的-handler" class="headerlink" title="(二) 维护 Pipeline 中的 handler"></a>(二) 维护 Pipeline 中的 handler</h3><p>ChannelPipeline是线程安全的，ChannelHandler可以在任何时候添加或删除。</p>
+<p>例如，你可以在即将交换敏感信息时插入加密处理程序，并在交换后删除它。</p>
+<p>一般操作，初始化的时候增加进去，较少删除。</p>
+<p>Pipeline 中管理 handler 的API</p>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>addFirst</td>
+<td>最前面插入</td>
+</tr>
+<tr>
+<td>addLast</td>
+<td>最后面插入</td>
+</tr>
+<tr>
+<td>addBefore</td>
+<td>插入到指定处理器前面</td>
+</tr>
+<tr>
+<td>addAfter</td>
+<td>插入到指定处理器后面</td>
+</tr>
+<tr>
+<td>remove</td>
+<td>移除指定处理器</td>
+</tr>
+<tr>
+<td>removeFirst</td>
+<td>移除第一个处理器</td>
+</tr>
+<tr>
+<td>removeLast</td>
+<td>移除最后一个处理器</td>
+</tr>
+<tr>
+<td>replace</td>
+<td>替换指定的处理器</td>
+</tr>
+</tbody></table>
+<p>伪代码示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> ...;<br>p.addLast(<span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">InboundHandlerA</span>());<br>p.addLast(<span class="hljs-string">&quot;2&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">InboundHandlerB</span>());<br>p.addLast(<span class="hljs-string">&quot;3&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">OutboundHandlerA</span>());<br>p.addLast(<span class="hljs-string">&quot;4&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">OutboundHandlerB</span>());<br>p.addLast(<span class="hljs-string">&quot;5&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">InboundOutboundHandlerX</span>()); <span class="hljs-comment">// 聚合处理器</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="三-handler-的执行分析"><a href="#三-handler-的执行分析" class="headerlink" title="(三) handler 的执行分析"></a>(三) handler 的执行分析</h3><p>按之前伪代码逻辑, 现在的责任链如图所示</p>
+<pre><code class=" mermaid">graph TD
+E[ChannelDuplexHandler5] --- D[Outbound Handler 4] --- C[Outbound Handler 3] --- B[Inbound Handler 2] --- A[Inbound Handler 1] 
+</code></pre>
+
+<p>由此可以推断 : </p>
+<ul>
+<li>当入站事件时, 执行顺序是 : 1 &#x3D;&gt; 2 &#x3D;&gt; 3 &#x3D;&gt; 4 &#x3D;&gt; 5</li>
+<li>当出站事件时, 执行顺序是 : 5 &#x3D;&gt; 4 &#x3D;&gt; 3 &#x3D;&gt; 2 &#x3D;&gt; 1</li>
+</ul>
+<p>在这一原则之上, ChannelPipeline在执行时会进行选择3和4为出站处理器, 因此, 实际执行是 :</p>
+<ul>
+<li>入站事件的执行顺序是 1 &#x3D;&gt; 2 &#x3D;&gt; 5, 1和2为入站处理器</li>
+<li>出站事件的执行顺序是 5 &#x3D;&gt; 4 &#x3D;&gt; 3</li>
+</ul>
+<p>不同的入站事件会触发handler不同的方法执行 : </p>
+<ul>
+<li><p>上下文对象中 <code>fire**</code> 开头的方法, 代表<strong>入站</strong>事件传播和处理</p>
+</li>
+<li><p>其余的方法代表<strong>出站</strong>事件的传播和处理。</p>
+</li>
+</ul>
+<h3 id="四-分析"><a href="#四-分析" class="headerlink" title="四 : 分析"></a>四 : 分析</h3><h3 id="一-分析-registered-入站事件的处理"><a href="#一-分析-registered-入站事件的处理" class="headerlink" title="(一) 分析 registered 入站事件的处理"></a>(一) 分析 registered 入站事件的处理</h3><p><img src="/images/image-2020072402.png" srcset="/img/loading.gif" lazyload> </p>
+<p>ServerSocketChannel.pipeline的变化</p>
+<p><img src="/images/image-2020072403.png" srcset="/img/loading.gif" lazyload alt="image-2020072403"> </p>
+<h3 id="二-分析-bind-出站事件的处理"><a href="#二-分析-bind-出站事件的处理" class="headerlink" title="(二) 分析 bind 出站事件的处理"></a>(二) 分析 bind 出站事件的处理</h3><p><img src="/images/image-2020072404.png" srcset="/img/loading.gif" lazyload alt="image-2020072404"> </p>
+<h3 id="三-分析-accept-入站事件的处理"><a href="#三-分析-accept-入站事件的处理" class="headerlink" title="(三) 分析 accept 入站事件的处理"></a>(三) 分析 accept 入站事件的处理</h3><p><img src="/images/image-2020072405.png" srcset="/img/loading.gif" lazyload alt="image-2020072405"> </p>
+<p>这是一个分配的过程，main Group负责accept，然后分配sub Group负责read</p>
+<h3 id="四-分析-read-入站事件的处理"><a href="#四-分析-read-入站事件的处理" class="headerlink" title="(四) 分析 read 入站事件的处理"></a>(四) 分析 read 入站事件的处理</h3><p>pipeline分析的关键4要素:什么事件、有哪些处理器、哪些会被触发、执行顺序</p>
+<p><img src="/images/image-2020072406.png" srcset="/img/loading.gif" lazyload alt="image-2020072406"> </p>
+<h3 id="五-小结"><a href="#五-小结" class="headerlink" title="五 : 小结"></a>五 : 小结</h3><p>用户在管道中有一个或多个 channelhandler 来接收 I&#x2F;O 事件(例如读取)和请求 I&#x2F;O 操作(例如写入和关闭)</p>
+<p>一个典型的服务器在每个通道的管道中都有以下处理程序, 但是根据协议和业务逻辑的复杂性和特征, 可能会有所不同</p>
+<ul>
+<li><p>协议解码器 : 将二进制数据(例如 ByteBuf)转换为 Java 对象</p>
+</li>
+<li><p>协议编码器 : 将 Java 对象转换为二进制数据</p>
+</li>
+<li><p>业务逻辑处理程序 : 执行实际的业务逻辑(例如数据库访问)</p>
+</li>
+</ul>
+<h2 id="三、零拷贝机制"><a href="#三、零拷贝机制" class="headerlink" title="三、零拷贝机制"></a>三、零拷贝机制</h2><h3 id="一-ByteBuf"><a href="#一-ByteBuf" class="headerlink" title="一 : ByteBuf"></a>一 : ByteBuf</h3><p>ByteBuf 是为解决 ByteBuffer 的问题和满足网络应用程序开发人员的日常需求而设计的。</p>
+<p>JDK ByteBuffer的缺点︰</p>
+<ul>
+<li><strong>无法动态扩容 :</strong> 长度是固定, 不能动态扩展和收缩, 当数据大于ByteBuffer容量时, 会发生索引越界异常。</li>
+<li><strong>API使用复杂 :</strong> 读写的时候需要手工调用flip()和rewind()等方法, 使用时需要非常谨慎的使用这些api,否则很容出现错误</li>
+</ul>
+<p>ByteBuf 做了哪些增强</p>
+<ul>
+<li>API操作便捷性</li>
+<li>动态扩容</li>
+<li>多种 ByteBuf实现</li>
+<li>高效的零拷贝机制</li>
+</ul>
+<h3 id="二-ByteBuf-操作"><a href="#二-ByteBuf-操作" class="headerlink" title="二 : ByteBuf 操作"></a>二 : ByteBuf 操作</h3><p>ByteBuf 三个<strong>重要属性</strong> : capacity容量、readerIndex读取位置、writerIndex写入位置。</p>
+<p>提供了两个指针变量来支持顺序读和写操作, 分别是readerIndex和写操作writerIndex</p>
+<p>常用方法定义</p>
+<ul>
+<li>随机访问索引 getByte</li>
+<li>顺序读read*</li>
+<li>顺序写write*</li>
+<li>清除已读内容discardReadBytes</li>
+<li>清除缓冲区clear</li>
+<li>搜索操作</li>
+<li>标记和重置</li>
+<li>引用计数和释放</li>
+</ul>
+<p>下图显示了一个缓冲区是如何被两个指针分割成三个区域的</p>
+<p><img src="/images/image-2020073101.png" srcset="/img/loading.gif" lazyload alt="image-2020073101"> </p>
+<p>代码示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ByteBufDemo</span> &#123;<br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">apiTest</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-comment">// 1.创建一个非池化的ByteBuf, 大小为10个字节</span><br>        <span class="hljs-type">ByteBuf</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> Unpooled.buffer(<span class="hljs-number">10</span>);<br>        System.out.println(<span class="hljs-string">&quot;原始ByteBuf为====================&gt;&quot;</span> + buf.toString());<br>        System.out.println(<span class="hljs-string">&quot;1.ByteBuf中的内容为===============&gt;&quot;</span> + Arrays.toString(buf.array()) + <span class="hljs-string">&quot;\n&quot;</span>);<br><br>        <span class="hljs-comment">// 2.写入一段内容</span><br>        <span class="hljs-type">byte</span>[] bytes = &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>&#125;;<br>        buf.writeBytes(bytes);<br>        System.out.println(<span class="hljs-string">&quot;写入的bytes为====================&gt;&quot;</span> + Arrays.toString(bytes));<br>        System.out.println(<span class="hljs-string">&quot;写入一段内容后ByteBuf为===========&gt;&quot;</span> + buf.toString());<br>        System.out.println(<span class="hljs-string">&quot;2.ByteBuf中的内容为===============&gt;&quot;</span> + Arrays.toString(buf.array()) + <span class="hljs-string">&quot;\n&quot;</span>);<br><br>        <span class="hljs-comment">// 3.读取一段内容</span><br>        <span class="hljs-type">byte</span> <span class="hljs-variable">b1</span> <span class="hljs-operator">=</span> buf.readByte();<br>        <span class="hljs-type">byte</span> <span class="hljs-variable">b2</span> <span class="hljs-operator">=</span> buf.readByte();<br>        System.out.println(<span class="hljs-string">&quot;读取的bytes为====================&gt;&quot;</span> + Arrays.toString(<span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[]&#123;b1, b2&#125;));<br>        System.out.println(<span class="hljs-string">&quot;读取一段内容后ByteBuf为===========&gt;&quot;</span> + buf.toString());<br>        System.out.println(<span class="hljs-string">&quot;3.ByteBuf中的内容为===============&gt;&quot;</span> + Arrays.toString(buf.array()) + <span class="hljs-string">&quot;\n&quot;</span>);<br><br>        <span class="hljs-comment">// 4.将读取的内容丢弃</span><br>        buf.discardReadBytes();<br>        System.out.println(<span class="hljs-string">&quot;将读取的内容丢弃后ByteBuf为========&gt;&quot;</span> + buf.toString());<br>        System.out.println(<span class="hljs-string">&quot;4.ByteBuf中的内容为===============&gt;&quot;</span> + Arrays.toString(buf.array()) + <span class="hljs-string">&quot;\n&quot;</span>);<br><br>        <span class="hljs-comment">// 5.清空读写指针</span><br>        buf.clear();<br>        System.out.println(<span class="hljs-string">&quot;将读写指针清空后ByteBuf为==========&gt;&quot;</span> + buf.toString());<br>        System.out.println(<span class="hljs-string">&quot;5.ByteBuf中的内容为===============&gt;&quot;</span> + Arrays.toString(buf.array()) + <span class="hljs-string">&quot;\n&quot;</span>);<br><br>        <span class="hljs-comment">// 6.再次写入一段内容, 比第一段内容少</span><br>        <span class="hljs-type">byte</span>[] bytes2 = &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>&#125;;<br>        buf.writeBytes(bytes2);<br>        System.out.println(<span class="hljs-string">&quot;写入的bytes为====================&gt;&quot;</span> + Arrays.toString(bytes2));<br>        System.out.println(<span class="hljs-string">&quot;写入一段内容后ByteBuf为===========&gt;&quot;</span> + buf.toString());<br>        System.out.println(<span class="hljs-string">&quot;6.ByteBuf中的内容为===============&gt;&quot;</span> + Arrays.toString(buf.array()) + <span class="hljs-string">&quot;\n&quot;</span>);<br><br>        <span class="hljs-comment">// 7.将ByteBuf清零</span><br>        buf.setZero(<span class="hljs-number">0</span>, buf.capacity());<br>        System.out.println(<span class="hljs-string">&quot;将内容清零后ByteBuf为==============&gt;&quot;</span> + buf.toString());<br>        System.out.println(<span class="hljs-string">&quot;7.ByteBuf中的内容为================&gt;&quot;</span> + Arrays.toString(buf.array()) + <span class="hljs-string">&quot;\n&quot;</span>);<br><br>        <span class="hljs-comment">// 8.再次写入一段超过容量的内容</span><br>        <span class="hljs-type">byte</span>[] bytes3 = &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>, <span class="hljs-number">10</span>, <span class="hljs-number">11</span>&#125;;<br>        buf.writeBytes(bytes3);<br>        System.out.println(<span class="hljs-string">&quot;写入的bytes为====================&gt;&quot;</span> + Arrays.toString(bytes3));<br>        System.out.println(<span class="hljs-string">&quot;写入一段内容后ByteBuf为===========&gt;&quot;</span> + buf.toString());<br>        System.out.println(<span class="hljs-string">&quot;8.ByteBuf中的内容为===============&gt;&quot;</span> + Arrays.toString(buf.array()) + <span class="hljs-string">&quot;\n&quot;</span>);<br>        <span class="hljs-comment">//  随机访问索引 getByte</span><br>        <span class="hljs-comment">//  顺序读 read*</span><br>        <span class="hljs-comment">//  顺序写 write*</span><br>        <span class="hljs-comment">//  清除已读内容 discardReadBytes</span><br>        <span class="hljs-comment">//  清除缓冲区 clear</span><br>        <span class="hljs-comment">//  搜索操作</span><br>        <span class="hljs-comment">//  标记和重置</span><br>        <span class="hljs-comment">//  完整代码示例：参考</span><br>        <span class="hljs-comment">// 搜索操作 读取指定位置 buf.getByte(1);</span><br>        <span class="hljs-comment">//</span><br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="三-ByteBuf-动态扩容"><a href="#三-ByteBuf-动态扩容" class="headerlink" title="三 : ByteBuf 动态扩容"></a>三 : ByteBuf 动态扩容</h3><p>capacity默认值:256字节、最大值:Integer.MAX_VALUE ( 2GB)</p>
+<p><code>write*</code> 方法调用时, 通过 <code>AbstractByteBuf.ensureWritable0</code> 进行检查。</p>
+<p>容量计算方法 : AbstractByteBufAllocator. calculateNewCapacity (新capacity的最小要求, capacity最大值), 根据新capacity的最小值要求, 对应有两套计算方法:</p>
+<ol>
+<li><strong>没超过4兆 :</strong> 从64字节开始, 每次增加一倍, 直至计算出来的newCapacity满足新容量最小要求。示例 : 当前大小256, 已写250, 继续写10字节数据, 需要的容量最小要求是261, 则新容量是  64 * 2 * 2 * 2&#x3D;512</li>
+<li><strong>超过4兆 :</strong> 新容量 &#x3D; 新容量最小要求&#x2F;4兆 * 4兆＋4兆; 示例:当前大小3兆, 已写3兆, 继续写2兆数据, 需要的容量最小要求是5兆, 则新容量是9兆(不能超过最大值)。</li>
+</ol>
+<h3 id="四-ByteBuf-的具体实现"><a href="#四-ByteBuf-的具体实现" class="headerlink" title="四 : ByteBuf 的具体实现"></a>四 : ByteBuf 的具体实现</h3><p>3个维度, 8种实现</p>
+<p><img src="/images/image-2020073102.png" srcset="/img/loading.gif" lazyload alt="image-2020073102"> </p>
+<p>unsafe意味着不安全的操作。但是更底层的操作会带来性能提升和特殊功能, Netty中会尽力使用unsafe。</p>
+<p>Java语言很重要的特性是“一次编写到处运行”, 所以它针对底层的内存或者其他操作, 做了很多封装。而unsafe提供了一系列我们操作底层的方法, 可能会导致不兼容或者不可知的异常。</p>
+<ul>
+<li>Info.仅返回一些低级的内存信息 : addressSize, pageSize</li>
+<li>Objects.提供用于操作对象及其字段的方法 : allocatelnstance, objectFieldOffset</li>
+<li>Classes.提供用于操作类及其静态字段的方法 : staticFieldoffset, defineClass, defineAnonymousClass, ensureClassInitialized</li>
+<li>Synchronization.低级的同步原语 : monitorEnter, tryMonitorEnter, monitorExit, compareAndSwaplnt, putOrderedInt</li>
+<li>Memory.直接访问内存方法 : allocateMemory, copyMemory, freeMemory, getAddress, getln, tputlnt</li>
+<li>Arrays.操作数组 : arrayBaseOffset, arrayIndexScale</li>
+</ul>
+<p>在使用中, 都是通过 ByteBufAllocator 分配器进行申请, 同时分配器具备有内存管理的功能</p>
+<p>代码示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 堆外内存的常规API</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DirectByteBufDemo</span> &#123;<br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">apiTest</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-comment">// 1.创建一个非池化的ByteBuf, 大小为10个字节</span><br>        <span class="hljs-type">ByteBuf</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> Unpooled.directBuffer(<span class="hljs-number">10</span>);<br>        System.out.println(<span class="hljs-string">&quot;原始ByteBuf为====================&gt;&quot;</span> + buf.toString());<br>        <span class="hljs-comment">// System.out.println(&quot;1.ByteBuf中的内容为===============&gt;&quot; + Arrays.toString(buf.array()) + &quot;\n&quot;);</span><br><br>        <span class="hljs-comment">// 2.写入一段内容</span><br>        <span class="hljs-type">byte</span>[] bytes = &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>&#125;;<br>        buf.writeBytes(bytes);<br>        System.out.println(<span class="hljs-string">&quot;写入的bytes为====================&gt;&quot;</span> + Arrays.toString(bytes));<br>        System.out.println(<span class="hljs-string">&quot;写入一段内容后ByteBuf为===========&gt;&quot;</span> + buf.toString());<br>        <span class="hljs-comment">//System.out.println(&quot;2.ByteBuf中的内容为===============&gt;&quot; + Arrays.toString(buf.array()) + &quot;\n&quot;);</span><br><br>        <span class="hljs-comment">// 3.读取一段内容</span><br>        <span class="hljs-type">byte</span> <span class="hljs-variable">b1</span> <span class="hljs-operator">=</span> buf.readByte();<br>        <span class="hljs-type">byte</span> <span class="hljs-variable">b2</span> <span class="hljs-operator">=</span> buf.readByte();<br>        System.out.println(<span class="hljs-string">&quot;读取的bytes为====================&gt;&quot;</span> + Arrays.toString(<span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[]&#123;b1, b2&#125;));<br>        System.out.println(<span class="hljs-string">&quot;读取一段内容后ByteBuf为===========&gt;&quot;</span> + buf.toString());<br>       <span class="hljs-comment">//System.out.println(&quot;3.ByteBuf中的内容为===============&gt;&quot; + Arrays.toString(buf.array()) + &quot;\n&quot;);</span><br><br>        <span class="hljs-comment">// 4.将读取的内容丢弃</span><br>        buf.discardReadBytes();<br>        System.out.println(<span class="hljs-string">&quot;将读取的内容丢弃后ByteBuf为========&gt;&quot;</span> + buf.toString());<br>        <span class="hljs-comment">//System.out.println(&quot;4.ByteBuf中的内容为===============&gt;&quot; + Arrays.toString(buf.array()) + &quot;\n&quot;);</span><br><br>        <span class="hljs-comment">// 5.清空读写指针</span><br>        buf.clear();<br>        System.out.println(<span class="hljs-string">&quot;将读写指针清空后ByteBuf为==========&gt;&quot;</span> + buf.toString());<br>        <span class="hljs-comment">//System.out.println(&quot;5.ByteBuf中的内容为===============&gt;&quot; + Arrays.toString(buf.array()) + &quot;\n&quot;);</span><br><br>        <span class="hljs-comment">// 6.再次写入一段内容, 比第一段内容少</span><br>        <span class="hljs-type">byte</span>[] bytes2 = &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>&#125;;<br>        buf.writeBytes(bytes2);<br>        System.out.println(<span class="hljs-string">&quot;写入的bytes为====================&gt;&quot;</span> + Arrays.toString(bytes2));<br>        System.out.println(<span class="hljs-string">&quot;写入一段内容后ByteBuf为===========&gt;&quot;</span> + buf.toString());<br>       <span class="hljs-comment">// System.out.println(&quot;6.ByteBuf中的内容为===============&gt;&quot; + Arrays.toString(buf.array()) + &quot;\n&quot;);</span><br><br>        <span class="hljs-comment">// 7.将ByteBuf清零</span><br>        buf.setZero(<span class="hljs-number">0</span>, buf.capacity());<br>        System.out.println(<span class="hljs-string">&quot;将内容清零后ByteBuf为==============&gt;&quot;</span> + buf.toString());<br>       <span class="hljs-comment">// System.out.println(&quot;7.ByteBuf中的内容为================&gt;&quot; + Arrays.toString(buf.array()) + &quot;\n&quot;);</span><br><br>        <span class="hljs-comment">// 8.再次写入一段超过容量的内容</span><br>        <span class="hljs-type">byte</span>[] bytes3 = &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>, <span class="hljs-number">10</span>, <span class="hljs-number">11</span>&#125;;<br>        buf.writeBytes(bytes3);<br>        System.out.println(<span class="hljs-string">&quot;写入的bytes为====================&gt;&quot;</span> + Arrays.toString(bytes3));<br>        System.out.println(<span class="hljs-string">&quot;写入一段内容后ByteBuf为===========&gt;&quot;</span> + buf.toString());<br>       <span class="hljs-comment">// System.out.println(&quot;8.ByteBuf中的内容为===============&gt;&quot; + Arrays.toString(buf.array()) + &quot;\n&quot;);</span><br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="五-PooledByteBuf-对象、内存复用"><a href="#五-PooledByteBuf-对象、内存复用" class="headerlink" title="五 : PooledByteBuf 对象、内存复用"></a>五 : PooledByteBuf 对象、内存复用</h3><p><strong>PoolThreadCache :</strong> PooledByteBufAllocator 实例维护的一个线程变量。</p>
+<p>多种分类的 MemoryRegionCache <strong>数组</strong>用作内存缓存，MemoryRegionCache内部是链表，队列里面存Chunk</p>
+<p>PoolChunk里面维护了内存引用，内存复用的做法就是把 buf 的 memory 指向 chunk 的 memory</p>
+<p>PooledByteBufAllocator.ioBuffer<strong>运作过程</strong>梳理</p>
+<p><img src="/images/image-2020073103.png" srcset="/img/loading.gif" lazyload alt="image-2020073103"> </p>
+<h3 id="六-零拷贝机制"><a href="#六-零拷贝机制" class="headerlink" title="六 : 零拷贝机制"></a>六 : 零拷贝机制</h3><p>Netty的零拷贝机制，是一种应用层的实现。和底层JVM、操作系统内存机制并无过多关联。</p>
+<p>CompositeByteBuf，将多个ByteBuf合并为一个逻辑上的ByteBuf，避免了各个ByteBuf之间的拷贝</p>
+<p><img src="/images/image-2020073104.png" srcset="/img/loading.gif" lazyload alt="image-2020073104">  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">CompositeByteBuf</span> <span class="hljs-variable">compositeByteBuf</span> <span class="hljs-operator">=</span> Unpooled.compositeBuffer();<br><span class="hljs-type">ByteBuf</span> <span class="hljs-variable">newBuffer</span> <span class="hljs-operator">=</span> compositeByteBuf.addComponents(<span class="hljs-literal">true</span>, buffer1, buffer2);<br></code></pre></td></tr></table></figure>
+
+<p>wrapedBuffer()方法，将byte[]数组包装成ByteBuf对象。</p>
+<p><img src="/images/image-2020073105.png" srcset="/img/loading.gif" lazyload alt="image-2020073105"> </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ByteBuf</span> <span class="hljs-variable">newBuffer</span> <span class="hljs-operator">=</span> Unpooled.wrappedBuffer(<span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[]&#123;<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>]);<br></code></pre></td></tr></table></figure>
+
+<p>slice()方法。将一个ByteBuf对象切分成多个ByteBuf对象。</p>
+<p><img src="/images/image-2020073106.png" srcset="/img/loading.gif" lazyload alt="image-2020073106"> </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ByteBuf</span> <span class="hljs-variable">buffer1</span> <span class="hljs-operator">=</span> Unpooled.wrappedBuffer(<span class="hljs-string">&quot;hello&quot;</span>.getBytes());<span class="hljs-type">ByteBuf</span> <span class="hljs-variable">newBuffer</span> <span class="hljs-operator">=</span> buffer1.slice(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>);<br></code></pre></td></tr></table></figure>
+
+<p>代码示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 零拷贝</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ZeroCopyTest</span> &#123;<br>    <span class="hljs-meta">@org</span>.junit.Test<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">wrapTest</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-type">byte</span>[] arr = &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>&#125;;<br>        <span class="hljs-type">ByteBuf</span> <span class="hljs-variable">byteBuf</span> <span class="hljs-operator">=</span> Unpooled.wrappedBuffer(arr);<br>        System.out.println(byteBuf.getByte(<span class="hljs-number">4</span>));<br>        arr[<span class="hljs-number">4</span>] = <span class="hljs-number">6</span>;<br>        System.out.println(byteBuf.getByte(<span class="hljs-number">4</span>));<br>    &#125;<br><br>    <span class="hljs-meta">@org</span>.junit.Test<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">sliceTest</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-type">ByteBuf</span> <span class="hljs-variable">buffer1</span> <span class="hljs-operator">=</span> Unpooled.wrappedBuffer(<span class="hljs-string">&quot;hello&quot;</span>.getBytes());<br>        <span class="hljs-type">ByteBuf</span> <span class="hljs-variable">newBuffer</span> <span class="hljs-operator">=</span> buffer1.slice(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);<br>        newBuffer.unwrap();<br>        System.out.println(newBuffer.toString());<br>    &#125;<br><br>    <span class="hljs-meta">@org</span>.junit.Test<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">compositeTest</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-type">ByteBuf</span> <span class="hljs-variable">buffer1</span> <span class="hljs-operator">=</span> Unpooled.buffer(<span class="hljs-number">3</span>);<br>        buffer1.writeByte(<span class="hljs-number">1</span>);<br>        <span class="hljs-type">ByteBuf</span> <span class="hljs-variable">buffer2</span> <span class="hljs-operator">=</span> Unpooled.buffer(<span class="hljs-number">3</span>);<br>        buffer2.writeByte(<span class="hljs-number">4</span>);<br>        <span class="hljs-type">CompositeByteBuf</span> <span class="hljs-variable">compositeByteBuf</span> <span class="hljs-operator">=</span> Unpooled.compositeBuffer();<br>        <span class="hljs-type">CompositeByteBuf</span> <span class="hljs-variable">newBuffer</span> <span class="hljs-operator">=</span> compositeByteBuf.addComponents(<span class="hljs-literal">true</span>, buffer1, buffer2);<br>        System.out.println(newBuffer);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/" class="category-chain-item">高性能编程</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/">#高性能编程</a>
+      
+        <a href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">#高并发网络编程</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Netty</div>
+      <div>https://info4z.github.io/2020/02/07/java_06_netty/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>倗诚</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年2月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/02/14/java_07_jvm/" title="jvm性能篇">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">jvm性能篇</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/01/31/java_05_nio/" title="NIO网络编程">
+                        <span class="hidden-mobile">NIO网络编程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
