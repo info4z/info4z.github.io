@@ -16,15 +16,15 @@
   <meta name="author" content="倗诚">
   <meta name="keywords" content="">
   
-    <meta name="description" content="目标不是学会写一个能跑的 Hello World，而是理解 Spring Boot 作为一个框架，其设计决策背后的工程权衡。">
+    <meta name="description" content="目标不是学会写一个能跑的 Hello World，而是理解 SpringBoot 作为一个框架，其设计决策背后的工程权衡。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="框架核心：理解“为什么”而非“怎么用”">
 <meta property="og:url" content="https://info4z.github.io/2026/07/03/micro_service_01_springboot%E6%A1%86%E6%9E%B6%E6%A0%B8%E5%BF%83/index.html">
 <meta property="og:site_name" content="云深不知处">
-<meta property="og:description" content="目标不是学会写一个能跑的 Hello World，而是理解 Spring Boot 作为一个框架，其设计决策背后的工程权衡。">
+<meta property="og:description" content="目标不是学会写一个能跑的 Hello World，而是理解 SpringBoot 作为一个框架，其设计决策背后的工程权衡。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-07-02T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-08-14T00:46:18.692Z">
+<meta property="article:modified_time" content="2026-08-14T00:59:08.524Z">
 <meta property="article:author" content="倗诚">
 <meta property="article:tag" content="微服务">
 <meta property="article:tag" content="spring">
@@ -275,16 +275,16 @@
             
               <div class="markdown-body">
                 
-                <h1 id="一、Spring-Boot-核心设计思想"><a href="#一、Spring-Boot-核心设计思想" class="headerlink" title="一、Spring Boot 核心设计思想"></a>一、Spring Boot 核心设计思想</h1><h2 id="（一）约定优于配置：Convention-over-Configuration"><a href="#（一）约定优于配置：Convention-over-Configuration" class="headerlink" title="（一）约定优于配置：Convention over Configuration"></a>（一）约定优于配置：Convention over Configuration</h2><p>这是 Spring Boot 最核心的设计哲学。在传统的 Spring 框架中，开发者需要编写大量 XML 或 Java 配置来声明 Bean、定义数据源、配置事务管理器等。Spring Boot 通过建立一套合理的默认约定，大幅减少了这些重复劳动。</p>
+                <h1 id="一、Spring-Boot-核心设计思想"><a href="#一、Spring-Boot-核心设计思想" class="headerlink" title="一、Spring Boot 核心设计思想"></a>一、Spring Boot 核心设计思想</h1><h2 id="（一）约定优于配置：Convention-over-Configuration"><a href="#（一）约定优于配置：Convention-over-Configuration" class="headerlink" title="（一）约定优于配置：Convention over Configuration"></a>（一）约定优于配置：Convention over Configuration</h2><p>这是 SpringBoot 最核心的设计哲学。在传统的 Spring 框架中，开发者需要编写大量 XML 或 Java 配置来声明 Bean、定义数据源、配置事务管理器等。SpringBoot 通过建立一套合理的默认约定，大幅减少了这些重复劳动。</p>
 <p>作为架构师，你需要理解的是：约定优于配置并非为了“少写代码”这么简单。它的本质是<strong>降低团队的认知负荷</strong>——当所有项目遵循相同的目录结构、相同的配置键命名规则、相同的异常处理模式时，团队成员在不同项目之间切换的成本大大降低，新人上手的速度显著提升。</p>
-<p>但，<strong>约定也有其边界</strong>。当业务场景偏离默认约定时，Spring Boot 提供了覆盖机制（如 <code>application.properties</code> &#x2F; <code>application.yml</code>、<code>@Conditional</code> 条件注解等），让你可以在不破坏整体框架的前提下进行定制。</p>
-<h2 id="（二）Starter-启动器机制"><a href="#（二）Starter-启动器机制" class="headerlink" title="（二）Starter 启动器机制"></a>（二）Starter 启动器机制</h2><p>Starter 是 Spring Boot 实现“开箱即用”的核心载体。一个 Starter 本质上是一个 Maven&#x2F;Gradle 依赖的聚合 POM，它将某个技术栈所需的所有依赖（包括自动配置代码和典型类库）打包在一起。</p>
+<p>但，<strong>约定也有其边界</strong>。当业务场景偏离默认约定时，SpringBoot 提供了覆盖机制（如 <code>application.properties</code> &#x2F; <code>application.yml</code>、<code>@Conditional</code> 条件注解等），让你可以在不破坏整体框架的前提下进行定制。</p>
+<h2 id="（二）Starter-启动器机制"><a href="#（二）Starter-启动器机制" class="headerlink" title="（二）Starter 启动器机制"></a>（二）Starter 启动器机制</h2><p>Starter 是 SpringBoot 实现“开箱即用”的核心载体。一个 Starter 本质上是一个 Maven&#x2F;Gradle 依赖的聚合 POM，它将某个技术栈所需的所有依赖（包括自动配置代码和典型类库）打包在一起。</p>
 <p>以 <code>spring-boot-starter-web</code> 为例，它聚合了：<code>spring-boot-starter</code>（Spring Boot 基础）、<code>spring-boot-starter-tomcat</code>（内嵌 Tomcat）、<code>spring-webmvc</code>（Spring MVC）、<code>jackson-databind</code>（JSON 序列化）。开发者只需引入这一个依赖，就能获得一个完整的 Web 开发环境。</p>
 <hr>
 <p><strong>架构视角</strong>：Starter 机制的本质是<strong>依赖管理与版本仲裁的标准化</strong>。在一个中大型团队中，依赖版本冲突是常见的问题根源。Starter 通过父 POM 统一管理版本（<code>spring-boot-starter-parent</code> 中定义了所有主流三方库的兼容版本），大大降低了“依赖地狱”的风险。</p>
 <hr>
 <p>在架构评审时，应当优先使用官方 Starter，而非自行组合依赖——这不仅是为了省事，更是为了获得经过充分测试的版本组合。</p>
-<h2 id="（三）自动配置机制：Auto-Configuration"><a href="#（三）自动配置机制：Auto-Configuration" class="headerlink" title="（三）自动配置机制：Auto-Configuration"></a>（三）自动配置机制：Auto-Configuration</h2><p>自动配置是“约定优于配置”的实现机制。Spring Boot 在启动时会扫描类路径，根据<strong>已有的依赖</strong>和<strong>配置属性</strong>，自动推断并注册所需的 Bean。</p>
+<h2 id="（三）自动配置机制：Auto-Configuration"><a href="#（三）自动配置机制：Auto-Configuration" class="headerlink" title="（三）自动配置机制：Auto-Configuration"></a>（三）自动配置机制：Auto-Configuration</h2><p>自动配置是“约定优于配置”的实现机制。SpringBoot 在启动时会扫描类路径，根据<strong>已有的依赖</strong>和<strong>配置属性</strong>，自动推断并注册所需的 Bean。</p>
 <p>自动配置的核心流程如下：</p>
 <pre><code class=" mermaid">graph TD
     %% 入口
@@ -352,7 +352,7 @@
 <p><strong>架构视角</strong>：<a href="https://info4z.github.io/spring/auto-configuration.png">自动配置机制</a>的价值在于<strong>让基础设施代码与业务代码解耦</strong>。数据源、连接池、事务管理器、消息队列连接等“样板式”配置，不再散落在各个模块中，而是由框架统一管理。这使得业务代码更加纯粹，也降低了因配置不一致导致的生产事故概率。</p>
 <p>但自动配置也有其“黑盒”属性——当配置未按预期生效时，排障难度会增加。因此，生产环境应开启 <code>--debug</code> 启动参数或访问 <code>/actuator/conditions</code> 端点，查看自动配置报告，了解哪些配置生效、哪些被跳过及原因。</p>
 <hr>
-<h2 id="（四）内嵌-Web-容器的设计取舍"><a href="#（四）内嵌-Web-容器的设计取舍" class="headerlink" title="（四）内嵌 Web 容器的设计取舍"></a>（四）内嵌 Web 容器的设计取舍</h2><p>Spring Boot 支持内嵌 Tomcat、Jetty 和 Undertow 三种 Web 容器。默认使用 Tomcat，但可通过排除 <code>spring-boot-starter-tomcat</code> 并引入对应的 Starter 来切换。</p>
+<h2 id="（四）内嵌-Web-容器的设计取舍"><a href="#（四）内嵌-Web-容器的设计取舍" class="headerlink" title="（四）内嵌 Web 容器的设计取舍"></a>（四）内嵌 Web 容器的设计取舍</h2><p>SpringBoot 支持内嵌 Tomcat、Jetty 和 Undertow 三种 Web 容器。默认使用 Tomcat，但可通过排除 <code>spring-boot-starter-tomcat</code> 并引入对应的 Starter 来切换。</p>
 <hr>
 <p><strong>架构视角</strong>：内嵌容器的选择不是性能数字的简单比较。Tomcat 是生态最成熟、文档最丰富的选择，适合绝大多数场景；Jetty 在长连接和 WebSocket 场景下有优势；Undertow 在并发处理上有更好的表现。</p>
 <p>作为架构师，应当基于<strong>业务场景的流量特征</strong>而非“听说哪个好”来做决策。更重要的是，内嵌容器使得<strong>部署产物与环境解耦</strong>——同一个 Jar 包可以在任何有 JRE 的环境中运行，这对容器化和云原生部署至关重要。</p>
@@ -380,7 +380,7 @@
 </tbody></table>
 <p><code>@SpringBootApplication</code> 通常放置在主类上，它隐式定义了项目的<strong>基础搜索包</strong>（base package）。例如，JPA 应用会以该注解所在的包为根，搜索 <code>@Entity</code> 类。</p>
 <hr>
-<p><strong>架构视角</strong>：<code>@SpringBootApplication</code> 是一个典型的“便利注解”（convenience annotation）。它的设计体现了 Spring Boot 对<strong>开发者体验</strong>的重视——用一个注解替代三个，减少了认知负担。但在某些场景下，你可能需要拆分这三个注解：例如，当测试类不需要自动配置时，可以使用 <code>@SpringBootTest</code> 配合 <code>@EnableAutoConfiguration</code> 的 <code>exclude</code> 参数精细控制。</p>
+<p><strong>架构视角</strong>：<code>@SpringBootApplication</code> 是一个典型的“便利注解”（convenience annotation）。它的设计体现了 SpringBoot 对<strong>开发者体验</strong>的重视——用一个注解替代三个，减少了认知负担。但在某些场景下，你可能需要拆分这三个注解：例如，当测试类不需要自动配置时，可以使用 <code>@SpringBootTest</code> 配合 <code>@EnableAutoConfiguration</code> 的 <code>exclude</code> 参数精细控制。</p>
 <hr>
 <p><strong>关键参数</strong>：</p>
 <ul>
@@ -394,10 +394,10 @@
 <li><strong>2.7 之后（含 3.x）</strong> ：通过 <code>META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</code> 文件注册</li>
 </ul>
 <hr>
-<p><strong>架构视角</strong>：这个变化看似是技术细节，实则反映了 Spring Boot 团队对<strong>模块化和可维护性</strong>的持续追求——从“大杂烩”式的 <code>spring.factories</code> 转向更清晰、更易管理的按模块导入方式。了解这类演进有助于你在技术决策时判断哪些是“应该跟随的趋势”。</p>
+<p><strong>架构视角</strong>：这个变化看似是技术细节，实则反映了 SpringBoot 团队对<strong>模块化和可维护性</strong>的持续追求——从“大杂烩”式的 <code>spring.factories</code> 转向更清晰、更易管理的按模块导入方式。了解这类演进有助于你在技术决策时判断哪些是“应该跟随的趋势”。</p>
 <hr>
 <h2 id="（三）-Conditional-系列：条件注解体系"><a href="#（三）-Conditional-系列：条件注解体系" class="headerlink" title="（三）@Conditional 系列：条件注解体系"></a>（三）@Conditional 系列：条件注解体系</h2><p>条件注解是实现“智能”自动配置的<strong>核心机制</strong>。它们能在运行时根据<strong>类路径、环境属性、Bean 存在性</strong>等多种条件动态决定配置类或 Bean 是否应该被加载。</p>
-<p>Spring Boot 提供的核心条件注解包括：</p>
+<p>SpringBoot 提供的核心条件注解包括：</p>
 <table>
 <thead>
 <tr>
@@ -441,18 +441,18 @@
 <li><strong>条件评估器</strong>：在运行时执行匹配判断</li>
 </ol>
 <hr>
-<p><strong>架构视角</strong>：条件注解的价值在于<strong>让配置具备环境感知能力</strong>。举个例子：当 classpath 中存在 H2 驱动且没有配置数据源时，Spring Boot 会自动创建内存数据库——这在开发测试环境非常便利；但在生产环境，你配置了 <code>spring.datasource.url</code> 后，条件不满足，自动配置的 H2 数据源就不会生效。</p>
-<p>这种“智能默认+显式覆盖”的模式，是 Spring Boot 能够同时兼顾<strong>开发效率和生产稳定性</strong>的关键设计。</p>
+<p><strong>架构视角</strong>：条件注解的价值在于<strong>让配置具备环境感知能力</strong>。举个例子：当 classpath 中存在 H2 驱动且没有配置数据源时，SpringBoot 会自动创建内存数据库——这在开发测试环境非常便利；但在生产环境，你配置了 <code>spring.datasource.url</code> 后，条件不满足，自动配置的 H2 数据源就不会生效。</p>
+<p>这种“智能默认+显式覆盖”的模式，是 SpringBoot 能够同时兼顾<strong>开发效率和生产稳定性</strong>的关键设计。</p>
 <hr>
 <p><strong>自定义条件注解</strong>：当内置条件无法满足业务需求时，可以实现自己的 <code>Condition</code> 并创建自定义条件注解。这在构建企业级公共组件时尤为重要。</p>
-<h2 id="（四）-ConfigurationProperties：类型安全的配置绑定"><a href="#（四）-ConfigurationProperties：类型安全的配置绑定" class="headerlink" title="（四）@ConfigurationProperties：类型安全的配置绑定"></a>（四）@ConfigurationProperties：类型安全的配置绑定</h2><p><code>@ConfigurationProperties</code> 是 Spring Boot 中用于将<strong>外部配置</strong>（properties、YAML、环境变量等）<strong>类型安全地绑定到 Java 对象</strong>的核心注解。</p>
+<h2 id="（四）-ConfigurationProperties：类型安全的配置绑定"><a href="#（四）-ConfigurationProperties：类型安全的配置绑定" class="headerlink" title="（四）@ConfigurationProperties：类型安全的配置绑定"></a>（四）@ConfigurationProperties：类型安全的配置绑定</h2><p><code>@ConfigurationProperties</code> 是 SpringBoot 中用于将<strong>外部配置</strong>（properties、YAML、环境变量等）<strong>类型安全地绑定到 Java 对象</strong>的核心注解。</p>
 <p><strong>核心特性</strong>：<strong>宽松绑定（Relaxed Binding）</strong> ——环境属性名与 Bean 属性名不需要完全匹配。例如，<code>spring.datasource.url</code> 可以绑定到 <code>dataSource.setUrl()</code>。</p>
 <hr>
-<p><strong>架构视角</strong>：<code>@ConfigurationProperties</code> 不仅仅是“读取配置”这么简单。它是 Spring Boot <strong>将基础设施配置外部化</strong>的关键工具——所有自动配置类都大量使用它来读取用户配置。</p>
+<p><strong>架构视角</strong>：<code>@ConfigurationProperties</code> 不仅仅是“读取配置”这么简单。它是 SpringBoot <strong>将基础设施配置外部化</strong>的关键工具——所有自动配置类都大量使用它来读取用户配置。</p>
 <p>从架构设计角度看，这实现了<strong>配置与代码的分离</strong>，使得同一个 Jar 包可以在不同环境（开发、测试、预发布、生产）通过不同的配置文件运行，而无需重新构建。</p>
 <hr>
 <p><strong>与 <code>@Value</code> 的区别</strong>：<code>@Value</code> 适用于单个配置值的注入，而 <code>@ConfigurationProperties</code> 适用于<strong>结构化配置</strong>（如一个数据源的所有连接参数）。在企业级应用中，强烈推荐使用 <code>@ConfigurationProperties</code> 管理所有业务相关的配置组，这能让配置更加集中、可维护性更强。</p>
-<h1 id="三、项目结构与模块化设计"><a href="#三、项目结构与模块化设计" class="headerlink" title="三、项目结构与模块化设计"></a>三、项目结构与模块化设计</h1><h2 id="（一）标准目录结构及其设计意图"><a href="#（一）标准目录结构及其设计意图" class="headerlink" title="（一）标准目录结构及其设计意图"></a>（一）标准目录结构及其设计意图</h2><p>Spring Boot 推荐的 Maven&#x2F;Gradle 项目结构如下：</p>
+<h1 id="三、项目结构与模块化设计"><a href="#三、项目结构与模块化设计" class="headerlink" title="三、项目结构与模块化设计"></a>三、项目结构与模块化设计</h1><h2 id="（一）标准目录结构及其设计意图"><a href="#（一）标准目录结构及其设计意图" class="headerlink" title="（一）标准目录结构及其设计意图"></a>（一）标准目录结构及其设计意图</h2><p>SpringBoot 推荐的 Maven&#x2F;Gradle 项目结构如下：</p>
 <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs gradle">src/<br>├── main/<br>│   ├── java/<br>│   │   └── com<span class="hljs-regexp">/example/</span>app/<br>│   │       ├── Application.java          ← @SpringBootApplication 启动类<br>│   │       ├── controller/               ← Web 控制器层<br>│   │       ├── service/                  ← 业务逻辑层<br>│   │       ├── repository/               ← 数据访问层<br>│   │       └── config/                   ← 自定义配置类<br>│   └── resources/<br>│       ├── application.yml               ← 主配置文件<br>│       ├── application-&#123;profile&#125;.yml     ← 环境特定配置<br>│       ├── <span class="hljs-keyword">static</span>/                       ← 静态资源<br>│       └── templates/                    ← 模板文件<br>└── test/<br>    └── java/<br>        └── com<span class="hljs-regexp">/example/</span>app/<br>            └── ...<br></code></pre></td></tr></table></figure>
 
 <hr>
@@ -460,30 +460,30 @@
 <hr>
 <p>启动类 <code>Application.java</code> 放在<strong>根包</strong>（如 <code>com.example.app</code>）下是一个重要的约定。因为 <code>@SpringBootApplication</code> 默认从它所在的包开始扫描，如果放在子包中，上层的组件将无法被扫描到。</p>
 <h2 id="（二）多模块项目的架构设计"><a href="#（二）多模块项目的架构设计" class="headerlink" title="（二）多模块项目的架构设计"></a>（二）多模块项目的架构设计</h2><p>对于中大型项目，Maven&#x2F;Gradle 多模块结构是必要的。推荐的分层模块划分如下：</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs armasm"><span class="hljs-symbol">parent</span>-project (父 POM，统一版本管理)<br>├── api/              ← API 定义模块（DTO、接口契约）<br>├── <span class="hljs-meta">common</span>/           ← 公共模块（工具类、常量、异常定义）<br>├── infra/            ← 基础设施模块（数据源、缓存、消息队列配置）<br>├── service/          ← 业务服务模块（核心业务逻辑）<br>└── web/              ← Web 接入模块（Controller、过滤器、拦截器）<br></code></pre></td></tr></table></figure>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs armasm"><span class="hljs-symbol">parent</span>-project (父POM，统一版本管理)<br>├── api/              ← API 定义模块（DTO、接口契约）<br>├── <span class="hljs-meta">common</span>/           ← 公共模块（工具类、常量、异常定义）<br>├── infra/            ← 基础设施模块（数据源、缓存、消息队列配置）<br>├── service/          ← 业务服务模块（核心业务逻辑）<br>└── web/              ← Web 接入模块（Controller、过滤器、拦截器）<br></code></pre></td></tr></table></figure>
 
 <hr>
 <p><strong>架构视角</strong>：模块化设计最核心的目标是<strong>控制依赖方向</strong>——<code>web</code> 依赖 <code>service</code>，<code>service</code> 依赖 <code>infra</code> 和 <code>common</code>，但反向依赖绝不允许。这种“单向依赖”约束保证了代码的可测试性和可维护性。</p>
 <hr>
 <p>另一个关键考量是<strong>模块的粒度</strong>：过细会导致模块数量爆炸、构建复杂；过粗则失去了模块化的意义。在实践中，以<strong>业务域</strong>（如订单域、用户域）和<strong>技术层</strong>（如基础设施层）两个维度交叉划分，往往是比较平衡的方案。</p>
-<h2 id="（三）父-POM-设计与依赖版本统一管理"><a href="#（三）父-POM-设计与依赖版本统一管理" class="headerlink" title="（三）父 POM 设计与依赖版本统一管理"></a>（三）父 POM 设计与依赖版本统一管理</h2><p><code>spring-boot-starter-parent</code> 作为父 POM，提供了：</p>
+<h2 id="（三）父-POM-设计与依赖版本统一管理"><a href="#（三）父-POM-设计与依赖版本统一管理" class="headerlink" title="（三）父 POM 设计与依赖版本统一管理"></a>（三）父 POM 设计与依赖版本统一管理</h2><p><code>spring-boot-starter-parent</code> 作为父POM，提供了：</p>
 <ul>
 <li>默认的 Java 版本（17+）</li>
 <li>默认的字符编码（UTF-8）</li>
-<li>依赖版本管理（所有 Spring Boot 官方 Starter 及主流三方库的兼容版本）</li>
+<li>依赖版本管理（所有 SpringBoot 官方 Starter 及主流三方库的兼容版本）</li>
 <li>插件配置（<code>spring-boot-maven-plugin</code> 等）</li>
 </ul>
 <hr>
-<p><strong>架构视角</strong>：在企业级项目中，强烈建议<strong>自定义父 POM</strong>，继承自 <code>spring-boot-starter-parent</code>，再在其中统一管理公司内部公共组件（如日志规范、监控埋点、安全框架等）的版本。</p>
+<p><strong>架构视角</strong>：在企业级项目中，强烈建议<strong>自定义父POM</strong>，继承自 <code>spring-boot-starter-parent</code>，再在其中统一管理公司内部公共组件（如日志规范、监控埋点、安全框架等）的版本。</p>
 <hr>
 <p>这样做的好处是：</p>
 <ol>
 <li><strong>全项目依赖版本一致</strong>，避免“同一个库在不同子模块版本不同”的冲突</li>
-<li><strong>升级成本可控</strong>——只需修改父 POM 中的版本号，所有子模块同步更新</li>
-<li><strong>新项目快速启动</strong>——拉取父 POM 即可获得全套企业级技术栈</li>
+<li><strong>升级成本可控</strong>——只需修改父POM中的版本号，所有子模块同步更新</li>
+<li><strong>新项目快速启动</strong>——拉取父POM即可获得全套企业级技术栈</li>
 </ol>
-<h1 id="四、技术总结"><a href="#四、技术总结" class="headerlink" title="四、技术总结"></a>四、技术总结</h1><p>第一阶段的核心收获应该是：<strong>Spring Boot 不是“省事的框架”，而是一个有清晰设计哲学的系统</strong>。“约定优于配置”是它的价值主张，Starter 是它的分发机制，自动配置是它的实现引擎，条件注解是它的灵活性保障。</p>
-<p>进入第二阶段（Web 层与数据层）之前，建议你带着以下问题去阅读 Spring Boot 源码中的 <code>spring-boot-autoconfigure</code> 模块：</p>
+<h1 id="四、技术总结"><a href="#四、技术总结" class="headerlink" title="四、技术总结"></a>四、技术总结</h1><p>第一阶段的核心收获应该是：<strong>SpringBoot 不是“省事的框架”，而是一个有清晰设计哲学的系统</strong>。“约定优于配置”是它的价值主张，Starter 是它的分发机制，自动配置是它的实现引擎，条件注解是它的灵活性保障。</p>
+<p>进入第二阶段（Web层与数据层）之前，建议你带着以下问题去阅读 SpringBoot 源码中的 <code>spring-boot-autoconfigure</code> 模块：</p>
 <ul>
 <li>一个典型的自动配置类（如 <code>DataSourceAutoConfiguration</code>）是如何组织的？</li>
 <li>条件注解在自动配置类中是如何组合使用的？</li>
